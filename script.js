@@ -3,23 +3,38 @@
         const GRID_WIDTH = 5;
         const GRID_HEIGHT = 5;
 
+        const terrainInfo = {
+            'Planície': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ -1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR',
+            'Floresta': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ +1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR',
+            'Floresta Sombria': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
+            'Colinas': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia',
+            'Montanhas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
+            'Montanhas Altas': '✥ Intransponível<br>✥ Não é possível coletar ou caçar',
+            'Lago ou Rio': '✥ Requer um barco ou balsa<br>✥ Não é possível coletar',
+            'Pantano': '✥ Requer uma balsa<br>✥ +1 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
+            'Charco': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
+            'Ruínas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR'
+        };
+
         // --- INICIALIZAÇÃO ---
         const solitarySvg = document.getElementById('solitary-hexagon-svg');
         const selectedHexagonContainer = document.getElementById('selected-hexagon-container');
         let originalTextWindowContent = '';
         let currentSelectedHexagon = 11; // Default selected hexagon
         let selectedTemperatureRowIndex = null;
-
-        let currentTerrainInfo = '';
+        let selectedTerrainInfo = '';
 
         function updateInfoDisplay(content) {
             const infoDisplay = document.getElementById('info-display');
             if (infoDisplay) {
-                let newContent = '';
-                if (currentTerrainInfo) {
-                    newContent += currentTerrainInfo + '<br>';
+                let newContent = content;
+                if (selectedTerrainInfo) {
+                    if (newContent) {
+                        newContent += '<br><br>' + selectedTerrainInfo;
+                    } else {
+                        newContent = selectedTerrainInfo;
+                    }
                 }
-                newContent += content;
                 infoDisplay.innerHTML = newContent;
             }
         }
@@ -535,8 +550,8 @@
                         const x = hexWidth * q * 0.75 + hexWidth / 2 + offsetX;
                         const y = hexHeight * r + (q % 2) * (hexHeight / 2) + hexHeight / 2 + offsetY;
 
-                        marker.style.left = `${x}px`;
-                        marker.style.top = `${y}px`;
+                        marker.style.left = `${(x / 800) * 100}%`;
+                        marker.style.top = `${(y / 600) * 100}%`;
                         
                         const allHexagons = document.querySelectorAll('.hexagon');
                         allHexagons.forEach(hex => {
@@ -664,29 +679,13 @@
                 'charco.png': 'Charco',
                 'montanhas.png': 'Montanhas',
                 'colinas.png': 'Colinas',
-                'pantano.png': 'Pântano',
+                'pantano.png': 'Pantano',
                 'floresta.png': 'Floresta',
                 'florestaSombria.png': 'Floresta Sombria',
                 'ruinas.png': 'Ruínas',
                 'lagoRio.png': 'Lago ou Rio'
             };
             return terrainMap[imageName] || imageName.split('.')[0];
-        }
-
-        function getTerrainDescription(terrainName) {
-            const terrainDescriptions = {
-                'Planície': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ -1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR.',
-                'Floresta': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ +1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR.',
-                'Floresta Sombria': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR.',
-                'Colinas': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia.',
-                'Montanhas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR.',
-                'Montanhas Altas': '✥ Intransponível<br>✥ Não é possível coletar ou caçar.',
-                'Lago ou Rio': '✥ Requer um barco ou balsa<br>✥ Não é possível coletar.',
-                'Pântano': '✥ Requer uma balsa<br>✥ +1 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR.',
-                'Charco': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR.',
-                'Ruínas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR.'
-            };
-            return terrainDescriptions[terrainName] || '';
         }
 
         function initializeTerrainModal() {
@@ -726,7 +725,9 @@
                     if(terrainTitle) {
                         terrainTitle.textContent = img.alt;
                     }
-                    currentTerrainInfo = getTerrainDescription(img.alt);
+
+                    const terrainName = getTerrainName(imageName);
+                    selectedTerrainInfo = terrainInfo[terrainName] || '';
 
                     const temperatureTable = document.getElementById('temperature-table');
                     if (temperatureTable) {
@@ -734,16 +735,12 @@
                         if (selectedRow) {
                             updateTextWithTemperature(selectedRow);
                         } else {
-                            const lines = originalTextWindowContent.split('<br>');
-                            const titleIndex = lines.findIndex(line => line.startsWith('<b>'));
-                            const linesWithoutTitle = [...lines];
-                            if (titleIndex > -1) {
-                                linesWithoutTitle.splice(titleIndex, 1);
-                            }
-                            const hexInfo = linesWithoutTitle.filter(line => line && !line.includes('para rolar na tabela de')).join('<br>');
-                            updateInfoDisplay(hexInfo);
+                            updateInfoDisplay("");
                         }
+                    } else {
+                        updateInfoDisplay("");
                     }
+
                     closeModal();
                 });
             });

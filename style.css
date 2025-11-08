@@ -158,11 +158,12 @@ h1 {
     width: 100%;
     height: 100%;
     z-index: 1;
+    overflow: visible !important;
 }
 
 #marker {
-    width: 80px;
-    height: 70px;
+    width: 10%;
+    height: 11.67%;
     position: absolute;
     transform: translate(-50%, -50%);
     z-index: 10;
@@ -403,6 +404,7 @@ input:checked + .slider:before {
     right: 20px;
     font-size: 28px;
     font-weight: bold;
+    z-index: 100;
 }
 
 .close-button:hover,
@@ -486,4 +488,40 @@ input:checked + .slider:before {
 
 #terrain-grid .terrain-item:hover img {
     border-color: var(--primary);
+}
+
+#hexagon-modal .close-button {
+    left: 20px;
+    right: auto;
+}
+
+/* Responsive layout for weather modal */
+@media (max-width: 1120px) {
+    #hexagon-modal .modal-content {
+        flex-direction: column;
+        align-items: center;
+        margin: 2.5vh auto;
+        width: 95vw;
+        max-width: 900px;
+        padding: 10px;
+        height: 95vh;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    #hexagon-modal #modal-map-container {
+        width: 100%;
+        aspect-ratio: 800 / 600;
+        height: auto;
+    }
+
+    #hexagon-modal #map-container {
+        transform: none !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    #hexagon-modal #modal-controls-container {
+        width: 100%;
+    }
 }
