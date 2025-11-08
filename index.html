@@ -3,46 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Hexagonal 5x5</title>
+    <title>Companion para Forbidden Lands</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Companhia do Explorador das Terras Proibídas</h1>
-    <div class="controls">
-        <label class="switch">
-            <input type="checkbox" id="toggle-numbers">
-            <span class="slider round"></span>
-        </label>
-        <label for="toggle-numbers">Mostrar/Ocultar Números</label>
+    <h1>Tracker de viagem para Forbidden Lands</h1>
+    <div id="info-container">
+        <div id="info-display"></div>
     </div>
-    <div class="main-container">
-        <div id="map-container">
-            <svg id="grid-svg" viewBox="0 0 800 600"></svg>
-            <svg id="marker" width="80" height="70" viewBox="-40 -35 80 70"><polygon points="40,0 20,34.64 -20,34.64 -40,0 -20,-34.64 20,-34.64" fill="transparent" stroke="blue" stroke-width="2" pointer-events="all"/></svg>
-            <div id="info-container">
-                <div id="text-window"></div>
-                <table id="info-table">
-                    <tr>
-                        <td>d12</td>
-                        <td>Calor (MESES QUENTES)</td>
-                    </tr>
-                    <tr>
-                        <td>1 - 8</td>
-                        <td><b>Ameno</b>. Sem alterações.</td>
-                    </tr>
-                    <tr>
-                        <td>9 - 11</td>
-                        <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.</td>
-                    </tr>
-                    <tr>
-                        <td>12</td>
-                        <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em cada Quarto de Dia, falha significa -1 de AGILIDADE.</td>
-                    </tr>
-                </table>
-            </div>
-            <div id="new-image-container">
-                <img src="img/cresceoutono.png" alt="Cresce Outono">
-            </div>
+    <div id="bottom-container">
+        <div id="selected-hexagon-container">
+            <h5 id="selected-hexagon-title"></h5>
+            <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
+        </div>
+        <div id="selected-terrain">
+            <h5 id="selected-terrain-title">Planície</h5>
+            <img src="img/terrain/planicie.png" alt="Planície">
+        </div>
+    </div>
+
+    <div id="modal-placeholder"></div>
+
+    <div id="terrain-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Selecione o Terreno</h2>
+            <div id="terrain-grid"></div>
         </div>
     </div>
 

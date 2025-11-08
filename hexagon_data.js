@@ -1,103 +1,135 @@
 const hexagonData = {
+    '1A': {
+        redImage: 'img/weather/bloqueioEsquerdo.png',
+        blueImage: null,
+        //text: '1A',
+        blocked: true,
+        q: 1,
+        r: -1
+    },
+    '0': {
+        redImage: 'img/weather/bloqueioSuperior.png',
+        blueImage: null,
+        //text: '0',
+        blocked: true,
+        q: 2,
+        r: -1
+    },
+    '3A': {
+        redImage: 'img/weather/bloqueioDireito.png',
+        blueImage: null,
+        //text: '3A',
+        blocked: true,
+        q: 3,
+        r: -1
+    },
+    '19A': {
+        redImage: 'img/weather/bloqueioInferior.png',
+        blueImage: null,
+        //text: '19A',
+        blocked: true,
+        q: 2,
+        r: 5
+    },
     1: {
-        redImage: 'img/diaQuenteDeSol.png',
+        redImage: 'img/weather/diaQuenteDeSol.png',
         blueImage: null,
         text: ''
     },
     2: {
-        redImage: 'img/diaQuenteDeSol.png',
+        redImage: 'img/weather/diaQuenteDeSol.png',
         blueImage: null,
         text: ''
     },
     3: {
-        redImage: 'img/temporal.png',
-        blueImage: 'img/vento3.png',
+        redImage: 'img/weather/temporal.png',
+        blueImage: 'img/weather/vento3.png',
         text: ''
     },
     4: {
-        redImage: 'img/ceuLimpo.png',
-        blueImage: 'img/vento0.png',
+        redImage: 'img/weather/ceuLimpo.png',
+        blueImage: 'img/weather/vento0.png',
         text: ''
     },
     5: {
-        redImage: 'img/ceuLimpo.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/ceuLimpo.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     6: {
-        redImage: 'img/garoa.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/garoa.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     7: {
-        redImage: 'img/nuvensPesadas.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/nuvensPesadas.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     8: {
-        redImage: 'img/chuvaForte.png',
-        blueImage: 'img/vento3.png',
+        redImage: 'img/weather/chuvaForte.png',
+        blueImage: 'img/weather/vento3.png',
         text: ''
     },
     9: {
-        redImage: 'img/ceuLimpo.png',
-        blueImage: 'img/vento1.png',
+        redImage: 'img/weather/ceuLimpo.png',
+        blueImage: 'img/weather/vento1.png',
         text: ''
     },
     10: {
-        redImage: 'img/nuvensClaras.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/nuvensClaras.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     11: {
-        redImage: 'img/garoa.png',
-        blueImage: 'img/vento1.png',
+        redImage: 'img/weather/garoa.png',
+        blueImage: 'img/weather/vento1.png',
         text: ''
     },
     12: {
-        redImage: 'img/chuvaLeve.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/chuvaLeve.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     13: {
-        redImage: 'img/chuvaForte.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/chuvaForte.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     14: {
-        redImage: 'img/chuvaLeve.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/chuvaLeve.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     15: {
-        redImage: 'img/nuvensClaras.png',
-        blueImage: 'img/vento1.png',
+        redImage: 'img/weather/nuvensClaras.png',
+        blueImage: 'img/weather/vento1.png',
         text: ''
     },
     16: {
-        redImage: 'img/nebuloso.png',
-        blueImage: 'img/vento1.png',
+        redImage: 'img/weather/nebuloso.png',
+        blueImage: 'img/weather/vento1.png',
         text: ''
     },
     17: {
-        redImage: 'img/encoberto.png',
-        blueImage: 'img/vento1.png',
+        redImage: 'img/weather/encoberto.png',
+        blueImage: 'img/weather/vento1.png',
         text: ''
     },
     18: {
-        redImage: 'img/chuvaLeve.png',
-        blueImage: 'img/vento2.png',
+        redImage: 'img/weather/chuvaLeve.png',
+        blueImage: 'img/weather/vento2.png',
         text: ''
     },
     19: {
-        redImage: 'img/garoa.png',
-        blueImage: 'img/vento0.png',
+        redImage: 'img/weather/garoa.png',
+        blueImage: 'img/weather/vento0.png',
         text: ''
     }
 };
 
 const weatherEffects = {
-    'Dia Quente de Sol': '✥ +1 em rolagens de DESBRAVAR<br>✥ <b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em cada Quarto de Dia, falha significa -1 de AGILIDADE.',
+    'Dia Quente de Sol': '✥ +1 em rolagens de DESBRAVAR',
     'Céu Limpo': '✥ +1 em rolagens de DESBRAVAR',
     'Garoa': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 para rolar na tabela de CALOR<br>✥ -1 em rolagens de DESBRAVAR',
     'Chuva Leve': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 para rolar na tabela de CALOR<br>✥ -1 em rolagens de DESBRAVAR',

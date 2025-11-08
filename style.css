@@ -29,12 +29,114 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding-top: 50px; /* Add padding to prevent overlap with controls */
+
+}
+
+/* Modal Styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.6); 
+}
+
+.modal-content {
+    background-color: var(--card);
+    margin: 0 auto;
+    top: 0;
+    max-width: 900px;
+    position: relative;
+    display: flex;
+    gap: 20px;
 }
 
 h1 {
     font-size: 20px;
     color: var(--foreground);
+}
+
+#info-container {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+    padding: 0 20px; /* Add some padding */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+#info-display {
+    width: 100%;
+    height: auto;
+    min-height: 150px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    overflow-y: auto;
+    color: var(--card-foreground);
+    box-sizing: border-box;
+}
+
+#selected-hexagon-container {
+    width: 200px;
+    max-width: 100%;
+    height: 220px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    gap: 10px;
+    padding: 20px 0 40px 0;
+}
+
+#bottom-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+}
+
+#selected-terrain {
+    width: 200px;
+    height: 220px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0 40px 0;
+}
+
+#selected-hexagon-container h5,
+#selected-terrain h5 {
+    margin: 0;
+}
+
+#selected-terrain img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+#solitary-hexagon-svg {
+    width: 100%;
+    height: 150px;
 }
 
 #map-container {
@@ -66,70 +168,79 @@ h1 {
     z-index: 10;
 }
 
-#info-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100%;
-    background-color: var(--popover);
-    border-left: 1px solid var(--border);
-    padding: 10px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    z-index: 5;
-    border-top-right-radius: var(--radius);
-    border-bottom-right-radius: var(--radius);
-}
 
-#info-table {
+
+#temperature-table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 10px;
 }
 
 #text-window {
-    flex-grow: 1;
+    width: 100%;
+    height: auto;
+    min-height: 150px;
     background-color: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 10px;
+    padding: 20px;
     overflow-y: auto;
     color: var(--card-foreground);
+    transition: opacity 0.3s ease-in-out;
+    box-sizing: border-box;
 }
 
-#info-table td, #info-table th {
+#text-window.fade-out {
+    opacity: 0;
+}
+
+
+#temperature-table td, #temperature-table th {
     border: 1px solid var(--border);
     padding: 8px;
     color: var(--muted-foreground);
 }
 
-#info-table tr td:first-child {
-    white-space: nowrap;
+#temperature-table tr td:first-child {
+    font-weight: bold;
+    font-size: 1.1em;
+    width: 22%;
 }
 
-#info-table tr:first-child td {
+#temperature-table tr td:last-child {
+    font-size: 0.7em;
+}
+
+#temperature-table tr:first-child td {
     font-weight: bold;
     color: var(--foreground);
 }
 
-#info-table tr:hover {
+#temperature-table tr:hover {
     background-color: var(--accent);
     cursor: pointer;
 }
 
-#info-table tr.selected {
+#temperature-table tr.selected {
     background-color: var(--primary);
 }
 
-#info-table tr.selected td {
+#temperature-table tr.selected td {
     color: var(--primary-foreground);
 }
 
+#temperature-table.locked {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+
+
+
+
 .controls {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     left: 10px;
     display: flex;
     align-items: center;
@@ -218,7 +329,7 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 820px) {
-    .main-container {
+    #map-container {
         width: 100vw;
         height: calc(620px * (100vw / 820px));
     }
@@ -229,15 +340,150 @@ input:checked + .slider:before {
     }
 }
 
-#new-image-container {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 15;
-}
+
 
 #new-image-container img {
-    width: 150px;
+    width: 120px;
     height: auto;
     border-radius: var(--radius);
+}
+
+.selected-hex {
+    filter: drop-shadow(0 0 3px #00FFFF) drop-shadow(0 0 6px #00FFFF);
+}
+
+/* Modal Styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.6); 
+}
+
+.modal-content {
+    background-color: var(--card);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: auto; /* Let content define width */
+    max-width: 1120px; /* Increased max-width to accommodate larger map */
+    position: relative;
+    display: flex;
+    gap: 20px;
+}
+
+#modal-map-container {
+    width: 800px;
+    height: 600px;
+}
+
+#modal-controls-container {
+    width: 300px; /* Fixed width for controls */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#modal-map-container #map-container {
+    width: 100%;
+    height: 100%;
+    transform-origin: top left;
+}
+
+.close-button {
+    color: var(--muted-foreground);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--foreground);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+
+
+.dice-roller {
+    background-color: var(--secondary);
+    padding: 15px;
+    border-radius: var(--radius);
+}
+
+.dice-roller button {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.dice-roller button:hover {
+    opacity: 0.9;
+}
+
+.dice-roller p {
+    margin: 0;
+    font-size: 18px;
+}
+
+#terrain-modal .modal-content {
+    max-width: 800px;
+    flex-direction: column;
+}
+
+#terrain-modal .modal-content h2 {
+    text-align: center;
+}
+
+#terrain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-bottom: 15px;
+}
+
+.terrain-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.terrain-item span {
+    margin-top: 5px;
+    color: var(--foreground);
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+#terrain-grid .terrain-item img {
+    width: 100%;
+    height: 120px; /* Adjusted height */
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+#terrain-grid .terrain-item:hover img {
+    border-color: var(--primary);
 }
