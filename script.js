@@ -9,8 +9,8 @@ const terrainInfo = {
     'Floresta Sombria': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
     'Colinas': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia',
     'Montanhas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
-    'Montanhas Altas': '✥ Intransponível<br>✥ Não é possível coletar ou caçar',
-    'Lago ou Rio': '✥ Requer um barco ou balsa<br>✥ Não é possível coletar',
+    'Montanhas Altas': '✥ Intransponível<br>✥ Não é possível COLETAR ou CAÇAR',
+    'Lago ou Rio': '✥ Requer um barco ou balsa<br>✥ Não é possível COLETAR',
     'Pantano': '✥ Requer uma balsa<br>✥ +1 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
     'Charco': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
     'Ruínas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR'
@@ -82,6 +82,10 @@ function startNewDay(resetWeather = true) {
         }
     }
 
+    if (typeof updateActiveHexagonData === 'function') {
+        updateActiveHexagonData(CALENDAR_CONFIG.months[gameState.currentMonthIndex].name);
+    }
+
     const dayId = calendarData.length + 1;
     const monthData = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
 
@@ -106,6 +110,24 @@ function startNewDay(resetWeather = true) {
     }
 
     calendarData.push(newDay);
+
+    // Update index to point to the new day
+    gameState.currentDayIndex = calendarData.length - 1;
+    gameState.currentQuarterIndex = 0;
+    gameState.currentActionCount = 0;
+
+    // Reset Weather Selection
+    if (resetWeather) {
+        renderSelectedHexagon(null);
+        updateInfoDisplay("");
+    } else {
+        // preserve info if needed
+        if (typeof currentInfoMessage !== 'undefined') {
+            updateInfoDisplay(currentInfoMessage);
+        }
+    }
+
+    updateTravelButtonState();
     updateTemperatureTable();
 }
 
@@ -367,11 +389,11 @@ function updateInfoDisplay(content) {
             let seasonalModifier = '';
 
             if (['Cresceprimavera', 'Minguaprimavera'].includes(currentMonthName)) {
-                seasonalModifier = '✥ -1 em rolagens de Coletar.';
+                seasonalModifier = '✥ -1 em rolagens de COLETAR.';
             } else if (['Cresceoutono', 'Minguaoutono'].includes(currentMonthName)) {
-                seasonalModifier = '✥ +1 em rolagens de Coletar.';
+                seasonalModifier = '✥ +1 em rolagens de COLETAR.';
             } else if (['Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
-                seasonalModifier = '✥ -2 em rolagens de Coletar.';
+                seasonalModifier = '✥ -2 em rolagens de COLETAR.';
             }
 
             if (seasonalModifier) {
@@ -739,9 +761,10 @@ function highlightSelectedHexagon(targetDisplayNumber, updateMainDisplay = true)
 
 function renderGrid() {
     const modalMapContainer = document.getElementById('modal-map-container');
+    const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
     modalMapContainer.innerHTML = `
                 <h2>Hexflower de Temperatura</h2>
-                <h3>Cresceoutono</h3>
+                <h3>${currentMonthName}</h3>
                 <div id="map-container">
                     <div class="controls">
                         <label class="switch">
@@ -968,10 +991,24 @@ function renderGrid() {
 
 // --- EXECUÇÃO INICIAL ---
 
-function selectHexagon(displayNumber) {
+function selectHexagon(displayNumber, navSelection = '3N') {
     currentSelectedHexagon = displayNumber;
+
+    const tempContainer = document.getElementById('temperature-container');
+    const weatherNav = document.getElementById('weather-navigation');
+
+    if (tempContainer && weatherNav) {
+        if (!displayNumber) {
+            tempContainer.classList.add('disabled-container');
+            weatherNav.classList.add('disabled-container');
+        } else {
+            tempContainer.classList.remove('disabled-container');
+            weatherNav.classList.remove('disabled-container');
+        }
+    }
+
     renderSelectedHexagon(displayNumber);
-    renderWeatherNavigation('3N'); // Reset nav selection and order on new hex selection
+    renderWeatherNavigation(navSelection); // Reset nav selection and order on new hex selection
     updateTemperatureTable(); // Update table header with modifier
     updateInfoDisplay("✥ Além do hexagono de clima é preciso selecionar uma opção na tabela de Temperatura."); // Prompt for temperature
 
@@ -999,6 +1036,22 @@ function selectHexagon(displayNumber) {
                 updateTextWithTemperature(targetRow);
                 temperatureTable.classList.add('locked');
             }
+        }
+    }
+
+    // Disable/Enable dice roll UI
+    const btnRollTemp = document.getElementById('btn-roll-temp');
+    const dieIcon = document.getElementById('die-d12');
+
+    if (btnRollTemp && dieIcon) {
+        if (displayNumber === 1 || displayNumber === 2) {
+            btnRollTemp.disabled = true;
+            btnRollTemp.classList.add('disabled');
+            dieIcon.classList.add('disabled');
+        } else {
+            btnRollTemp.disabled = false;
+            btnRollTemp.classList.remove('disabled');
+            dieIcon.classList.remove('disabled');
         }
     }
 
@@ -1031,6 +1084,10 @@ function initializeModal() {
     const closeButton = modal.querySelector('.close-button');
 
     function openModal() {
+        if (calendarData.length === 0) {
+            alert('Primeiro selecione o mês e o dia inicial abaixo!');
+            return;
+        }
         modal.style.display = 'block';
         renderGrid();
         renderWeatherNavigation('3N'); // Reset nav selection and order on modal open
@@ -1069,6 +1126,12 @@ function initializeModal() {
     }
 
     function closeModal() {
+        // Enforce temperature selection if a hexagon is selected
+        if (currentSelectedHexagon !== null && selectedTemperatureRowIndex === null) {
+            alert('Selecione uma opção Tabela de Temperatura!');
+            return;
+        }
+
         // selectedTemperatureRowIndex = null; // Persist selection
         modal.style.display = 'none';
         const modalMapContainer = document.getElementById('modal-map-container');
@@ -1322,11 +1385,26 @@ function showDayDetails(day) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeModal();
+    // Initialize with null to ensure containers are disabled if no valid selection exists/persisted
+    // logic in selectHexagon handles null check
     selectHexagon(currentSelectedHexagon);
     initializeTerrainModal();
     initializeCalendar();
     updateTemperatureTable();
     initializeDiceRollerTemp();
+
+    const toggleMounted = document.getElementById('toggle-mounted');
+    const labelMounted = document.querySelector('label[for="toggle-mounted"]');
+
+    if (toggleMounted && labelMounted) {
+        toggleMounted.addEventListener('change', () => {
+            if (toggleMounted.checked) {
+                labelMounted.textContent = 'Todos Montados!';
+            } else {
+                labelMounted.textContent = 'Todos Montados?';
+            }
+        });
+    }
 });
 
 function setupStartGameModal() {
@@ -1401,15 +1479,71 @@ function renderWeatherNavigation(selectedHexName = '3N') {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     svg.appendChild(defs);
 
-    let hexConfig = [
-        { name: '1N', label: '2, 12', q: 1, r: 0 },
-        { name: '2N', label: '3, 4', q: 0, r: 1 },
-        { name: '3N', label: 'Atual', q: 1, r: 1 },
-        { name: '4N', label: '5, 6', q: 2, r: 1 },
-        { name: '5N', label: '9, 10', q: 0, r: 2 },
-        { name: '6N', label: '11', q: 1, r: 2 },
-        { name: '7N', label: '7, 8', q: 2, r: 2 }
-    ];
+    const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+    let hexConfig = [];
+
+    if (currentMonthName === 'Minguaprimavera') {
+        hexConfig = [
+            { name: '1N', label: '12', q: 1, r: 0 },
+            { name: '2N', label: '6, 11', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '2, 7', q: 2, r: 1 },
+            { name: '5N', label: '5, 10', q: 0, r: 2 },
+            { name: '6N', label: '4, 9', q: 1, r: 2 },
+            { name: '7N', label: '3, 8', q: 2, r: 2 }
+        ];
+    } else if (['Cresceverão', 'Minguaverão'].includes(currentMonthName)) {
+        hexConfig = [
+            { name: '1N', label: '12', q: 1, r: 0 },
+            { name: '2N', label: '10, 11', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '2, 3', q: 2, r: 1 },
+            { name: '5N', label: '8, 9', q: 0, r: 2 },
+            { name: '6N', label: '6, 7', q: 1, r: 2 },
+            { name: '7N', label: '4, 5', q: 2, r: 2 }
+        ];
+    } else if (currentMonthName === 'Cresceoutono') {
+        hexConfig = [
+            { name: '1N', label: '2, 12', q: 1, r: 0 },
+            { name: '2N', label: '3, 4', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '5, 6', q: 2, r: 1 },
+            { name: '5N', label: '9, 10', q: 0, r: 2 },
+            { name: '6N', label: '11', q: 1, r: 2 },
+            { name: '7N', label: '7, 8', q: 2, r: 2 }
+        ];
+    } else if (['Cresceprimavera', 'Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
+        hexConfig = [
+            { name: '1N', label: '12', q: 1, r: 0 },
+            { name: '2N', label: '10, 11', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '2, 3', q: 2, r: 1 },
+            { name: '5N', label: '8, 9', q: 0, r: 2 },
+            { name: '6N', label: '6, 7', q: 1, r: 2 },
+            { name: '7N', label: '4, 5', q: 2, r: 2 }
+        ];
+    } else if (currentMonthName === 'Minguaoutono') {
+        hexConfig = [
+            { name: '1N', label: '12', q: 1, r: 0 },
+            { name: '2N', label: '2, 3', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '10, 11', q: 2, r: 1 },
+            { name: '5N', label: '4, 5', q: 0, r: 2 },
+            { name: '6N', label: '6, 7', q: 1, r: 2 },
+            { name: '7N', label: '8, 9', q: 2, r: 2 }
+        ];
+    } else {
+        // Fallback default
+        hexConfig = [
+            { name: '1N', label: '2, 12', q: 1, r: 0 },
+            { name: '2N', label: '3, 4', q: 0, r: 1 },
+            { name: '3N', label: 'Atual', q: 1, r: 1 },
+            { name: '4N', label: '5, 6', q: 2, r: 1 },
+            { name: '5N', label: '9, 10', q: 0, r: 2 },
+            { name: '6N', label: '11', q: 1, r: 2 },
+            { name: '7N', label: '7, 8', q: 2, r: 2 }
+        ];
+    }
 
     if (selectedHexName) {
         const selectedIndex = hexConfig.findIndex(h => h.name === selectedHexName);
@@ -1436,15 +1570,123 @@ function renderWeatherNavigation(selectedHexName = '3N') {
         if (!group) return;
 
         const navName = group.dataset.navName;
-        renderWeatherNavigation(navName);
+        handleNavigate(navName);
     };
 
-    initializeDiceRoller();
+    initializeDiceRoller(hexConfig);
 }
 
+const REMOVED_HEXAGONS = [1, 5, 21, 22, 24, 25];
+const GRID_WIDTH_VAL = 5;
 
+function handleNavigate(navName) {
+    if (!currentSelectedHexagon) return;
+    if (navName === '3N') {
+        // Re-select current hex to reset temperature table and visuals
+        selectHexagon(currentSelectedHexagon);
+        return;
+    }
 
-function initializeDiceRoller() {
+    // Edge Wrapping Logic
+    const EDGE_WRAPS = {
+        1: { '1N': 15, '2N': 13 },
+        3: { '1N': 17, '4N': 9 },
+        4: { '1N': 14, '2N': 18 },
+        8: { '1N': 18, '4N': 14 },
+        9: { '2N': 17, '5N': 3 },
+        13: { '4N': 15, '7N': 1 },
+        14: { '2N': 19, '5N': 8, '6N': 4 },
+        15: { '5N': 8, '6N': 1 },
+        17: { '6N': 3, '7N': 9 },
+        18: { '4N': 19, '6N': 8, '7N': 1 },
+        19: { '5N': 18, '7N': 14 }
+    };
+
+    if (EDGE_WRAPS[currentSelectedHexagon] && EDGE_WRAPS[currentSelectedHexagon][navName]) {
+        const targetId = EDGE_WRAPS[currentSelectedHexagon][navName];
+        selectHexagon(targetId, navName);
+        return;
+    }
+
+    // 1. Map current DisplayID (1-19) to Grid Coordinates (1-25)
+    let gridIdOfCurrent = -1;
+    let counter = 1;
+
+    for (let i = 1; i <= 25; i++) {
+        if (REMOVED_HEXAGONS.includes(i)) continue;
+        if (counter === currentSelectedHexagon) {
+            gridIdOfCurrent = i;
+            break;
+        }
+        counter++;
+    }
+
+    if (gridIdOfCurrent === -1) return;
+
+    const currentQ = (gridIdOfCurrent - 1) % GRID_WIDTH_VAL;
+    const currentR = Math.floor((gridIdOfCurrent - 1) / GRID_WIDTH_VAL);
+    const isEvenCol = currentQ % 2 === 0;
+
+    let dq = 0, dr = 0;
+
+    switch (navName) {
+        case '1N': // North
+            dq = 0; dr = -1;
+            break;
+        case '6N': // South
+            dq = 0; dr = 1;
+            break;
+        case '2N': // North-West
+            dq = -1;
+            dr = isEvenCol ? -1 : 0;
+            break;
+        case '5N': // South-West
+            dq = -1;
+            dr = isEvenCol ? 0 : 1;
+            break;
+        case '4N': // North-East
+            dq = 1;
+            dr = isEvenCol ? -1 : 0;
+            break;
+        case '7N': // South-East
+            dq = 1;
+            dr = isEvenCol ? 0 : 1;
+            break;
+    }
+
+    const newQ = currentQ + dq;
+    const newR = currentR + dr;
+
+    // Check bounds
+    if (newQ < 0 || newQ >= GRID_WIDTH_VAL || newR < 0 || newR >= GRID_WIDTH_VAL) {
+        renderWeatherNavigation('3N');
+        return;
+    }
+
+    const newGridId = newR * GRID_WIDTH_VAL + newQ + 1;
+
+    if (REMOVED_HEXAGONS.includes(newGridId)) {
+        renderWeatherNavigation('3N');
+        return;
+    }
+
+    // 2. Map new GridID back to DisplayID
+    let newDisplayId = 0;
+    let validCount = 0;
+    for (let i = 1; i <= 25; i++) {
+        if (REMOVED_HEXAGONS.includes(i)) continue;
+        validCount++;
+        if (i === newGridId) {
+            newDisplayId = validCount;
+            break;
+        }
+    }
+
+    // Move
+    selectHexagon(newDisplayId, navName);
+}
+
+function initializeDiceRoller(hexConfig) {
     const die1 = document.getElementById('die-1');
     const die2 = document.getElementById('die-2');
     const btnRoll = document.getElementById('btn-roll-nav');
@@ -1452,17 +1694,13 @@ function initializeDiceRoller() {
 
     if (!die1 || !die2 || !btnRoll) return;
 
-    // Clear existing content
-    // Clear existing content only if empty (optional, or just don't reset)
     if (!die1.textContent) die1.textContent = '1';
     if (!die2.textContent) die2.textContent = '1';
 
-    // Remove old event listeners to prevent duplicates (cloning is a simple way)
     const newBtn = btnRoll.cloneNode(true);
     btnRoll.parentNode.replaceChild(newBtn, btnRoll);
 
     newBtn.addEventListener('click', () => {
-        // Animation
         die1.classList.add('shake');
         die2.classList.add('shake');
         let counter = 0;
@@ -1476,12 +1714,12 @@ function initializeDiceRoller() {
                 clearInterval(interval);
                 die1.classList.remove('shake');
                 die2.classList.remove('shake');
-                finalRoll(die1, die2);
+                finalRoll(die1, die2, hexConfig);
             }
         }, 50);
     });
 
-    function finalRoll(d1, d2) {
+    function finalRoll(d1, d2, config) {
         const array = new Uint32Array(2);
         crypto.getRandomValues(array);
         const r1 = (array[0] % 6) + 1;
@@ -1491,55 +1729,68 @@ function initializeDiceRoller() {
         d1.textContent = r1;
         d2.textContent = r2;
 
-        // Logic for Hexagon 2 Blocking (Top Edge)
-        // Blocked sums: 2, 3, 4, 5, 6, 12
+        if (resultDisplay) resultDisplay.textContent = `Resultado: ${sum}`;
+
+        // Block logic (retaining checks for hex 2 and 19 edges if applicable)
+        // These might need adaptation to DataID vs GridID but using currentSelectedHexagon (DisplayID) matches legacy logic.
         const blockedSums = [2, 3, 4, 5, 6, 12];
         if (currentSelectedHexagon === 2 && blockedSums.includes(sum)) {
-            if (resultDisplay) {
-                // Using HTML to bold the warning if needed, or just text
-                resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
-            }
+            if (resultDisplay) resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
             renderWeatherNavigation('3N');
+            return;
         }
-
-        // Logic for Hexagon 19 Blocking (Bottom Edge)
         if (currentSelectedHexagon === 19 && sum === 11) {
-            if (resultDisplay) {
-                resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
-            }
+            if (resultDisplay) resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
             renderWeatherNavigation('3N');
             return;
         }
 
-        if (resultDisplay) resultDisplay.textContent = `Resultado: ${sum}`;
+        // Auto-navigate
+        if (config) {
+            const match = config.find(h => {
+                const nums = h.label.split(',').map(s => s.trim());
+                return nums.includes(sum.toString());
+            });
 
-        selectHexagonBySum(sum);
-    }
-}
+            if (match) {
+                // Block logic (Hex 4 -> 5N)
+                if (currentSelectedHexagon === 4 && match.name === '5N') {
+                    if (resultDisplay) resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
+                    renderWeatherNavigation('3N');
+                    return;
+                }
+                // Block logic (Hex 8 -> 7N)
+                if (currentSelectedHexagon === 8 && match.name === '7N') {
+                    if (resultDisplay) resultDisplay.innerHTML = `Resultado: ${sum} <span style="color:var(--col-accent-warm)">BLOQUEADO</span>`;
+                    renderWeatherNavigation('3N');
+                    return;
+                }
 
-function selectHexagonBySum(sum) {
-    const svg = document.getElementById('weather-nav-svg');
-    if (!svg) return;
+                // Immediate visual feedback on Nav
+                renderWeatherNavigation(match.name);
 
-    const allGroups = svg.querySelectorAll('.hex-group');
-    let targetNavName = null;
+                // Delayed navigation and focus shift
+                // Delayed focus shift
+                setTimeout(() => {
+                    const mapContainer = document.getElementById('modal-map-container');
+                    if (mapContainer) {
+                        mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
 
-    allGroups.forEach(group => {
-        const textElement = group.querySelector('text');
-        if (textElement) {
-            const labelText = textElement.textContent;
-            // Split by comma and trim
-            const numbers = labelText.split(',').map(s => s.trim());
-            if (numbers.includes(sum.toString())) {
-                targetNavName = group.dataset.navName;
+                    // Hexagon change after scroll starts
+                    setTimeout(() => {
+                        handleNavigate(match.name);
+                    }, 500);
+                }, 1500);
+
+            } else {
+                handleNavigate('3N');
             }
         }
-    });
-
-    if (targetNavName) {
-        renderWeatherNavigation(targetNavName);
     }
 }
+
+
 
 
 function getTemperatureModifier() {
@@ -1672,6 +1923,7 @@ function initializeDiceRollerTemp() {
 
             if (rowIndex > -1 && rows[rowIndex]) {
                 rows[rowIndex].classList.add('selected-row');
+                selectedTemperatureRowIndex = rowIndex; // Update global state
                 updateTextWithTemperature(rows[rowIndex]);
             }
         }
