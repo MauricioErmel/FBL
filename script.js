@@ -1225,7 +1225,7 @@ function setupCalendarModal() {
     const grid = document.getElementById('calendar-grid');
     const details = document.getElementById('day-details');
 
-    btn.onclick = function () {
+    btn.addEventListener('click', function () {
         if (calendarData.length === 0) {
             const startModal = document.getElementById('start-game-modal');
             startModal.style.display = "block";
@@ -1233,17 +1233,17 @@ function setupCalendarModal() {
             modal.style.display = "block";
             renderCalendarGrid();
         }
-    }
+    });
 
-    span.onclick = function () {
+    span.addEventListener('click', function () {
         modal.style.display = "none";
-    }
+    });
 
-    window.onclick = function (event) {
+    window.addEventListener('click', function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-    }
+    });
 
     function renderCalendarGrid() {
         grid.innerHTML = '';
@@ -1344,15 +1344,15 @@ function setupStartGameModal() {
         selectMonth.appendChild(option);
     });
 
-    closeButton.onclick = function () {
+    closeButton.addEventListener('click', function () {
         modal.style.display = "none";
-    }
+    });
 
-    window.onclick = function (event) {
+    window.addEventListener('click', function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-    }
+    });
 
     btnStart.onclick = function () {
         const monthIndex = parseInt(selectMonth.value);

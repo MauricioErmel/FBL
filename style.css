@@ -339,14 +339,19 @@ button:hover {
     flex-direction: row;
     gap: 20px;
     color: var(--col-text-primary);
+    position: relative;
+    /* For absolute positioning of close button */
 }
 
 .close-button {
     color: var(--col-text-primary);
-    float: right;
+    position: absolute;
+    top: 10px;
+    left: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    z-index: 10;
 }
 
 .close-button:hover,
