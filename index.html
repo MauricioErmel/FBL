@@ -1,28 +1,147 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Companion para Forbidden Lands</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <h1>Tracker de viagem para Forbidden Lands</h1>
     <div id="info-container">
         <div id="info-display"></div>
     </div>
     <div id="bottom-container">
-        <div id="selected-hexagon-container">
-            <h5 id="selected-hexagon-title"></h5>
-            <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
+        <div id="bottom-left-column">
+            <div id="selected-hexweather-container">
+                <h5 id="selected-hexagon-title">Selecione o Clima</h5>
+                <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
+            </div>
+            <div id="selected-terrain">
+                <h5 id="selected-terrain-title">Selecione o Terreno</h5>
+                <svg id="terrain-placeholder" viewBox="-50 -50 100 100">
+                    <polygon
+                        points="40,0 20.000000000000004,34.64101615137754 -19.999999999999993,34.64101615137755 -40,4.898587196589413e-15 -20.000000000000018,-34.641016151377535 20.000000000000004,-34.64101615137754 "
+                        class="hexagon placeholder" stroke="#444" stroke-width="2" fill="transparent"
+                        style="stroke-dasharray: 5, 5;">
+                    </polygon>
+                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="#666"
+                        font-size="24">?</text>
+                </svg>
+                <img src="" alt="Terreno Selecionado" style="display: none;">
+            </div>
         </div>
-        <div id="selected-terrain">
-            <h5 id="selected-terrain-title">Planície</h5>
-            <img src="img/terrain/planicie.png" alt="Planície">
+        <div id="ambience-reference"></div>
+    </div>
+
+    <div id="calendar-container">
+        <div id="current-day-display">Selecione o mês e dia para iniciar</div>
+        <div id="travel-controls">
+            <div class="desbravar-container">
+                <button id="btn-desbravar" class="travel-btn">DESBRAVAR</button>
+                <div class="mounted-switch-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-mounted">
+                        <span class="slider round"></span>
+                    </label>
+                    <label for="toggle-mounted">Todos Montados?</label>
+                </div>
+            </div>
+            <button id="btn-permanecer" class="travel-btn">PERMANECER</button>
+            <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
+        </div>
+        <div id="day-details-main"></div>
+    </div>
+
+    <div id="calendar-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Diário de Viagem</h2>
+            <div id="calendar-grid"></div>
+            <div id="day-details"></div>
         </div>
     </div>
 
-    <div id="modal-placeholder"></div>
+    <div id="hexagon-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modal-left-column">
+                <div id="modal-map-container"></div>
+                <div id="text-window"></div>
+            </div>
+            <div id="modal-controls-container">
+                <div id="temperature-container">
+                    <h3>Tabela de Temperatura</h3>
+                    <p class="subtitle">Role 1d12 e some com o modificador do hexagono selecionado do Hexflower de
+                        Temperatura, se houver algum modificador</p>
+                    <table id="temperature-table">
+                        <tr>
+                            <td>d12</td>
+                            <td>Calor (MESES QUENTES)</td>
+                        </tr>
+                        <tr>
+                            <td>1 - 8</td>
+                            <td><b>Ameno</b>. Sem alterações.</td>
+                        </tr>
+                        <tr>
+                            <td>9 - 11</td>
+                            <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar
+                                DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em
+                                cada
+                                Quarto de Dia, falha significa -1 de AGILIDADE.</td>
+                        </tr>
+                    </table>
+                    <div id="dice-container-temp">
+                        <div class="dice-wrapper">
+                            <div class="die-d12" id="die-d12">
+                                <svg viewBox="0 0 100 100" class="d12-svg">
+                                    <polygon points="50,2 97,35 79,90 21,90 3,35" fill="var(--col-text-highlight)"
+                                        stroke="var(--col-bg-main)" stroke-width="2" />
+                                    <polygon points="50,25 74,42 65,70 35,70 26,42" fill="none"
+                                        stroke="var(--col-bg-main)" stroke-width="2" />
+                                    <line x1="50" y1="2" x2="50" y2="25" stroke="var(--col-bg-main)" stroke-width="2" />
+                                    <line x1="97" y1="35" x2="74" y2="42" stroke="var(--col-bg-main)"
+                                        stroke-width="2" />
+                                    <line x1="79" y1="90" x2="65" y2="70" stroke="var(--col-bg-main)"
+                                        stroke-width="2" />
+                                    <line x1="21" y1="90" x2="35" y2="70" stroke="var(--col-bg-main)"
+                                        stroke-width="2" />
+                                    <line x1="3" y1="35" x2="26" y2="42" stroke="var(--col-bg-main)" stroke-width="2" />
+                                </svg>
+                                <span class="die-number">1</span>
+                            </div>
+                        </div>
+                        <button id="btn-roll-temp">Rolar 1d12</button>
+                        <div id="dice-result-temp"></div>
+                    </div>
+                </div>
+
+                <div id="weather-navigation">
+                    <h3>Navegação no Hexflower</h3>
+                    <p class="subtitle">Role 2d6 e some, compare o resultado com o hexflower abaixo e mova no hexflower
+                        de temperatura para o hexagono indicado.</p>
+                    <svg id="weather-nav-svg"></svg>
+                    <div id="dice-container-nav">
+                        <div class="dice-wrapper">
+                            <div class="die" id="die-1"></div>
+                            <div class="die" id="die-2"></div>
+                        </div>
+                        <button id="btn-roll-nav">Rolar 2d6</button>
+                        <div id="dice-result-nav"></div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
 
     <div id="terrain-modal" class="modal">
         <div class="modal-content">
@@ -32,7 +151,24 @@
         </div>
     </div>
 
+    <div id="start-game-modal" class="modal">
+        <div class="modal-content start-game-content">
+            <span class="close-button">&times;</span>
+            <h2>Iniciar Viagem</h2>
+            <div class="form-group">
+                <label for="start-month">Mês:</label>
+                <select id="start-month"></select>
+            </div>
+            <div class="form-group">
+                <label for="start-day">Dia:</label>
+                <input type="number" id="start-day" min="1" max="46" value="1">
+            </div>
+            <button id="btn-start-game">Iniciar</button>
+        </div>
+    </div>
+
     <script src="hexagon_data.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
