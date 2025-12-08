@@ -32,6 +32,21 @@ h6 {
     color: var(--col-text-highlight);
 }
 
+/* --- Site Header --- */
+#site-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+#header-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
 /* --- Layout Principal --- */
 /* --- Layout Principal --- */
 #main-container {
@@ -1596,6 +1611,7 @@ button.disabled,
     display: block;
     margin-bottom: 5px;
 }
+
 /* Ambience Reference Styles */
 #ambience-reference {
     position: relative;
@@ -1691,8 +1707,13 @@ button.disabled,
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 #ambience-reference p {
@@ -1700,4 +1721,3 @@ button.disabled,
     font-size: 0.9em;
     color: var(--col-text-muted);
 }
-
