@@ -36,15 +36,18 @@ h6 {
 #site-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     gap: 15px;
     margin-bottom: 10px;
 }
 
-#header-icon {
-    width: 50px;
-    height: 50px;
+#header-logo {
+    width: 120px;
+    height: 120px;
     object-fit: contain;
+    background-color: var(--col-text-highlight);
+    border-radius: 25%;
+    margin-left: -50px;
 }
 
 /* --- Layout Principal --- */
@@ -140,27 +143,18 @@ h6 {
     flex-direction: row;
     gap: 20px;
     justify-content: center;
-    align-items: stretch;
+    align-items: flex-start;
     margin-top: 20px;
-    height: 400px;
+    /* height: 400px; removed to allow growth */
 }
 
 #bottom-left-column {
     display: flex;
     flex-direction: column;
     width: 30%;
-    height: 100%;
+    height: 400px;
+    /* Fixed height for controls */
     gap: 10px;
-}
-
-#ambience-reference {
-    width: 70%;
-    height: 100%;
-    background-image: url('img/ambience-placeholder.png');
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-    border: 1px solid var(--col-accent-cool);
 }
 
 /* --- Selected Hexagon Display --- */
@@ -172,6 +166,7 @@ h6 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
     border: 1px solid var(--col-accent-cool);
     border-radius: 8px;
     background-color: var(--col-bg-surface);
@@ -462,14 +457,16 @@ button:hover {
 /* --- Calendar Styles --- */
 #calendar-container {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0;
     padding: 20px;
     background: var(--col-bg-surface);
     border: 1px solid var(--col-accent-cool);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 800px;
+    /* width: 70%; Replaced with flex to fill remaining space properly */
+    flex: 1;
+    width: auto;
+    max-width: none;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -1212,149 +1209,6 @@ button.disabled,
     background-color: var(--col-accent-deep);
 }
 
-
-/* Mobile / Portrait (9:16 approximation) */
-@media (max-width: 1120px) {
-
-    html,
-    body,
-    .modal {
-        overflow-x: hidden !important;
-
-    }
-
-    #calendar-modal {
-        overflow-x: hidden;
-    }
-
-    #calendar-modal .modal-content {
-        width: 95%;
-        margin: 10px auto;
-        box-sizing: border-box;
-    }
-
-    h1 {
-        text-align: center;
-        font-size: 1.5rem;
-    }
-
-    #selected-terrain-title {
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 0px;
-        font-size: 0.5em;
-    }
-
-    #info-container,
-    #bottom-container,
-    #calendar-container {
-        width: 95%;
-    }
-
-    #selected-hexagon-title {
-        text-align: center;
-        margin-bottom: 0px;
-        font-size: 0.5em;
-        margin-top: 22px;
-    }
-
-    #bottom-container {
-        flex-direction: column;
-        height: auto;
-    }
-
-    #bottom-left-column {
-        width: 100%;
-        flex-direction: row;
-        height: 220px;
-        gap: 10px;
-    }
-
-    #selected-hexweather-container,
-    #selected-terrain {
-        width: 50%;
-        height: 100%;
-    }
-
-    #ambience-reference {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 4 / 3;
-        margin-top: 10px;
-    }
-
-    #hexagon-modal .modal-content {
-        flex-direction: column;
-        align-items: center;
-        width: 95%;
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: auto;
-        box-sizing: border-box;
-        background-color: var(--col-bg-surface);
-        margin: 10px auto;
-    }
-
-    #terrain-modal .modal-content {
-        width: 95%;
-        margin: 10px auto;
-        box-sizing: border-box;
-    }
-
-    #map-container {
-        transform: none !important;
-        width: 700px !important;
-        height: 700px !important;
-        margin-top: -150px;
-        margin-bottom: -180px;
-    }
-
-    #modal-map-container h2 {
-        text-align: center;
-    }
-
-    #text-window {
-        width: 320px;
-        margin: 0px;
-    }
-
-    #modal-left-column,
-    #modal-controls-container {
-        width: 100%;
-    }
-
-    #temperature-container,
-    #weather-navigation {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 9999;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .controls {
-        display: none;
-    }
-
-    .travel-btn,
-    .desbravar-container {
-        max-width: none;
-    }
-
-    #terrain-tooltip {
-        display: none !important;
-    }
-}
-
 /* --- Journal Editor Styles --- */
 #journal-section {
     width: 100%;
@@ -1612,112 +1466,163 @@ button.disabled,
     margin-bottom: 5px;
 }
 
-/* Ambience Reference Styles */
-#ambience-reference {
-    position: relative;
-    width: 100%;
-    /* min-height: 200px; Remove fixed height to allow content to dictate, or keep if needed for layout stability */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--col-bg-surface);
-    border: 1px solid var(--col-accent-cool);
-    border-radius: var(--radius-md);
-    padding: 10px;
-    box-sizing: border-box;
-    overflow: hidden;
-    text-align: center;
-}
+/* Mobile / Portrait (9:16 approximation) */
+@media (max-width: 1120px) {
 
-.ambience-options {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-}
+    html,
+    body,
+    .modal {
+        overflow-x: hidden !important;
 
-.ambience-btn {
-    background-color: var(--col-bg-main);
-    color: var(--col-text-primary);
-    border: 1px solid var(--col-accent-cool);
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all 0.2s ease;
-}
-
-.ambience-btn:hover {
-    border-color: var(--col-text-highlight);
-    color: var(--col-text-highlight);
-}
-
-.ambience-btn.active {
-    background-color: var(--col-accent-deep);
-    border-color: var(--col-accent-deep);
-    color: var(--col-text-primary);
-}
-
-.api-key-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.api-key-input {
-    width: 100%;
-    padding: 8px;
-    background-color: var(--col-bg-main);
-    border: 1px solid var(--col-accent-cool);
-    color: var(--col-text-primary);
-    border-radius: var(--radius-sm);
-    box-sizing: border-box;
-}
-
-.generated-image-container {
-    position: relative;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: var(--radius-sm);
-    background-color: #000;
-}
-
-.generated-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.loading-spinner {
-    border: 4px solid var(--col-bg-main);
-    border-top: 4px solid var(--col-accent-deep);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
     }
 
-    100% {
-        transform: rotate(360deg);
+    #site-header {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        gap: 15px;
+        margin-left: 10px;
+        margin-bottom: 10px;
     }
-}
 
-#ambience-reference p {
-    margin: 0;
-    font-size: 0.9em;
-    color: var(--col-text-muted);
+    #header-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        background-color: var(--col-text-highlight);
+        border-radius: 25%;
+        margin-left: 0px;
+    }
+
+    h1 {
+        text-align: left;
+        font-size: 1.3rem;
+    }
+
+
+    #calendar-modal {
+        overflow-x: hidden;
+    }
+
+    #calendar-modal .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        box-sizing: border-box;
+    }
+
+
+
+    #selected-terrain-title {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 0px;
+        font-size: 0.5em;
+    }
+
+    #info-container,
+    #bottom-container {
+        width: 95%;
+    }
+
+    #selected-hexagon-title {
+        text-align: center;
+        margin-bottom: 0px;
+        font-size: 0.5em;
+        margin-top: 22px;
+    }
+
+    #bottom-container {
+        flex-direction: column;
+        height: auto;
+        align-items: center;
+    }
+
+    #calendar-container {
+        width: 100%;
+        flex: none;
+    }
+
+    #bottom-left-column {
+        width: 100%;
+        flex-direction: row;
+        height: 220px;
+        gap: 10px;
+    }
+
+    #selected-hexweather-container,
+    #selected-terrain {
+        width: 50%;
+        height: 100%;
+    }
+
+    #hexagon-modal .modal-content {
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: auto;
+        box-sizing: border-box;
+        background-color: var(--col-bg-surface);
+        margin: 10px auto;
+    }
+
+    #terrain-modal .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        box-sizing: border-box;
+    }
+
+    #map-container {
+        transform: none !important;
+        width: 700px !important;
+        height: 700px !important;
+        margin-top: -150px;
+        margin-bottom: -180px;
+    }
+
+    #modal-map-container h2 {
+        text-align: center;
+    }
+
+    #text-window {
+        width: 320px;
+        margin: 0px;
+    }
+
+    #modal-left-column,
+    #modal-controls-container {
+        width: 100%;
+    }
+
+    #temperature-container,
+    #weather-navigation {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    .travel-btn,
+    .desbravar-container {
+        max-width: none;
+    }
+
+    #terrain-tooltip {
+        display: none !important;
+    }
 }

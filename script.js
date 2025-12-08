@@ -1194,7 +1194,7 @@ function initializeModal() {
 
     function openModal() {
         if (calendarData.length === 0) {
-            alert('Primeiro selecione o mês e o dia inicial abaixo!');
+            alert('Primeiro selecione o mês e o dia iniciais!');
             return;
         }
         modal.style.display = 'block';

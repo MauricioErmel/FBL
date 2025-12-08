@@ -11,86 +11,101 @@
 
 <body>
     <header id="site-header">
-        <img src="img/icon.webp" alt="Ícone" id="header-icon">
+        <img src="img/icon.webp" alt="Logo" id="header-logo">
         <h1>Tracker de viagem para Forbidden Lands</h1>
     </header>
+
     <div id="info-container">
         <div id="info-display"></div>
     </div>
+
     <div id="bottom-container">
+
         <div id="bottom-left-column">
+
             <div id="selected-hexweather-container">
                 <h5 id="selected-hexagon-title">Selecione o Clima</h5>
                 <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
             </div>
+
             <div id="selected-terrain">
                 <h5 id="selected-terrain-title">Selecione o Terreno</h5>
                 <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
             </div>
-        </div>
-        <div id="ambience-reference"></div>
-    </div>
 
-    <div id="calendar-container">
-        <div id="current-day-display">Selecione o mês e dia para iniciar</div>
-        <div id="travel-controls">
-            <div class="desbravar-container">
-                <button id="btn-desbravar" class="travel-btn">DESBRAVAR</button>
-                <div class="mounted-switch-container">
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-mounted">
-                        <span class="slider round"></span>
-                    </label>
-                    <label for="toggle-mounted">Todos Montados?</label>
+        </div>
+
+        <div id="calendar-container">
+
+            <div id="current-day-display">
+                Selecione o mês e dia para iniciar
+            </div>
+
+            <div id="travel-controls">
+                <div class="desbravar-container">
+                    <button id="btn-desbravar" class="travel-btn">DESBRAVAR</button>
+                    <div class="mounted-switch-container">
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-mounted">
+                            <span class="slider round"></span>
+                        </label>
+                        <label for="toggle-mounted">Todos Montados?</label>
+                    </div>
                 </div>
-            </div>
-            <button id="btn-permanecer" class="travel-btn">PERMANECER</button>
-            <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
-        </div>
-        <div id="day-details-main"></div>
-
-        <div id="journal-section" style="display:none;">
-            <h3>Diário do Dia</h3>
-
-            <div id="journal-entries-list" class="journal-entries-list"></div>
-
-            <div id="journal-controls" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                <label for="journal-quarter-select">Momento:</label>
-                <select id="journal-quarter-select"
-                    style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
-                    <option value="0">Manhã</option>
-                    <option value="1">Tarde</option>
-                    <option value="2">Anoitecer</option>
-                    <option value="3">Noite</option>
-                </select>
+                <button id="btn-permanecer" class="travel-btn">PERMANECER</button>
+                <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
             </div>
 
-            <div class="editor-toolbar">
-                <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
-                <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
-                <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
-                <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
-                <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
-                <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
-                <div class="color-picker-wrapper" title="Cor do Texto">
-                    <span>A</span>
-                    <input type="color" id="editor-color" value="#e0e0e0">
+            <div id="day-details-main"></div>
+
+            <div id="journal-section" style="display:none;">
+                <h3>Diário do Dia</h3>
+
+                <div id="journal-entries-list" class="journal-entries-list"></div>
+
+                <div id="journal-controls" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <label for="journal-quarter-select">Momento:</label>
+                    <select id="journal-quarter-select"
+                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                        <option value="0">Manhã</option>
+                        <option value="1">Tarde</option>
+                        <option value="2">Anoitecer</option>
+                        <option value="3">Noite</option>
+                    </select>
                 </div>
-            </div>
-            <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada..."></div>
 
-            <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                <button id="btn-save-entry">Salvar Entrada</button>
-                <button id="btn-cancel-edit"
-                    style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
-                    Edição</button>
+                <div class="editor-toolbar">
+                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
+                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
+                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
+                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
+                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
+                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
+                    <div class="color-picker-wrapper" title="Cor do Texto">
+                        <span>A</span>
+                        <input type="color" id="editor-color" value="#e0e0e0">
+                    </div>
+                </div>
+
+                <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada..."></div>
+
+                <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button id="btn-save-entry">Salvar Entrada</button>
+                    <button id="btn-cancel-edit"
+                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
+                        Edição</button>
+                </div>
+
             </div>
+
         </div>
+
+
     </div>
 
     <div id="calendar-modal" class="modal">
