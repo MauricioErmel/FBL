@@ -21,16 +21,7 @@
             </div>
             <div id="selected-terrain">
                 <h5 id="selected-terrain-title">Selecione o Terreno</h5>
-                <svg id="terrain-placeholder" viewBox="-50 -50 100 100">
-                    <polygon
-                        points="40,0 20.000000000000004,34.64101615137754 -19.999999999999993,34.64101615137755 -40,4.898587196589413e-15 -20.000000000000018,-34.641016151377535 20.000000000000004,-34.64101615137754 "
-                        class="hexagon placeholder" stroke="#444" stroke-width="2" fill="transparent"
-                        style="stroke-dasharray: 5, 5;">
-                    </polygon>
-                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="#666"
-                        font-size="24">?</text>
-                </svg>
-                <img src="" alt="Terreno Selecionado" style="display: none;">
+                <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
             </div>
         </div>
         <div id="ambience-reference"></div>
@@ -53,6 +44,49 @@
             <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
         </div>
         <div id="day-details-main"></div>
+
+        <div id="journal-section" style="display:none;">
+            <h3>Diário do Dia</h3>
+
+            <div id="journal-entries-list" class="journal-entries-list"></div>
+
+            <div id="journal-controls" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <label for="journal-quarter-select">Momento:</label>
+                <select id="journal-quarter-select"
+                    style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                    <option value="0">Manhã</option>
+                    <option value="1">Tarde</option>
+                    <option value="2">Anoitecer</option>
+                    <option value="3">Noite</option>
+                </select>
+            </div>
+
+            <div class="editor-toolbar">
+                <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
+                <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
+                <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
+                <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
+                <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
+                <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
+                <div class="color-picker-wrapper" title="Cor do Texto">
+                    <span>A</span>
+                    <input type="color" id="editor-color" value="#e0e0e0">
+                </div>
+            </div>
+            <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada..."></div>
+
+            <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                <button id="btn-save-entry">Salvar Entrada</button>
+                <button id="btn-cancel-edit"
+                    style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
+                    Edição</button>
+            </div>
+        </div>
     </div>
 
     <div id="calendar-modal" class="modal">
@@ -61,6 +95,46 @@
             <h2>Diário de Viagem</h2>
             <div id="calendar-grid"></div>
             <div id="day-details"></div>
+
+            <div id="modal-journal-section" style="display:none; margin-top: 20px;">
+                <div id="modal-journal-controls"
+                    style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <label for="modal-journal-quarter-select">Momento:</label>
+                    <select id="modal-journal-quarter-select"
+                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                        <option value="0">Manhã</option>
+                        <option value="1">Tarde</option>
+                        <option value="2">Anoitecer</option>
+                        <option value="3">Noite</option>
+                    </select>
+                </div>
+
+                <div class="editor-toolbar modal-editor-toolbar">
+                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
+                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
+                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
+                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
+                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
+                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
+                    <div class="color-picker-wrapper" title="Cor do Texto">
+                        <span>A</span>
+                        <input type="color" id="modal-editor-color" value="#e0e0e0">
+                    </div>
+                </div>
+                <div id="modal-journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
+                </div>
+
+                <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button id="modal-btn-save-entry">Salvar Entrada</button>
+                    <button id="modal-btn-cancel-edit"
+                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
+                </div>
+            </div>
         </div>
     </div>
 

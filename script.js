@@ -18,6 +18,7 @@ const terrainInfo = {
 
 // --- INICIALIZAÇÃO ---
 const solitarySvg = document.getElementById('solitary-hexagon-svg');
+const solitaryTerrainSvg = document.getElementById('solitary-terrain-svg');
 const selectedHexagonContainer = document.getElementById('selected-hexweather-container');
 let originalTextWindowContent = '';
 let currentSelectedHexagon = null; // Default selected hexagon is now null
@@ -65,7 +66,9 @@ function initializeCalendar() {
     setupCalendarModal();
     setupStartGameModal();
     updateTravelButtonState(); // Initial check
+    updateTravelButtonState(); // Initial check
     renderWeatherNavigation();
+    renderSelectedTerrain(null); // Initialize terrain placeholder
 }
 
 function startNewDay(resetWeather = true) {
@@ -96,6 +99,7 @@ function startNewDay(resetWeather = true) {
         dayInMonth: gameState.currentDayInMonth,
         lighting: monthData.lighting,
         weather: null,
+        journal: [],
         quarters: [
             { id: 0, name: 'Manhã', actions: [] },
             { id: 1, name: 'Tarde', actions: [] },
@@ -128,6 +132,20 @@ function startNewDay(resetWeather = true) {
     }
 
     updateTravelButtonState();
+
+    // Update Journal UI
+    const journalSection = document.getElementById('journal-section');
+    const journalEditor = document.getElementById('journal-editor');
+    if (journalSection) journalSection.style.display = 'block';
+    if (journalEditor) journalEditor.innerHTML = '';
+
+    // Sync dropdown
+    const selectQuarter = document.getElementById('journal-quarter-select');
+    if (selectQuarter) {
+        selectQuarter.value = gameState.currentQuarterIndex;
+    }
+
+    renderJournalEntries();
     updateTemperatureTable();
 }
 
@@ -234,15 +252,7 @@ function handleDesbravar() {
         gameState.waitingForTerrainSelection = true;
 
         // Clear selected terrain UI to show placeholder
-        const selectedTerrain = document.getElementById('selected-terrain');
-        const mainTerrainImage = selectedTerrain.querySelector('img');
-        const terrainPlaceholder = document.getElementById('terrain-placeholder');
-        const terrainTitle = document.getElementById('selected-terrain-title');
-
-        mainTerrainImage.style.display = 'none';
-        mainTerrainImage.src = '';
-        if (terrainPlaceholder) terrainPlaceholder.style.display = 'flex';
-        if (terrainTitle) terrainTitle.textContent = 'Selecione o Terreno';
+        renderSelectedTerrain(null);
         return;
     }
 
@@ -298,6 +308,12 @@ function recordAction(terrainData, actionType) {
 function advanceQuarter() {
     gameState.currentActionCount = 0;
     gameState.currentQuarterIndex++;
+
+    // Sync dropdown
+    const selectQuarter = document.getElementById('journal-quarter-select');
+    if (selectQuarter && gameState.currentQuarterIndex < QUARTERS.length) {
+        selectQuarter.value = gameState.currentQuarterIndex;
+    }
 
     // Check if day is over
     if (gameState.currentQuarterIndex >= QUARTERS.length) {
@@ -444,7 +460,7 @@ function createHexagon(targetSvg, q, r, hexWidth, hexHeight, offsetX, offsetY, d
     hex.setAttribute('points', points);
     hex.setAttribute('class', 'hexagon');
     if (hasBorder) {
-        hex.setAttribute('stroke', '#333');
+        hex.setAttribute('stroke', 'var(--col-accent-cool)');
         hex.setAttribute('stroke-width', '2');
     } else {
         hex.style.stroke = 'none';
@@ -687,7 +703,7 @@ function renderSelectedHexagon(displayNumber) {
             hexOutline.setAttribute('points', points);
             hexOutline.setAttribute('class', 'hexagon');
             hexOutline.setAttribute('fill', 'transparent');
-            hexOutline.setAttribute('stroke', '#333');
+            hexOutline.setAttribute('stroke', 'var(--col-accent-cool)');
             hexOutline.setAttribute('stroke-width', '2');
             solitarySvg.appendChild(hexOutline);
         } else {
@@ -695,7 +711,7 @@ function renderSelectedHexagon(displayNumber) {
             hex.setAttribute('points', points);
             hex.setAttribute('class', 'hexagon');
             hex.setAttribute('fill', `url(#${patternRedId})`);
-            hex.setAttribute('stroke', '#333');
+            hex.setAttribute('stroke', 'var(--col-accent-cool)');
             hex.setAttribute('stroke-width', '2');
             solitarySvg.appendChild(hex);
         }
@@ -704,14 +720,102 @@ function renderSelectedHexagon(displayNumber) {
         hex.setAttribute('points', points);
         hex.setAttribute('class', 'hexagon');
         hex.setAttribute('fill', 'url(#hexGradient)'); // Fallback gradient
-        hex.setAttribute('stroke', '#333');
+        hex.setAttribute('stroke', 'var(--col-accent-cool)');
         hex.setAttribute('stroke-width', '2');
         solitarySvg.appendChild(hex);
     }
 }
 
 
+function renderSelectedTerrain(terrainData) {
+    solitaryTerrainSvg.innerHTML = '';
+    const selectedTerrainTitle = document.getElementById('selected-terrain-title');
 
+    const HEX_SIZE_SOLITARY = 40;
+
+    // Center in SVG (viewBox is -50 -50 100 100)
+    const centerX = 0;
+    const centerY = 0;
+
+    let points = "";
+    for (let i = 0; i < 6; i++) {
+        const angle_deg = 60 * i;
+        const angle_rad = Math.PI / 180 * angle_deg;
+        const x = centerX + HEX_SIZE_SOLITARY * Math.cos(angle_rad);
+        const y = centerY + HEX_SIZE_SOLITARY * Math.sin(angle_rad);
+        points += `${x},${y} `;
+    }
+
+    if (!terrainData) {
+        if (selectedTerrainTitle) {
+            selectedTerrainTitle.textContent = 'Selecione o Terreno';
+        }
+
+        const hex = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        hex.setAttribute('points', points);
+        hex.setAttribute('class', 'hexagon placeholder');
+        hex.setAttribute('stroke', '#444');
+        hex.setAttribute('stroke-width', '2');
+        hex.setAttribute('fill', 'transparent');
+        hex.style.strokeDasharray = '5,5';
+
+        solitaryTerrainSvg.appendChild(hex);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', centerX);
+        text.setAttribute('y', centerY);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('fill', '#666');
+        text.setAttribute('font-size', '24');
+        text.textContent = '?';
+        solitaryTerrainSvg.appendChild(text);
+        return;
+    }
+
+    if (selectedTerrainTitle) {
+        selectedTerrainTitle.textContent = terrainData.name;
+    }
+
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    solitaryTerrainSvg.appendChild(defs);
+
+    const patternId = `patternTerrain-${Date.now()}`;
+    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+    pattern.setAttribute('id', patternId);
+    pattern.setAttribute('patternContentUnits', 'objectBoundingBox');
+    pattern.setAttribute('width', '1');
+    pattern.setAttribute('height', '1');
+    pattern.setAttribute('viewBox', '0 0 1 1');
+    pattern.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+    const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image.setAttribute('href', terrainData.image);
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', terrainData.image);
+    image.setAttribute('x', '0');
+    image.setAttribute('y', '0');
+    image.setAttribute('width', '1');
+    image.setAttribute('height', '1');
+
+    pattern.appendChild(image);
+    defs.appendChild(pattern);
+
+    // Background Color Hexagon
+    const hexBg = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    hexBg.setAttribute('points', points);
+    hexBg.setAttribute('fill', terrainData.color || '#444');
+    hexBg.setAttribute('stroke', 'none');
+    solitaryTerrainSvg.appendChild(hexBg);
+
+    const hex = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    hex.setAttribute('points', points);
+    hex.setAttribute('class', 'hexagon');
+    hex.setAttribute('fill', `url(#${patternId})`);
+    hex.setAttribute('stroke', 'var(--col-accent-cool)');
+    hex.setAttribute('stroke-width', '2');
+
+    solitaryTerrainSvg.appendChild(hex);
+}
 
 function highlightSelectedHexagon(targetDisplayNumber, updateMainDisplay = true) {
     const textWindow = document.getElementById('text-window');
@@ -934,7 +1038,7 @@ function renderGrid() {
                 hexOutline.setAttribute('points', points);
                 hexOutline.setAttribute('class', 'hexagon');
                 hexOutline.setAttribute('fill', 'transparent');
-                hexOutline.setAttribute('stroke', '#333');
+                hexOutline.setAttribute('stroke', 'var(--col-accent-cool)');
                 hexOutline.setAttribute('stroke-width', '2');
                 hexOutline.dataset.displayNumber = displayNumber;
                 group.appendChild(hexOutline);
@@ -943,7 +1047,7 @@ function renderGrid() {
                 hex.setAttribute('points', points);
                 hex.setAttribute('class', 'hexagon');
                 hex.setAttribute('fill', `url(#${patternRedId})`);
-                hex.setAttribute('stroke', '#333');
+                hex.setAttribute('stroke', 'var(--col-accent-cool)');
                 hex.setAttribute('stroke-width', '2');
                 hex.dataset.displayNumber = displayNumber;
                 group.appendChild(hex);
@@ -1021,8 +1125,11 @@ function selectHexagon(displayNumber, navSelection = '3N') {
         // Reset lock state
         temperatureTable.classList.remove('locked');
 
-        const rows = temperatureTable.querySelectorAll('tr.selected-row');
-        rows.forEach(r => r.classList.remove('selected-row'));
+        const rows = temperatureTable.querySelectorAll('tr');
+        rows.forEach(r => {
+            r.classList.remove('selected-row');
+            r.classList.remove('faded-row');
+        });
         selectedTemperatureRowIndex = null;
 
         // Special logic for Hex 1 and 2
@@ -1036,6 +1143,8 @@ function selectHexagon(displayNumber, navSelection = '3N') {
                 updateTextWithTemperature(targetRow);
                 temperatureTable.classList.add('locked');
             }
+            if (tableRows[1]) tableRows[1].classList.add('faded-row');
+            if (tableRows[2]) tableRows[2].classList.add('faded-row');
         }
     }
 
@@ -1102,12 +1211,15 @@ function initializeModal() {
             }
         } else if (currentSelectedHexagon === 1 || currentSelectedHexagon === 2) {
             const temperatureTable = document.getElementById('temperature-table');
-            const fourthRow = temperatureTable.getElementsByTagName('tr')[3];
+            const rows = temperatureTable.getElementsByTagName('tr');
+            const fourthRow = rows[3];
             if (fourthRow) {
                 fourthRow.classList.add('selected');
                 // updateTextWithTemperature(fourthRow); // Suppressed on open
                 temperatureTable.classList.add('locked');
             }
+            if (rows[1]) rows[1].classList.add('faded-row');
+            if (rows[2]) rows[2].classList.add('faded-row');
         }
 
         const modalMapContainer = document.getElementById('modal-map-container');
@@ -1128,7 +1240,7 @@ function initializeModal() {
     function closeModal() {
         // Enforce temperature selection if a hexagon is selected
         if (currentSelectedHexagon !== null && selectedTemperatureRowIndex === null) {
-            alert('Selecione uma opção Tabela de Temperatura!');
+            alert('Selecione uma opção na Tabela de Temperatura!');
             return;
         }
 
@@ -1158,6 +1270,12 @@ function initializeModal() {
             targetRow.classList.add('selected-row');
             selectedTemperatureRowIndex = targetRow.rowIndex;
             updateTextWithTemperature(targetRow);
+
+            const bTag = targetRow.querySelector('b');
+            if (bTag && calendarData.length > 0) {
+                calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                showDayDetails(calendarData[gameState.currentDayIndex]);
+            }
         }
     });
 }
@@ -1183,8 +1301,7 @@ function initializeTerrainModal() {
     const selectedTerrain = document.getElementById('selected-terrain');
     const terrainGrid = document.getElementById('terrain-grid');
     const closeButton = terrainModal.querySelector('.close-button');
-    const mainTerrainImage = selectedTerrain.querySelector('img');
-    const terrainPlaceholder = document.getElementById('terrain-placeholder');
+
 
     const terrainImages = [
         'charco.png', 'colinas.png', 'floresta.png', 'florestaSombria.png',
@@ -1192,57 +1309,123 @@ function initializeTerrainModal() {
         'planicie.png', 'ruinas.png'
     ];
 
+    const terrainColors = {
+        'Charco': '#879253',
+        'Pantano': '#84ce94',
+        'Lago ou Rio': '#378cc3',
+        'Montanhas Altas': '#c07c00',
+        'Montanhas': '#c68f00',
+        'Colinas': '#c3d263',
+        'Floresta Sombria': '#07760f', // Note: Check consistency with getTerrainName
+        'Planície': '#a0d76b',
+        'Ruínas': '#6f6f6f',
+        'Floresta': '#0a8e21'
+    };
+
+    // Create Tooltip if not exists
+    let tooltip = document.getElementById('terrain-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'terrain-tooltip';
+        document.body.appendChild(tooltip);
+    }
+
     // Populate grid
+    terrainGrid.innerHTML = ''; // Clear existing content if any
     terrainImages.forEach(imageName => {
         const terrainContainer = document.createElement('div');
         terrainContainer.classList.add('terrain-item');
 
-        const img = document.createElement('img');
-        img.src = `img/terrain/${imageName}`;
         const terrainName = getTerrainName(imageName);
-        img.alt = terrainName;
+
+        // --- Create SVG Hexagon ---
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '-50 -50 100 100');
+        svg.style.width = '100px';
+        svg.style.height = '100px';
+        svg.style.display = 'block';
+
+        const size = 40; // Same as solitary hexagon
+        let points = "";
+        for (let i = 0; i < 6; i++) {
+            const angle_deg = 60 * i;
+            const angle_rad = Math.PI / 180 * angle_deg;
+            const x = size * Math.cos(angle_rad);
+            const y = size * Math.sin(angle_rad);
+            points += `${x},${y} `;
+        }
+
+        // Background Color Hexagon
+        const hexBg = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        hexBg.setAttribute('points', points);
+        const bgColor = terrainColors[terrainName] || '#444';
+        hexBg.setAttribute('fill', bgColor);
+        hexBg.setAttribute('stroke', 'none');
+        svg.appendChild(hexBg);
+
+        // Image
+        const imageSize = 50;
+        const imgSvg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+        imgSvg.setAttribute('href', `img/terrain/${imageName}`);
+        imgSvg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `img/terrain/${imageName}`);
+        imgSvg.setAttribute('x', -imageSize / 2);
+        imgSvg.setAttribute('y', -imageSize / 2);
+        imgSvg.setAttribute('width', imageSize);
+        imgSvg.setAttribute('height', imageSize);
+        svg.appendChild(imgSvg);
+
+        // Border Hexagon (optional, for definition)
+        const hexBorder = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        hexBorder.setAttribute('points', points);
+        hexBorder.setAttribute('fill', 'none');
+        hexBorder.setAttribute('stroke', 'var(--col-accent-cool)');
+        hexBorder.setAttribute('stroke-width', '2');
+        svg.appendChild(hexBorder);
+
+        terrainContainer.appendChild(svg);
 
         const nameSpan = document.createElement('span');
         nameSpan.textContent = terrainName;
+        nameSpan.style.marginTop = '5px';
 
-        terrainContainer.appendChild(img);
         terrainContainer.appendChild(nameSpan);
         terrainGrid.appendChild(terrainContainer);
+
+        // --- Tooltip Logic ---
+        terrainContainer.addEventListener('mouseenter', () => {
+            const info = terrainInfo[terrainName] || '';
+            tooltip.innerHTML = `<strong>${terrainName}</strong>${info}`;
+            tooltip.style.display = 'block';
+        });
+
+        terrainContainer.addEventListener('mousemove', (e) => {
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+        });
+
+        terrainContainer.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+
 
         terrainContainer.addEventListener('click', () => {
             // Logic for selecting terrain
             const terrainData = {
-                name: getTerrainName(imageName),
+                name: terrainName,
                 image: `img/terrain/${imageName}`,
-                info: terrainInfo[getTerrainName(imageName)]
+                info: terrainInfo[terrainName],
+                color: terrainColors[terrainName] || '#444' // Included color
             };
 
             currentSelectedTerrainData = terrainData;
 
-            // Removed ad-hoc button enabling here, handled by updateTravelButtonState
-
             // Update UI
-            mainTerrainImage.src = img.src;
-            mainTerrainImage.alt = img.alt;
-            mainTerrainImage.style.display = 'block';
-            if (terrainPlaceholder) terrainPlaceholder.style.display = 'none';
-            const terrainTitle = document.getElementById('selected-terrain-title');
-            if (terrainTitle) {
-                terrainTitle.textContent = img.alt;
-            }
+            renderSelectedTerrain(terrainData);
 
-            const terrainName = getTerrainName(imageName);
             selectedTerrainInfo = terrainInfo[terrainName] || '';
 
             // If we were waiting for selection (Desbravar), record it and advance
             if (gameState.waitingForTerrainSelection) {
-                // We don't record immediately here anymore, we just set the data
-                // The user needs to click Desbravar again or we can trigger it?
-                // Actually, the previous logic was: Click Desbravar -> Select Terrain -> Record & Advance
-                // New logic: Select Terrain -> Click Desbravar -> Record (maybe multiple) -> Advance
-
-                // However, if we are in "waitingForTerrainSelection" state, it means the user clicked Desbravar WITHOUT a terrain.
-                // So now that they selected one, we should probably execute the Desbravar action they intended.
                 gameState.waitingForTerrainSelection = false;
                 handleDesbravar(); // Retry the action
             }
@@ -1310,22 +1493,50 @@ function setupCalendarModal() {
 
     function renderCalendarGrid() {
         grid.innerHTML = '';
+
+        // Group by Month Year
+        const grouped = {};
         calendarData.forEach((day, index) => {
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day-item';
-            if (index === gameState.currentDayIndex) dayEl.classList.add('selected');
-
-            const weatherIcon = day.weather ? (day.weather.redImage || day.weather.blueImage) : null;
-            let weatherHtml = '';
-            if (weatherIcon) {
-                // Simple representation
-                // weatherHtml = `<img src="${weatherIcon}" style="width:20px; height:20px;">`;
-            }
-
-            dayEl.innerHTML = `<div>${day.dayInMonth}/${day.month.substring(0, 3)}</div>${weatherHtml}`;
-            dayEl.onclick = () => showDayDetails(day);
-            grid.appendChild(dayEl);
+            const key = `${day.month} ${day.year}`;
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push({ day, index });
         });
+
+        // Render groups
+        for (const [key, items] of Object.entries(grouped)) {
+            const section = document.createElement('div');
+            section.className = 'calendar-month-section';
+            section.style.width = '100%';
+            section.style.marginBottom = '10px';
+
+            const title = document.createElement('div');
+            title.className = 'calendar-month-title';
+            title.style.fontWeight = 'bold';
+            title.style.color = 'var(--col-text-highlight)';
+            title.style.marginBottom = '5px';
+            title.style.borderBottom = '1px solid var(--col-accent-cool)';
+            title.textContent = key;
+            section.appendChild(title);
+
+            const daysContainer = document.createElement('div');
+            daysContainer.style.display = 'flex';
+            daysContainer.style.flexWrap = 'wrap';
+            daysContainer.style.gap = '10px';
+
+            items.forEach(({ day, index }) => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day-item';
+                if (index === gameState.currentDayIndex) dayEl.classList.add('selected');
+
+                dayEl.innerHTML = `<div>${day.dayInMonth}</div>`;
+                dayEl.title = `${day.dayInMonth} de ${day.month}`; // Tooltip for context
+                dayEl.onclick = () => showDayDetails(day);
+                daysContainer.appendChild(dayEl);
+            });
+
+            section.appendChild(daysContainer);
+            grid.appendChild(section);
+        }
 
         // Show current day details by default
         if (calendarData.length > 0) {
@@ -1350,6 +1561,7 @@ function showDayDetails(day) {
             <div class="weather-images">
                 ${day.weather.redImage ? `<img src="${day.weather.redImage}" alt="${redTitle}">` : ''}
                 ${day.weather.blueImage ? `<img src="${day.weather.blueImage}" alt="${blueTitle}">` : ''}
+                ${day.temperature ? `<div class="temp-badge">${day.temperature}</div>` : ''}
             </div>
         </div>`;
     } else {
@@ -1368,9 +1580,12 @@ function showDayDetails(day) {
                 const verb = action.action === 'Desbravar' ? 'Desbravou' :
                     action.action === 'Permanecer' ? 'Permaneceu' : action.action;
 
+                const actionClass = action.action === 'Desbravar' ? 'text-desbravou' : 'text-permanecer';
+                const bgColor = action.color || 'transparent';
+
                 html += `<div class="slot-detail">
-                            <span>${verb}:</span>
-                            <img src="${action.image}" alt="${action.name}">
+                            <span class="${actionClass}">${verb}:</span>
+                            <img src="${action.image}" alt="${action.name}" style="background-color: ${bgColor}">
                             <span>${action.name}</span>
                         </div>`;
             });
@@ -1378,9 +1593,37 @@ function showDayDetails(day) {
         html += `</div>`;
     });
 
-    // Update both containers if they exist
-    if (detailsModal) detailsModal.innerHTML = html;
+    // Generate HTML for Journal Section separate from the main HTML so we can exclude it from main view
+    // Generate HTML for Journal Section separate from the main HTML so we can exclude it from main view
+    let journalHtml = '';
+
+    // Always show header and add button in modal
+    journalHtml += `<h3>Diário <button id="btn-add-entry-modal" data-day-index="${day.id - 1}">Adicionar Entrada</button></h3>`;
+
+    if (Array.isArray(day.journal) && day.journal.length > 0) {
+        journalHtml += `<div class="journal-entries-list">`;
+        // Sort by quarter
+        const entries = [...day.journal].sort((a, b) => a.quarterIndex - b.quarterIndex);
+
+        entries.forEach(entry => {
+            const quarterName = QUARTERS[entry.quarterIndex] || 'Desconhecido';
+            journalHtml += `<div class="journal-entry">
+                        <div class="journal-entry-header">
+                            <span class="journal-entry-quarter">${quarterName}</span>
+                            <button class="btn-edit-entry-modal" data-day-index="${day.id - 1}" data-entry-id="${entry.id}" style="background:none; border:none; color:var(--col-accent-cool); cursor:pointer; text-decoration:underline; font-size:0.85em;">Editar</button>
+                        </div>
+                        <div class="journal-entry-content">${entry.content}</div>
+                    </div>`;
+        });
+        journalHtml += `</div>`;
+    }
+
+    // Update containers
+    // detailsMain gets only the base HTML (without journal)
     if (detailsMain) detailsMain.innerHTML = html;
+
+    // detailsModal gets base HTML + Journal
+    if (detailsModal) detailsModal.innerHTML = html + journalHtml;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1405,7 +1648,325 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    initializeJournal();
+    initializeEditFromModal();
+    initializeModalJournal();
 });
+
+function initializeEditFromModal() {
+    document.body.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-edit-entry-modal')) {
+            const dayIndex = parseInt(e.target.dataset.dayIndex);
+            const entryId = parseInt(e.target.dataset.entryId);
+
+            // Validate data
+            if (isNaN(dayIndex) || isNaN(entryId)) return;
+
+            const day = calendarData[dayIndex];
+            if (!day || !day.journal) return;
+
+            const entry = day.journal.find(en => en.id === entryId);
+            if (!entry) return;
+
+            // Close modal
+            const modal = document.getElementById('calendar-modal');
+            if (modal) modal.style.display = 'none';
+
+            // Set editing state
+            editingDayIndex = dayIndex;
+            loadEntryForEdit(entry);
+        }
+    });
+}
+
+let editingEntryId = null;
+
+let editingDayIndex = null;
+
+function initializeJournal() {
+    const editor = document.getElementById('journal-editor');
+    const toolbar = document.querySelector('.editor-toolbar');
+    const colorPicker = document.getElementById('editor-color');
+    const btnSave = document.getElementById('btn-save-entry');
+    const btnCancel = document.getElementById('btn-cancel-edit');
+    const selectQuarter = document.getElementById('journal-quarter-select');
+
+    if (!editor || !toolbar) return;
+
+    // Toolbar buttons
+    toolbar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tool-btn');
+        if (!btn) return;
+
+        const cmd = btn.dataset.cmd;
+        if (cmd) {
+            document.execCommand(cmd, false, null);
+            editor.focus();
+        }
+    });
+
+    // Color picker
+    if (colorPicker) {
+        colorPicker.addEventListener('input', (e) => {
+            document.execCommand('foreColor', false, e.target.value);
+            editor.focus();
+        });
+    }
+
+    btnSave.addEventListener('click', () => {
+        const content = editor.innerHTML;
+        if (!content.trim()) return;
+
+        const dayIndex = editingDayIndex !== null ? editingDayIndex : gameState.currentDayIndex;
+        const currentDay = calendarData[dayIndex];
+        const quarterVal = parseInt(selectQuarter.value);
+
+        // Ensure journal is array (migration check)
+        if (!Array.isArray(currentDay.journal)) {
+            currentDay.journal = [];
+        }
+
+        if (editingEntryId !== null) {
+            // Update existing
+            const entryIndex = currentDay.journal.findIndex(e => e.id === editingEntryId);
+            if (entryIndex > -1) {
+                currentDay.journal[entryIndex].content = content;
+                currentDay.journal[entryIndex].quarterIndex = quarterVal;
+                // timestamp could be updated if we tracked edit time
+            }
+            editingEntryId = null;
+            btnSave.textContent = "Salvar Entrada";
+            btnCancel.style.display = 'none';
+        } else {
+            // New Entry
+            const newEntry = {
+                id: Date.now(),
+                quarterIndex: quarterVal,
+                content: content,
+                timestamp: Date.now()
+            };
+            currentDay.journal.push(newEntry);
+        }
+
+        // Create a copy of the index we used for potential refresh
+        const savedDayIndex = dayIndex;
+
+        editor.innerHTML = '';
+        renderJournalEntries();
+
+        // If we were editing from the modal (or any non-current day), refresh modal visual
+        // Only refresh modal if it's currently open (implied by editingDayIndex possibly)
+        if (editingDayIndex !== null) {
+            showDayDetails(calendarData[savedDayIndex]);
+        }
+
+        editingEntryId = null;
+        editingDayIndex = null;
+    });
+
+    btnCancel.addEventListener('click', () => {
+        editingEntryId = null;
+        editingDayIndex = null;
+        editor.innerHTML = '';
+        btnSave.textContent = "Salvar Entrada";
+        btnCancel.style.display = 'none';
+    });
+}
+
+function renderJournalEntries() {
+    const listContainer = document.getElementById('journal-entries-list');
+    const currentDay = calendarData[gameState.currentDayIndex];
+    if (!listContainer || !currentDay) return;
+
+    // Migration check: if string, convert to object/hide or do nothing (we assume array now)
+    let entries = Array.isArray(currentDay.journal) ? currentDay.journal : [];
+
+    // Sort by quarter then time? Or just by time? 
+    // Usually grouped by quarter is nice, or chronological.
+    // Let's sort by quarter index first, then creation id
+    entries.sort((a, b) => {
+        if (a.quarterIndex !== b.quarterIndex) {
+            return a.quarterIndex - b.quarterIndex;
+        }
+        return a.id - b.id;
+    });
+
+    listContainer.innerHTML = '';
+
+    entries.forEach(entry => {
+        const entryEl = document.createElement('div');
+        entryEl.className = 'journal-entry';
+
+        const quarterName = QUARTERS[entry.quarterIndex] || 'Desconhecido';
+
+        entryEl.innerHTML = `
+            <div class="journal-entry-header">
+                <span class="journal-entry-quarter">${quarterName}</span>
+                <div class="journal-entry-actions">
+                    <button class="btn-edit-entry" data-id="${entry.id}">Editar</button>
+                </div>
+            </div>
+            <div class="journal-entry-content">${entry.content}</div>
+        `;
+
+        // Bind edit
+        const btnEdit = entryEl.querySelector('.btn-edit-entry');
+        btnEdit.addEventListener('click', () => {
+            loadEntryForEdit(entry);
+        });
+
+        listContainer.appendChild(entryEl);
+    });
+}
+
+function loadEntryForEdit(entry) {
+    const editor = document.getElementById('journal-editor');
+    const selectQuarter = document.getElementById('journal-quarter-select');
+    const btnSave = document.getElementById('btn-save-entry');
+    const btnCancel = document.getElementById('btn-cancel-edit');
+
+    editingEntryId = entry.id;
+
+    // ... existing loadEntryForEdit ...
+    editor.innerHTML = entry.content;
+    selectQuarter.value = entry.quarterIndex;
+
+    btnSave.textContent = "Atualizar Entrada";
+    btnCancel.style.display = 'block';
+
+    // Scroll to editor
+    editor.scrollIntoView({ behavior: 'smooth' });
+}
+
+function initializeModalJournal() {
+    // --- Elements ---
+    const modalEditorContainer = document.getElementById('modal-journal-section');
+    const modalEditor = document.getElementById('modal-journal-editor');
+    const modalToolbar = document.querySelector('.modal-editor-toolbar');
+    const modalColorPicker = document.getElementById('modal-editor-color');
+    const modalBtnSave = document.getElementById('modal-btn-save-entry');
+    const modalBtnCancel = document.getElementById('modal-btn-cancel-edit');
+    const modalSelectQuarter = document.getElementById('modal-journal-quarter-select');
+
+    // --- Toolbar Helpers ---
+    if (modalToolbar) {
+        modalToolbar.addEventListener('click', (e) => {
+            const btn = e.target.closest('.tool-btn');
+            if (btn && btn.dataset.cmd) {
+                document.execCommand(btn.dataset.cmd, false, null);
+                modalEditor.focus();
+            }
+        });
+    }
+    if (modalColorPicker) {
+        modalColorPicker.addEventListener('input', (e) => {
+            document.execCommand('foreColor', false, e.target.value);
+            modalEditor.focus();
+        });
+    }
+
+    // --- Global Click Listener for Dynamic Buttons in Modal ---
+    document.body.addEventListener('click', (e) => {
+        // "Adicionar Entrada" Button
+        if (e.target.id === 'btn-add-entry-modal') {
+            const dayIndex = parseInt(e.target.dataset.dayIndex);
+            if (!isNaN(dayIndex)) {
+                editingDayIndex = dayIndex; // Set context
+                editingEntryId = null; // New entry
+
+                modalEditor.innerHTML = ''; // Clear editor
+                if (modalSelectQuarter) modalSelectQuarter.value = 0; // Default or maybe try to guess?
+
+                modalBtnSave.textContent = "Salvar Entrada";
+                modalEditorContainer.style.display = 'block'; // Show editor
+                // Scroll to editor
+                modalEditorContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // "Editar" Button (inside journal entry list in modal)
+        if (e.target.classList.contains('btn-edit-entry-modal')) {
+            const dayIndex = parseInt(e.target.dataset.dayIndex);
+            const entryId = parseInt(e.target.dataset.entryId);
+
+            if (!isNaN(dayIndex) && !isNaN(entryId)) {
+                editingDayIndex = dayIndex;
+                editingEntryId = entryId;
+
+                const day = calendarData[dayIndex];
+                const entry = day.journal.find(en => en.id === entryId);
+
+                if (entry) {
+                    modalEditor.innerHTML = entry.content;
+                    if (modalSelectQuarter) modalSelectQuarter.value = entry.quarterIndex;
+                    modalBtnSave.textContent = "Atualizar Entrada";
+                    modalEditorContainer.style.display = 'block';
+                    modalEditorContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    });
+
+    // --- Save Action ---
+    if (modalBtnSave) {
+        modalBtnSave.addEventListener('click', () => {
+            const content = modalEditor.innerHTML;
+            if (!content.trim() || editingDayIndex === null) return;
+
+            const currentDay = calendarData[editingDayIndex];
+            const quarterVal = parseInt(modalSelectQuarter.value);
+
+            if (!Array.isArray(currentDay.journal)) {
+                currentDay.journal = [];
+            }
+
+            if (editingEntryId !== null) {
+                // Update existing
+                const entryIndex = currentDay.journal.findIndex(e => e.id === editingEntryId);
+                if (entryIndex > -1) {
+                    currentDay.journal[entryIndex].content = content;
+                    currentDay.journal[entryIndex].quarterIndex = quarterVal;
+                }
+            } else {
+                // New Entry
+                const newEntry = {
+                    id: Date.now(),
+                    quarterIndex: quarterVal,
+                    content: content,
+                    timestamp: Date.now()
+                };
+                currentDay.journal.push(newEntry);
+            }
+
+            // Reset and Refresh
+            editingEntryId = null;
+            modalEditor.innerHTML = '';
+            modalEditorContainer.style.display = 'none'; // Hide editor after save
+
+            // Refresh Modal View
+            showDayDetails(currentDay);
+
+            // If we modified the current day, also refresh main page journal list
+            if (editingDayIndex === gameState.currentDayIndex) {
+                renderJournalEntries();
+            }
+            editingDayIndex = null;
+        });
+    }
+
+    // --- Cancel Action ---
+    if (modalBtnCancel) {
+        modalBtnCancel.addEventListener('click', () => {
+            editingEntryId = null;
+            editingDayIndex = null;
+            modalEditor.innerHTML = '';
+            modalEditorContainer.style.display = 'none';
+        });
+    }
+}
+
+
+
 
 function setupStartGameModal() {
     const modal = document.getElementById('start-game-modal');
@@ -1570,7 +2131,22 @@ function renderWeatherNavigation(selectedHexName = '3N') {
         if (!group) return;
 
         const navName = group.dataset.navName;
-        handleNavigate(navName);
+
+        // Immediate visual feedback on Nav
+        renderWeatherNavigation(navName);
+
+        // Delayed navigation and focus shift (Focus Effect)
+        setTimeout(() => {
+            const mapContainer = document.getElementById('modal-map-container');
+            if (mapContainer) {
+                mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Hexagon change after scroll starts
+            setTimeout(() => {
+                handleNavigate(navName);
+            }, 500);
+        }, 500);
     };
 
     initializeDiceRoller(hexConfig);
@@ -1925,6 +2501,12 @@ function initializeDiceRollerTemp() {
                 rows[rowIndex].classList.add('selected-row');
                 selectedTemperatureRowIndex = rowIndex; // Update global state
                 updateTextWithTemperature(rows[rowIndex]);
+
+                const bTag = rows[rowIndex].querySelector('b');
+                if (bTag && calendarData.length > 0) {
+                    calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                    showDayDetails(calendarData[gameState.currentDayIndex]);
+                }
             }
         }
     }

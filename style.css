@@ -12,6 +12,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--col-bg-main);
+    background-image: url("img/cartographer.png");
     color: var(--col-text-primary);
     display: flex;
     flex-direction: column;
@@ -72,7 +73,7 @@ h6 {
 
 /* --- Hexagon Styles --- */
 .hexagon {
-    stroke: var(--col-text-primary);
+    stroke: var(--col-accent-cool);
     stroke-width: 2;
     transition: stroke 0.3s;
 }
@@ -111,7 +112,8 @@ h6 {
     margin: 0 auto;
 }
 
-#solitary-hexagon-svg {
+#solitary-hexagon-svg,
+#solitary-terrain-svg {
     width: 100%;
     height: 100%;
     display: block;
@@ -194,7 +196,7 @@ h6 {
     /* Removed absolute positioning to match selected-hexagon-title */
     text-align: center;
     font-weight: bold;
-    margin-top: 5px;
+    margin-top: 22px;
     color: var(--col-text-highlight);
 }
 
@@ -212,25 +214,7 @@ h6 {
     /* Hidden by default */
 }
 
-#terrain-placeholder {
-    width: 100px;
-    height: 100px;
-    /* border: 1px dashed var(--col-text-primary); Removed square border */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--col-text-primary);
-    gap: 10px;
-    margin: 0 auto;
-    /* Center it */
-}
 
-#terrain-placeholder i {
-    font-size: 2em;
-    color: var(--col-accent-warm);
-}
 
 /* Duplicate definition removed */
 
@@ -419,6 +403,10 @@ button:hover {
 }
 
 /* --- Terrain Modal Grid --- */
+#terrain-modal h2 {
+    text-align: center;
+}
+
 #terrain-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -432,14 +420,13 @@ button:hover {
     align-items: center;
     cursor: pointer;
     padding: 10px;
-    border: 1px solid var(--col-bg-main);
+    border: none;
     border-radius: 8px;
     transition: background-color 0.2s;
 }
 
 .terrain-item:hover {
     background-color: var(--col-bg-main);
-    border-color: var(--col-text-highlight);
 }
 
 .terrain-item img {
@@ -547,7 +534,7 @@ button:hover {
 
 #btn-advance-day {
     background-color: var(--col-accent-cool);
-    color: var(--col-bg-main);
+    color: var(--col-text-primary);
     width: 100%;
     font-weight: bold;
     display: none;
@@ -579,6 +566,11 @@ button:hover {
 }
 
 /* --- Calendar Modal Styles --- */
+#calendar-modal .modal-content,
+#terrain-modal .modal-content {
+    flex-direction: column !important;
+}
+
 #calendar-grid {
     display: flex;
     flex-wrap: wrap;
@@ -718,12 +710,25 @@ button:hover {
     margin-left: 10px;
     font-size: 0.85em;
     margin-bottom: 2px;
+    gap: 5px;
+}
+
+.slot-detail span:first-child {
+    min-width: 95px;
+}
+
+.text-desbravou {
+    color: var(--col-accent-warm);
+    font-weight: bold;
+}
+
+.text-permanecer {
+    color: var(--col-text-primary);
 }
 
 .slot-detail img {
     width: 20px;
     height: 20px;
-    margin-right: 5px;
     border-radius: 3px;
     border: 1px solid var(--col-text-primary);
 }
@@ -747,6 +752,20 @@ button:hover {
     border: 1px solid var(--col-accent-cool);
     border-radius: 4px;
     background-color: var(--col-bg-main);
+}
+
+.weather-images .temp-badge {
+    height: 40px;
+    min-width: 60px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 4px;
+    background-color: var(--col-bg-main);
+    font-weight: bold;
+    color: var(--col-text-primary);
 }
 
 #weather-navigation {
@@ -1123,6 +1142,12 @@ button.disabled,
     filter: grayscale(80%);
 }
 
+.faded-row {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: grayscale(100%);
+}
+
 .mounted-switch-container input:checked+.slider:before {
     transform: translateX(10px);
 }
@@ -1176,35 +1201,51 @@ button.disabled,
 /* Mobile / Portrait (9:16 approximation) */
 @media (max-width: 1120px) {
 
+    html,
+    body,
+    .modal {
+        overflow-x: hidden !important;
+
+    }
+
+    #calendar-modal {
+        overflow-x: hidden;
+    }
+
+    #calendar-modal .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        box-sizing: border-box;
+    }
+
     h1 {
         text-align: center;
         font-size: 1.5rem;
     }
 
     #selected-terrain-title {
-        /* Removed absolute positioning to match selected-hexagon-title */
         text-align: center;
         font-weight: bold;
-        margin-top: -5px;
-        padding-bottom: 30px;
-        color: var(--col-text-highlight);
+        margin-bottom: 0px;
+        font-size: 0.5em;
     }
 
     #info-container,
     #bottom-container,
     #calendar-container {
         width: 95%;
-        /* Mobile width */
     }
 
     #selected-hexagon-title {
         text-align: center;
+        margin-bottom: 0px;
+        font-size: 0.5em;
+        margin-top: 22px;
     }
 
     #bottom-container {
         flex-direction: column;
         height: auto;
-        /* Stack on mobile for better fit */
     }
 
     #bottom-left-column {
@@ -1222,7 +1263,8 @@ button.disabled,
 
     #ambience-reference {
         width: 100%;
-        height: 300px;
+        height: auto;
+        aspect-ratio: 4 / 3;
         margin-top: 10px;
     }
 
@@ -1236,6 +1278,12 @@ button.disabled,
         box-sizing: border-box;
         background-color: var(--col-bg-surface);
         margin: 10px auto;
+    }
+
+    #terrain-modal .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        box-sizing: border-box;
     }
 
     #map-container {
@@ -1282,5 +1330,374 @@ button.disabled,
         display: none;
     }
 
+    .travel-btn,
+    .desbravar-container {
+        max-width: none;
+    }
 
+    #terrain-tooltip {
+        display: none !important;
+    }
 }
+
+/* --- Journal Editor Styles --- */
+#journal-section {
+    width: 100%;
+    margin-top: 20px;
+    background-color: var(--col-text-primary);
+    /* Light background requested */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--col-bg-main);
+}
+
+#journal-section h3 {
+    color: var(--col-bg-main);
+    /* Dark title for contrast */
+    border-bottom: 1px solid var(--col-bg-main);
+    padding-bottom: 10px;
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    background-color: var(--col-bg-main);
+    padding: 5px;
+    border-radius: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tool-btn {
+    background: transparent;
+    border: 1px solid var(--col-border);
+    color: var(--col-text-primary);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-btn:hover {
+    background-color: var(--col-bg-highlight);
+    border-color: var(--col-text-highlight);
+}
+
+.color-picker-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--col-border);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    background: var(--col-bg-main);
+}
+
+.color-picker-wrapper span {
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.color-picker-wrapper input[type="color"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+}
+
+#journal-editor {
+    min-height: 150px;
+    background-color: var(--col-bg-main);
+    border: 1px solid var(--col-border);
+    border-radius: 4px;
+    padding: 10px;
+    color: var(--col-text-primary);
+    overflow-y: auto;
+    font-family: inherit;
+    line-height: 1.5;
+    text-align: left;
+}
+
+#journal-editor:focus {
+    outline: 2px solid var(--col-accent-cool);
+    border-color: transparent;
+}
+
+#journal-editor ul,
+#journal-editor ol {
+    margin-left: 20px;
+}
+
+/* --- Journal Entries List --- */
+.journal-entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.journal-entry {
+    background-color: var(--col-bg-main);
+    /* Dark card background */
+    border: 1px solid var(--col-bg-surface);
+    border-radius: 5px;
+    padding: 10px;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.journal-entry:hover {
+    border-color: var(--col-text-highlight);
+}
+
+.journal-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--col-text-primary);
+    /* Lighter separator */
+    padding-bottom: 5px;
+}
+
+.journal-entry-quarter {
+    font-weight: bold;
+    color: var(--col-text-highlight);
+    font-size: 0.9em;
+}
+
+.journal-entry-content {
+    font-size: 0.95em;
+    color: var(--col-text-primary);
+    /* Keep text light on dark card */
+    line-height: 1.5;
+    text-align: left;
+}
+
+#journal-controls label {
+    color: var(--col-bg-main);
+    font-weight: bold;
+}
+
+.journal-entry-actions {
+    display: flex;
+    gap: 10px;
+}
+
+#btn-save-entry {
+    color: var(--col-text-highlight);
+}
+
+#btn-save-entry:hover {
+    color: var(--col-bg-main);
+}
+
+.btn-edit-entry {
+    background: none;
+    border: none;
+    color: var(--col-accent-cool);
+    cursor: pointer;
+    font-size: 0.85em;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.btn-edit-entry:hover {
+    color: var(--col-text-highlight);
+}
+
+#modal-journal-section {
+    background-color: var(--col-text-primary);
+    border: 1px solid var(--col-bg-main);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#modal-journal-editor {
+    min-height: 150px;
+    background-color: var(--col-bg-main);
+    border: 1px solid var(--col-border);
+    border-radius: 4px;
+    padding: 10px;
+    color: var(--col-text-primary);
+    overflow-y: auto;
+    font-family: inherit;
+    line-height: 1.5;
+    text-align: left;
+}
+
+#modal-journal-editor:focus {
+    outline: 2px solid var(--col-accent-cool);
+    border-color: transparent;
+}
+
+#modal-btn-save-entry {
+    color: var(--col-text-highlight);
+}
+
+#modal-btn-save-entry:hover {
+    color: var(--col-bg-main);
+}
+
+#btn-add-entry-modal {
+    background-color: var(--col-accent-cool);
+    color: var(--col-bg-main);
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+#btn-add-entry-modal:hover {
+    background-color: var(--col-text-highlight);
+}
+
+/* --- Tooltip --- */
+#terrain-tooltip {
+    position: fixed;
+    background-color: var(--col-bg-surface);
+    color: var(--col-text-primary);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 0.9em;
+    z-index: 2000;
+    pointer-events: none;
+    /* Mouse passes through */
+    max-width: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    display: none;
+    line-height: 1.4;
+}
+
+#terrain-tooltip strong {
+    color: var(--col-text-highlight);
+    display: block;
+    margin-bottom: 5px;
+}
+/* Ambience Reference Styles */
+#ambience-reference {
+    position: relative;
+    width: 100%;
+    /* min-height: 200px; Remove fixed height to allow content to dictate, or keep if needed for layout stability */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--col-bg-surface);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-align: center;
+}
+
+.ambience-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.ambience-btn {
+    background-color: var(--col-bg-main);
+    color: var(--col-text-primary);
+    border: 1px solid var(--col-accent-cool);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.ambience-btn:hover {
+    border-color: var(--col-text-highlight);
+    color: var(--col-text-highlight);
+}
+
+.ambience-btn.active {
+    background-color: var(--col-accent-deep);
+    border-color: var(--col-accent-deep);
+    color: var(--col-text-primary);
+}
+
+.api-key-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.api-key-input {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--col-bg-main);
+    border: 1px solid var(--col-accent-cool);
+    color: var(--col-text-primary);
+    border-radius: var(--radius-sm);
+    box-sizing: border-box;
+}
+
+.generated-image-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background-color: #000;
+}
+
+.generated-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.loading-spinner {
+    border: 4px solid var(--col-bg-main);
+    border-top: 4px solid var(--col-accent-deep);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#ambience-reference p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--col-text-muted);
+}
+
