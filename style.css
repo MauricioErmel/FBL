@@ -12,7 +12,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--col-bg-main);
-    background-image: url("img/cartographer.png");
+    background-image: url("img/cartographer.webp");
     color: var(--col-text-primary);
     display: flex;
     flex-direction: column;
@@ -36,9 +36,44 @@ h6 {
 #site-header {
     display: flex;
     align-items: center;
-    justify-content: left;
+    justify-content: space-between;
     gap: 15px;
-    margin-bottom: 10px;
+    margin: 0 auto 10px auto;
+    width: 800px;
+    box-sizing: border-box;
+}
+
+#header-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-end;
+}
+
+.header-btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: var(--col-bg-surface);
+    color: var(--col-text-primary);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 4px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+.header-btn:hover {
+    background-color: var(--col-accent-cool);
+    color: var(--col-bg-main);
+    border-color: var(--col-text-highlight);
 }
 
 #header-logo {
@@ -46,8 +81,7 @@ h6 {
     height: 120px;
     object-fit: contain;
     background-color: var(--col-text-highlight);
-    border-radius: 25%;
-    margin-left: -50px;
+    border-radius: 8%;
 }
 
 /* --- Layout Principal --- */
@@ -489,6 +523,38 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    /* Added for absolute child */
+    min-height: 50px;
+}
+
+#current-day-display.has-reset-btn {
+    padding-left: 50px;
+}
+
+#btn-reset-day {
+    position: absolute;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    transition: background-color 0.2s;
+    z-index: 10;
+}
+
+#btn-reset-day:hover {
+    background-color: var(--col-accent-warm-dim);
+}
+
+#btn-reset-day img {
+    width: 100%;
+    height: 100%;
 }
 
 #current-day-display:hover {
@@ -520,6 +586,23 @@ button:hover {
     flex: 1;
     max-width: 200px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+}
+
+#btn-desbravar:hover .btn-icon {
+    filter: brightness(0) invert(1);
+}
+
+#btn-permanecer:hover .btn-icon {
+    filter: brightness(0) invert(1);
 }
 
 .travel-btn:active {
@@ -583,6 +666,10 @@ button:hover {
     flex-direction: column !important;
 }
 
+#calendar-modal h2 {
+    text-align: center;
+}
+
 #calendar-grid {
     display: flex;
     flex-wrap: wrap;
@@ -638,6 +725,12 @@ button:hover {
     color: var(--col-text-highlight);
     font-weight: bold;
     box-shadow: 0 0 5px var(--col-text-highlight);
+}
+
+.calendar-day-item.viewing-day {
+    background-color: var(--col-accent-deep);
+    color: var(--col-text-highlight);
+    border-color: var(--col-text-highlight);
 }
 
 #day-details,
@@ -1370,6 +1463,17 @@ button.disabled,
     gap: 10px;
 }
 
+#journal-section {
+    transition: opacity 0.3s;
+}
+
+#journal-section.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+    filter: grayscale(100%);
+}
+
 #btn-save-entry {
     color: var(--col-text-highlight);
 }
@@ -1481,8 +1585,10 @@ button.disabled,
         align-items: center;
         justify-content: left;
         gap: 15px;
-        margin-left: 10px;
+        margin-left: auto;
+        margin-right: auto;
         margin-bottom: 10px;
+        width: 95%;
     }
 
     #header-logo {
@@ -1490,13 +1596,22 @@ button.disabled,
         height: 80px;
         object-fit: contain;
         background-color: var(--col-text-highlight);
-        border-radius: 25%;
         margin-left: 0px;
     }
 
     h1 {
         text-align: left;
         font-size: 1.3rem;
+    }
+
+    .header-btn {
+        width: 25px;
+        height: 25px;
+    }
+
+    .header-btn .btn-icon {
+        width: 12px;
+        height: 12px;
     }
 
 
@@ -1622,7 +1737,49 @@ button.disabled,
         max-width: none;
     }
 
+    .travel-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+    }
+
+    .travel-btn .btn-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .mounted-switch-container {
+        font-size: 0.7em;
+    }
+
     #terrain-tooltip {
         display: none !important;
     }
+}
+
+/* --- Toast Notification --- */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: var(--col-text-primary);
+    color: var(--col-bg-main);
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    top: 30px;
+    font-size: 17px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--col-text-highlight);
+    opacity: 0;
+    transition: opacity 0.5s, top 0.5s;
+    font-weight: bold;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    top: 50px;
 }

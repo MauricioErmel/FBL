@@ -147,6 +147,7 @@ function startNewDay(resetWeather = true) {
 
     renderJournalEntries();
     updateTemperatureTable();
+    autoSave();
 }
 
 function renderCalendar() {
@@ -161,7 +162,10 @@ function renderCalendar() {
     const lighting = day.lighting[gameState.currentQuarterIndex];
 
     if (currentDayDisplay) {
-        currentDayDisplay.textContent = `${day.dayInMonth} de ${day.month} de ${day.year} - ${quarterName} (${lighting})`;
+        currentDayDisplay.innerHTML = `${day.dayInMonth} de ${day.month} de ${day.year} - ${quarterName} (${lighting})`;
+        currentDayDisplay.classList.remove('has-reset-btn');
+
+
     }
 
     // Update main day details view
@@ -225,6 +229,15 @@ function updateTravelButtonState() {
         btnPermanecer.classList.add('disabled');
         btnPermanecer.disabled = true;
     }
+
+    const journalSection = document.getElementById('journal-section');
+    if (journalSection) {
+        if (isGameStarted) {
+            journalSection.classList.remove('disabled');
+        } else {
+            journalSection.classList.add('disabled');
+        }
+    }
 }
 
 function isFastTerrain(terrainName) {
@@ -270,6 +283,7 @@ function handleDesbravar() {
     } else {
         renderCalendar(); // Update display for next action number
     }
+    autoSave();
 }
 
 function handlePermanecer() {
@@ -289,6 +303,7 @@ function handlePermanecer() {
     // For simplicity based on request "registre apenas se permaneceu", we add one action entry
     recordAction(currentSelectedTerrainData, 'Permanecer');
     advanceQuarter();
+    autoSave();
 }
 
 function recordAction(terrainData, actionType) {
@@ -326,6 +341,7 @@ function advanceQuarter() {
     }
 
     renderCalendar();
+    autoSave();
 }
 
 
@@ -367,11 +383,68 @@ function updateInfoDisplay(content) {
     if (infoDisplay) {
         currentInfoMessage = content; // Store the base message
         let newContent = content;
-        if (selectedTerrainInfo) {
+
+        let terrainText = selectedTerrainInfo || '';
+        let terrainColetarMod = 0;
+        let terrainColetarForbidden = false;
+
+        if (terrainText.includes('Não é possível COLETAR')) {
+            terrainColetarForbidden = true;
+        } else {
+            // Check for numeric modifiers in terrain text
+            // Matches "✥ -1 em rolagens de COLETAR" or similar
+            const match = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de COLETAR/);
+            if (match) {
+                terrainColetarMod = parseInt(match[1].replace('+', ''), 10);
+            }
+        }
+
+        // Seasonal Logic
+        let monthColetarMod = 0;
+        let showSeasonal = false;
+
+        if (calendarData.length > 0) {
+            const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+            if (['Cresceprimavera', 'Minguaprimavera'].includes(currentMonthName)) {
+                monthColetarMod = -1;
+                showSeasonal = true;
+            } else if (['Cresceoutono', 'Minguaoutono'].includes(currentMonthName)) {
+                monthColetarMod = +1;
+                showSeasonal = true;
+            } else if (['Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
+                monthColetarMod = -2;
+                showSeasonal = true;
+            }
+        }
+
+        // Combinar modificadores se não for proibido
+        let finalModifierString = '';
+
+        if (!terrainColetarForbidden) {
+            if (showSeasonal) {
+                // If month has info (showSeasonal), we perform combination.
+                const total = terrainColetarMod + monthColetarMod;
+                const sign = total > 0 ? '+' : '';
+                finalModifierString = `✥ ${sign}${total} em rolagens de COLETAR.`;
+
+                // If terrain had a modifier, we should strip it from terrainText to avoid duplication
+                if (terrainColetarMod !== 0) {
+                    // Remove the specific line/block.
+                    // Patterns: "<br>✥ -1 em rolagens de COLETAR", "✥ -1 em rolagens de COLETAR<br>", etc.
+                    terrainText = terrainText.replace(/<br>\s*✥\s*[+-]?\d+\s*em rolagens de COLETAR/g, '');
+                    terrainText = terrainText.replace(/✥\s*[+-]?\d+\s*em rolagens de COLETAR(<br>)?/g, '');
+                }
+            }
+        }
+
+        // Append Terrain Info
+        if (terrainText) {
+            // Cleanup potential double BRs or edges if replacement happened
+            // (Simple concatenation logic handles the spacing, we just need to ensure terrainText is clean)
             if (newContent) {
-                newContent += '<br><br>' + selectedTerrainInfo;
+                newContent += '<br><br>' + terrainText;
             } else {
-                newContent = selectedTerrainInfo;
+                newContent = terrainText;
             }
         }
 
@@ -399,27 +472,27 @@ function updateInfoDisplay(content) {
             }
         }
 
-        // Seasonal Modifiers
-        if (calendarData.length > 0) {
-            const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
-            let seasonalModifier = '';
-
-            if (['Cresceprimavera', 'Minguaprimavera'].includes(currentMonthName)) {
-                seasonalModifier = '✥ -1 em rolagens de COLETAR.';
-            } else if (['Cresceoutono', 'Minguaoutono'].includes(currentMonthName)) {
-                seasonalModifier = '✥ +1 em rolagens de COLETAR.';
-            } else if (['Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
-                seasonalModifier = '✥ -2 em rolagens de COLETAR.';
-            }
-
-            if (seasonalModifier) {
-                if (newContent) newContent += '<br><br>';
-                newContent += seasonalModifier;
-            }
+        // Append Combined/Seasonal Modifier
+        if (finalModifierString) {
+            if (newContent) newContent += '<br><br>';
+            newContent += finalModifierString;
         }
 
         infoDisplay.innerHTML = newContent;
     }
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast-notification");
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    // After 3 seconds, remove the show class to hide it
+    setTimeout(function () {
+        toast.classList.remove("show");
+    }, 3000);
 }
 
 // --- LÓGICA DE RENDERIZAÇÃO ---
@@ -856,9 +929,23 @@ function highlightSelectedHexagon(targetDisplayNumber, updateMainDisplay = true)
 
     const temperatureTable = document.getElementById('temperature-table');
     if (temperatureTable && updateMainDisplay) {
-        const selectedRow = temperatureTable.querySelector('tr.selected');
+        const selectedRow = temperatureTable.querySelector('tr.selected-row') || temperatureTable.querySelector('tr.selected');
         if (selectedRow) {
             updateTextWithTemperature(selectedRow);
+        } else if (originalTextWindowContent) {
+            // Show weather info even without temp selected
+            const lines = originalTextWindowContent.split('<br>');
+            const titleIndex = lines.findIndex(line => line.startsWith('<b>'));
+            const linesWithoutTitle = [...lines];
+            if (titleIndex > -1) {
+                linesWithoutTitle.splice(titleIndex, 1);
+            }
+            let content = linesWithoutTitle.filter(l => l.trim()).join('<br>');
+
+            if (content) {
+                content += '<br><br>✥ Além do hexagono de clima é preciso selecionar uma opção na tabela de Temperatura.';
+                updateInfoDisplay(content);
+            }
         }
     }
 }
@@ -875,7 +962,7 @@ function renderGrid() {
                             <input type="checkbox" id="toggle-numbers">
                             <span class="slider round"></span>
                         </label>
-                        <label for="toggle-numbers">Mostrar/Ocultar Números</label>
+                        <!--<label for="toggle-numbers">Mostrar/Ocultar Números</label>-->
                     </div>
                     <svg id="grid-svg" viewBox="0 0 800 600"></svg>
                 </div>`;
@@ -1248,6 +1335,9 @@ function initializeModal() {
         modal.style.display = 'none';
         const modalMapContainer = document.getElementById('modal-map-container');
         modalMapContainer.innerHTML = ''; // Limpa o conteúdo do mapa ao fechar
+
+        // Trigger auto save when modal closes
+        autoSave();
     }
 
     selectedHexagonContainer.addEventListener('click', openModal);
@@ -1282,16 +1372,16 @@ function initializeModal() {
 
 function getTerrainName(imageName) {
     const terrainMap = {
-        'montanhasAltas.png': 'Montanhas Altas',
-        'planicie.png': 'Planície',
-        'charco.png': 'Charco',
-        'montanhas.png': 'Montanhas',
-        'colinas.png': 'Colinas',
-        'pantano.png': 'Pantano',
-        'floresta.png': 'Floresta',
-        'florestaSombria.png': 'Floresta Sombria',
-        'ruinas.png': 'Ruínas',
-        'lagoRio.png': 'Lago ou Rio'
+        'montanhasAltas.webp': 'Montanhas Altas',
+        'planicie.webp': 'Planície',
+        'charco.webp': 'Charco',
+        'montanhas.webp': 'Montanhas',
+        'colinas.webp': 'Colinas',
+        'pantano.webp': 'Pantano',
+        'floresta.webp': 'Floresta',
+        'florestaSombria.webp': 'Floresta Sombria',
+        'ruinas.webp': 'Ruínas',
+        'lagoRio.webp': 'Lago ou Rio'
     };
     return terrainMap[imageName] || imageName.split('.')[0];
 }
@@ -1304,9 +1394,9 @@ function initializeTerrainModal() {
 
 
     const terrainImages = [
-        'charco.png', 'colinas.png', 'floresta.png', 'florestaSombria.png',
-        'lagoRio.png', 'montanhas.png', 'montanhasAltas.png', 'pantano.png',
-        'planicie.png', 'ruinas.png'
+        'charco.webp', 'colinas.webp', 'floresta.webp', 'florestaSombria.webp',
+        'lagoRio.webp', 'montanhas.webp', 'montanhasAltas.webp', 'pantano.webp',
+        'planicie.webp', 'ruinas.webp'
     ];
 
     const terrainColors = {
@@ -1432,9 +1522,25 @@ function initializeTerrainModal() {
 
             const temperatureTable = document.getElementById('temperature-table');
             if (temperatureTable) {
-                const selectedRow = temperatureTable.querySelector('tr.selected');
+                const selectedRow = temperatureTable.querySelector('tr.selected-row') || temperatureTable.querySelector('tr.selected');
                 if (selectedRow) {
                     updateTextWithTemperature(selectedRow);
+                } else if (originalTextWindowContent) {
+                    // Fallback to preserve weather info if available
+                    const lines = originalTextWindowContent.split('<br>');
+                    const titleIndex = lines.findIndex(line => line.startsWith('<b>'));
+                    const linesWithoutTitle = [...lines];
+                    if (titleIndex > -1) {
+                        linesWithoutTitle.splice(titleIndex, 1);
+                    }
+                    let content = linesWithoutTitle.filter(l => l.trim()).join('<br>');
+
+                    if (content) {
+                        content += '<br><br>✥ Além do hexagono de clima é preciso selecionar uma opção na tabela de Temperatura.';
+                        updateInfoDisplay(content);
+                    } else {
+                        updateInfoDisplay(""); // Should not happen if originalTextWindowContent is valid
+                    }
                 } else {
                     updateInfoDisplay("");
                 }
@@ -1526,11 +1632,18 @@ function setupCalendarModal() {
             items.forEach(({ day, index }) => {
                 const dayEl = document.createElement('div');
                 dayEl.className = 'calendar-day-item';
-                if (index === gameState.currentDayIndex) dayEl.classList.add('selected');
+                if (index === gameState.currentDayIndex) {
+                    dayEl.classList.add('selected');
+                    dayEl.classList.add('viewing-day');
+                }
 
                 dayEl.innerHTML = `<div>${day.dayInMonth}</div>`;
                 dayEl.title = `${day.dayInMonth} de ${day.month}`; // Tooltip for context
-                dayEl.onclick = () => showDayDetails(day);
+                dayEl.onclick = () => {
+                    document.querySelectorAll('.calendar-day-item').forEach(el => el.classList.remove('viewing-day'));
+                    dayEl.classList.add('viewing-day');
+                    showDayDetails(day);
+                };
                 daysContainer.appendChild(dayEl);
             });
 
@@ -1762,6 +1875,8 @@ function initializeJournal() {
 
         editingEntryId = null;
         editingDayIndex = null;
+        saveToLocalStorage(); // Auto-save
+        autoSave();
     });
 
     btnCancel.addEventListener('click', () => {
@@ -1951,6 +2066,8 @@ function initializeModalJournal() {
                 renderJournalEntries();
             }
             editingDayIndex = null;
+            saveToLocalStorage(); // Auto-save
+            autoSave();
         });
     }
 
@@ -1967,6 +2084,34 @@ function initializeModalJournal() {
 
 
 
+
+function handleResetStartDay(e) {
+    if (e) e.stopPropagation(); // Prevent triggering modal
+
+    // Reset Game State
+    calendarData = [];
+    gameState.currentDayIndex = 0;
+    gameState.currentActionCount = 0;
+    gameState.currentQuarterIndex = 0;
+    // We don't reset terrain/weather selections as requested
+
+    // Update Display
+    const currentDayDisplay = document.getElementById('current-day-display');
+    if (currentDayDisplay) {
+        currentDayDisplay.innerHTML = 'Selecione o mês e dia para iniciar';
+        currentDayDisplay.classList.remove('has-reset-btn');
+    }
+
+    // Reset Buttons
+    updateTravelButtonState();
+
+    // Clear Day Details
+    const detailsMain = document.getElementById('day-details-main');
+    if (detailsMain) detailsMain.innerHTML = '';
+
+    saveToLocalStorage(); // Auto-save cleared state
+    // autoSave not needed here as we want immediate save logic
+}
 
 function setupStartGameModal() {
     const modal = document.getElementById('start-game-modal');
@@ -2010,6 +2155,8 @@ function setupStartGameModal() {
         startNewDay(false);
         renderCalendar();
         modal.style.display = "none";
+
+        saveToLocalStorage(); // Auto-save initial state
     }
 }
 
@@ -2149,6 +2296,16 @@ function renderWeatherNavigation(selectedHexName = '3N') {
         }, 500);
     };
 
+    // Add click listener for auto-save on map
+    const mapContainer = document.getElementById('weather-nav-svg');
+    if (mapContainer) {
+        mapContainer.addEventListener('click', () => {
+            // We can't easily hook into every internal click without specific logic,
+            // but handleNavigate already calls autoSave.
+            // If we want "click on anything", we might add a global listener or rely on logic points.
+        });
+    }
+
     initializeDiceRoller(hexConfig);
 }
 
@@ -2260,6 +2417,7 @@ function handleNavigate(navName) {
 
     // Move
     selectHexagon(newDisplayId, navName);
+    autoSave();
 }
 
 function initializeDiceRoller(hexConfig) {
@@ -2511,3 +2669,221 @@ function initializeDiceRollerTemp() {
         }
     }
 }
+
+// --- PERSISTENCE ---
+
+
+function getGameStateData() {
+    return {
+        calendarData,
+        gameState,
+        currentSelectedHexagon,
+        selectedTemperatureRowIndex,
+        selectedTerrainInfo,
+        currentSelectedTerrainData,
+        originalTextWindowContent,
+        currentInfoMessage, // Save this
+        timestamp: new Date().toISOString()
+    };
+}
+
+let saveTimer;
+function autoSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+        saveToLocalStorage();
+    }, 500); // Debounce save for 500ms
+}
+
+function restoreGameState(data) {
+    if (!data) return;
+
+    try {
+        calendarData = data.calendarData || [];
+        gameState = data.gameState || gameState;
+        currentSelectedHexagon = data.currentSelectedHexagon;
+        selectedTemperatureRowIndex = data.selectedTemperatureRowIndex;
+        selectedTerrainInfo = data.selectedTerrainInfo || '';
+        currentSelectedTerrainData = data.currentSelectedTerrainData;
+        originalTextWindowContent = data.originalTextWindowContent || '';
+        if (data.currentInfoMessage) {
+            currentInfoMessage = data.currentInfoMessage;
+        }
+
+        // Ensure hexagonData matches the saved month/season
+        if (gameState && CALENDAR_CONFIG.months[gameState.currentMonthIndex]) {
+            const monthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+            if (typeof updateActiveHexagonData === 'function') {
+                updateActiveHexagonData(monthName);
+            }
+        }
+
+        // Restore UI
+        if (currentSelectedTerrainData) {
+            renderSelectedTerrain(currentSelectedTerrainData);
+        } else {
+            // Reset terrain placeholder
+            const solitaryTerrainSvg = document.getElementById('solitary-terrain-svg');
+            if (solitaryTerrainSvg) solitaryTerrainSvg.innerHTML = '';
+
+            const selectedTerrainTitle = document.getElementById('selected-terrain-title');
+            if (selectedTerrainTitle) selectedTerrainTitle.textContent = 'Selecione o Terreno';
+        }
+
+        if (currentSelectedHexagon) {
+            // This might trigger effects, so be careful. 
+            // renderWeatherNavigation depends on selection.
+            // Highlight might update text window.
+            renderWeatherNavigation(); // Reset or Restore? Maybe tricky.
+            // Let's rely on highlightSelectedHexagon to restore visual state
+            // But highlightSelectedHexagon uses originalTextWindowContent which we just restored.
+            highlightSelectedHexagon(currentSelectedHexagon, true);
+        } else {
+            const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
+            if (selectedHexagonTitle) selectedHexagonTitle.textContent = 'Selecione o Clima';
+            const solitarySvg = document.getElementById('solitary-hexagon-svg');
+            if (solitarySvg) solitarySvg.innerHTML = '';
+        }
+
+        // Restore Temperature Table Selection
+        if (selectedTemperatureRowIndex !== null) {
+            // We need to wait for DOM updates? No, modification is direct.
+            // The table is re-rendered by updateTemperatureTable called in main flow?
+            // We should ensure table is correct for current month first.
+            updateTemperatureTable(); // Ensure table matches month
+            const table = document.getElementById('temperature-table');
+            if (table) {
+                const rows = table.querySelectorAll('tr');
+                if (rows[selectedTemperatureRowIndex]) {
+                    rows[selectedTemperatureRowIndex].classList.add('selected-row');
+                }
+            }
+        }
+
+        renderCalendar();
+
+        // Restore info display content properly
+        if (currentInfoMessage) {
+            updateInfoDisplay(currentInfoMessage);
+        }
+
+        showToast("Jogo carregado com sucesso!");
+        updateTravelButtonState();
+
+        // Also update text window content directly if needed
+        const textWindow = document.getElementById('text-window');
+        if (textWindow && originalTextWindowContent) textWindow.innerHTML = originalTextWindowContent;
+
+        // Force Visual Persistence of Selected Weather
+        if (currentSelectedHexagon !== null) {
+            const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
+            renderSelectedHexagon(currentSelectedHexagon); // This re-draws the solitary hex and title
+            renderWeatherNavigation(); // Use default '3N' or just reset. Do NOT pass hex ID.
+        }
+
+
+    } catch (e) {
+        console.error("Erro ao carregar save:", e);
+        alert("Erro ao carregar o jogo salvo.");
+    }
+}
+
+function saveToLocalStorage() {
+    const data = getGameStateData();
+    localStorage.setItem('fbl_hexflower_save', JSON.stringify(data));
+    console.log("Jogo salvo automaticamente.");
+}
+
+function loadFromLocalStorage() {
+    const json = localStorage.getItem('fbl_hexflower_save');
+    if (json) {
+        const data = JSON.parse(json);
+        restoreGameState(data);
+        return true;
+    }
+    return false;
+}
+
+function exportSaveFile() {
+    const data = getGameStateData();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fbl_tracker_save_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importSaveFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            restoreGameState(data);
+            saveToLocalStorage(); // Sync import to LS
+        } catch (err) {
+            console.error(err);
+            alert("Arquivo de save inválido.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
+}
+
+function setupPersistence() {
+    const btnSave = document.getElementById('btn-save-game');
+    const btnLoad = document.getElementById('btn-load-game');
+    const fileInput = document.getElementById('file-input-load');
+
+    if (btnSave) {
+        btnSave.addEventListener('click', () => {
+            saveToLocalStorage(); // Also save to LS just in case
+            exportSaveFile();
+        });
+    }
+
+    if (btnLoad && fileInput) {
+        btnLoad.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', importSaveFile);
+    }
+
+    const btnReset = document.getElementById('btn-reset-game');
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            if (confirm("Tem certeza que deseja resetar todo o jogo? Isso apagará o progresso salvo.")) {
+                localStorage.removeItem('fbl_hexflower_save');
+                location.reload();
+            }
+        });
+    }
+
+    // Auto-load if data exists and user hasn't started (optional, maybe prompting is better? 
+    // Usually web apps auto-load. Let's auto-load silently if state is found.)
+    // Check if we have data
+    if (localStorage.getItem('fbl_hexflower_save')) {
+        // We load, but maybe we should ask? For now, let's load to restore session.
+        loadFromLocalStorage();
+    }
+}
+
+// Hook into DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Other inits are called in the original listener...
+    // We can add a new listener or append. 
+    // Since we are appending this code, we can just run setupPersistence() if we are sure DOM is ready? 
+    // No, script is loaded usually in head or body end.
+    // We should rely on the existing DOMContentLoaded or add another one.
+    // Adding another one works fine.
+    setupPersistence();
+});

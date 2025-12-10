@@ -5,14 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Companion para Forbidden Lands</title>
-    <link rel="icon" type="image/x-icon" href="img/icon.ico">
+    <link rel="icon" type="image/x-icon" href="img/icons/icon.ico">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <header id="site-header">
-        <img src="img/icon.webp" alt="Logo" id="header-logo">
+        <img src="img/icons/icon.webp" alt="Logo" id="header-logo">
         <h1>Tracker de viagem para Forbidden Lands</h1>
+        <div id="header-controls">
+            <button id="btn-save-game" class="header-btn" title="Salvar Estado">
+                <img src="img/icons/save.svg" alt="" class="btn-icon">
+            </button>
+            <button id="btn-load-game" class="header-btn" title="Carregar Estado">
+                <img src="img/icons/load.svg" alt="" class="btn-icon">
+            </button>
+            <button id="btn-reset-game" class="header-btn" title="Resetar Jogo">
+                <img src="img/icons/reset.svg" alt="" class="btn-icon">
+            </button>
+            <input type="file" id="file-input-load" accept=".json" style="display: none;">
+        </div>
     </header>
 
     <div id="info-container">
@@ -43,7 +55,8 @@
 
             <div id="travel-controls">
                 <div class="desbravar-container">
-                    <button id="btn-desbravar" class="travel-btn">DESBRAVAR</button>
+                    <button id="btn-desbravar" class="travel-btn"><img src="img/icons/explore.svg" alt=""
+                            class="btn-icon">DESBRAVAR</button>
                     <div class="mounted-switch-container">
                         <label class="switch">
                             <input type="checkbox" id="toggle-mounted">
@@ -52,13 +65,14 @@
                         <label for="toggle-mounted">Todos Montados?</label>
                     </div>
                 </div>
-                <button id="btn-permanecer" class="travel-btn">PERMANECER</button>
+                <button id="btn-permanecer" class="travel-btn"><img src="img/icons/stay.svg" alt=""
+                        class="btn-icon">PERMANECER</button>
                 <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
             </div>
 
             <div id="day-details-main"></div>
 
-            <div id="journal-section" style="display:none;">
+            <div id="journal-section">
                 <h3>Diário do Dia</h3>
 
                 <div id="journal-entries-list" class="journal-entries-list"></div>
@@ -106,55 +120,6 @@
         </div>
 
 
-    </div>
-
-    <div id="calendar-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Diário de Viagem</h2>
-            <div id="calendar-grid"></div>
-            <div id="day-details"></div>
-
-            <div id="modal-journal-section" style="display:none; margin-top: 20px;">
-                <div id="modal-journal-controls"
-                    style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                    <label for="modal-journal-quarter-select">Momento:</label>
-                    <select id="modal-journal-quarter-select"
-                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
-                        <option value="0">Manhã</option>
-                        <option value="1">Tarde</option>
-                        <option value="2">Anoitecer</option>
-                        <option value="3">Noite</option>
-                    </select>
-                </div>
-
-                <div class="editor-toolbar modal-editor-toolbar">
-                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
-                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
-                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
-                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
-                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
-                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
-                    <div class="color-picker-wrapper" title="Cor do Texto">
-                        <span>A</span>
-                        <input type="color" id="modal-editor-color" value="#e0e0e0">
-                    </div>
-                </div>
-                <div id="modal-journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
-                </div>
-
-                <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button id="modal-btn-save-entry">Salvar Entrada</button>
-                    <button id="modal-btn-cancel-edit"
-                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="hexagon-modal" class="modal">
@@ -244,6 +209,55 @@
         </div>
     </div>
 
+    <div id="calendar-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Diário de Viagem</h2>
+            <div id="calendar-grid"></div>
+            <div id="day-details"></div>
+
+            <div id="modal-journal-section" style="display:none; margin-top: 20px;">
+                <div id="modal-journal-controls"
+                    style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <label for="modal-journal-quarter-select">Momento:</label>
+                    <select id="modal-journal-quarter-select"
+                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                        <option value="0">Manhã</option>
+                        <option value="1">Tarde</option>
+                        <option value="2">Anoitecer</option>
+                        <option value="3">Noite</option>
+                    </select>
+                </div>
+
+                <div class="editor-toolbar modal-editor-toolbar">
+                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
+                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
+                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
+                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
+                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
+                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
+                    <div class="color-picker-wrapper" title="Cor do Texto">
+                        <span>A</span>
+                        <input type="color" id="modal-editor-color" value="#e0e0e0">
+                    </div>
+                </div>
+                <div id="modal-journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
+                </div>
+
+                <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button id="modal-btn-save-entry">Salvar Entrada</button>
+                    <button id="modal-btn-cancel-edit"
+                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="start-game-modal" class="modal">
         <div class="modal-content start-game-content">
             <span class="close-button">&times;</span>
@@ -259,6 +273,8 @@
             <button id="btn-start-game">Iniciar</button>
         </div>
     </div>
+
+    <div id="toast-notification" class="toast"></div>
 
     <script src="hexagon_data.js"></script>
     <script src="script.js"></script>

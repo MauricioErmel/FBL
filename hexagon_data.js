@@ -1,6 +1,6 @@
 const hexagonDataWarm = {
     '1A': {
-        redImage: 'img/weather/bloqueioEsquerdo.png',
+        redImage: 'img/weather/bloqueioEsquerdo.webp',
         blueImage: null,
         //text: '1A',
         blocked: true,
@@ -9,7 +9,7 @@ const hexagonDataWarm = {
         r: -1
     },
     '0': {
-        redImage: 'img/weather/bloqueioSuperior.png',
+        redImage: 'img/weather/bloqueioSuperior.webp',
         blueImage: null,
         //text: '0',
         blocked: true,
@@ -18,7 +18,7 @@ const hexagonDataWarm = {
         r: -1
     },
     '3A': {
-        redImage: 'img/weather/bloqueioDireito.png',
+        redImage: 'img/weather/bloqueioDireito.webp',
         blueImage: null,
         //text: '3A',
         blocked: true,
@@ -27,7 +27,7 @@ const hexagonDataWarm = {
         r: -1
     },
     '1B': {
-        redImage: 'img/weather/bloqueioInferiorEsquerdo.png',
+        redImage: 'img/weather/bloqueioInferiorEsquerdo.webp',
         blueImage: null,
         //text: '1B',
         blocked: true,
@@ -36,7 +36,7 @@ const hexagonDataWarm = {
         r: 2
     },
     '2B': {
-        redImage: 'img/weather/bloqueioInferiorDireito.png',
+        redImage: 'img/weather/bloqueioInferiorDireito.webp',
         blueImage: null,
         //text: '2B',
         blocked: true,
@@ -45,7 +45,7 @@ const hexagonDataWarm = {
         r: 1
     },
     '19A': {
-        redImage: 'img/weather/bloqueioInferior.png',
+        redImage: 'img/weather/bloqueioInferior.webp',
         blueImage: null,
         //text: '19A',
         blocked: true,
@@ -54,116 +54,116 @@ const hexagonDataWarm = {
         r: 5
     },
     1: {
-        redImage: 'img/weather/diaQuenteDeSol.png',
+        redImage: 'img/weather/diaQuenteDeSol.webp',
         blueImage: null,
         text: '',
         temperatureModHot: null
     },
     2: {
-        redImage: 'img/weather/diaQuenteDeSol.png',
+        redImage: 'img/weather/diaQuenteDeSol.webp',
         blueImage: null,
         text: '',
         temperatureModHot: null
     },
     3: {
-        redImage: 'img/weather/temporal.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/temporal.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModHot: -4
     },
     4: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModHot: +1
     },
     5: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -1
     },
     6: {
-        redImage: 'img/weather/garoa.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/garoa.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -2
     },
     7: {
-        redImage: 'img/weather/nuvensPesadas.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nuvensPesadas.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -1
     },
     8: {
-        redImage: 'img/weather/chuvaForte.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/chuvaForte.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModHot: -4
     },
     9: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModHot: null
     },
     10: {
-        redImage: 'img/weather/nuvensClaras.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nuvensClaras.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -1
     },
     11: {
-        redImage: 'img/weather/garoa.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/garoa.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModHot: -1
     },
     12: {
-        redImage: 'img/weather/chuvaLeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaLeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -2
     },
     13: {
-        redImage: 'img/weather/chuvaForte.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaForte.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -3
     },
     14: {
-        redImage: 'img/weather/garoa.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/garoa.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -2
     },
     15: {
-        redImage: 'img/weather/nuvensClaras.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nuvensClaras.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModHot: null
     },
     16: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModHot: null
     },
     17: {
-        redImage: 'img/weather/encoberto.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/encoberto.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModHot: null
     },
     18: {
-        redImage: 'img/weather/chuvaLeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaLeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModHot: -2
     },
     19: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModHot: +1
     }
@@ -171,7 +171,7 @@ const hexagonDataWarm = {
 
 const hexagonDataIntermediate = {
     '1A': {
-        redImage: 'img/weather/bloqueioEsquerdo.png',
+        redImage: 'img/weather/bloqueioEsquerdo.webp',
         blueImage: null,
         //text: '1A',
         blocked: true,
@@ -180,7 +180,7 @@ const hexagonDataIntermediate = {
         r: -1
     },
     '0': {
-        redImage: 'img/weather/bloqueioSuperior.png',
+        redImage: 'img/weather/bloqueioSuperior.webp',
         blueImage: null,
         //text: '0',
         blocked: true,
@@ -189,7 +189,7 @@ const hexagonDataIntermediate = {
         r: -1
     },
     '3A': {
-        redImage: 'img/weather/bloqueioDireito.png',
+        redImage: 'img/weather/bloqueioDireito.webp',
         blueImage: null,
         //text: '3A',
         blocked: true,
@@ -198,7 +198,7 @@ const hexagonDataIntermediate = {
         r: -1
     },
     '1B': {
-        redImage: 'img/weather/bloqueioInferiorEsquerdo.png',
+        redImage: 'img/weather/bloqueioInferiorEsquerdo.webp',
         blueImage: null,
         //text: '1B',
         blocked: true,
@@ -207,7 +207,7 @@ const hexagonDataIntermediate = {
         r: 2
     },
     '2B': {
-        redImage: 'img/weather/bloqueioInferiorDireito.png',
+        redImage: 'img/weather/bloqueioInferiorDireito.webp',
         blueImage: null,
         //text: '2B',
         blocked: true,
@@ -216,7 +216,7 @@ const hexagonDataIntermediate = {
         r: 1
     },
     '19A': {
-        redImage: 'img/weather/bloqueioInferior.png',
+        redImage: 'img/weather/bloqueioInferior.webp',
         blueImage: null,
         //text: '19A',
         blocked: true,
@@ -225,116 +225,116 @@ const hexagonDataIntermediate = {
         r: 5
     },
     1: {
-        redImage: 'img/weather/diaDeFrioCortante.png',
+        redImage: 'img/weather/diaDeFrioCortante.webp',
         blueImage: null,
         text: '',
         temperatureModCold: null
     },
     2: {
-        redImage: 'img/weather/diaDeFrioCortante.png',
+        redImage: 'img/weather/diaDeFrioCortante.webp',
         blueImage: null,
         text: '',
         temperatureModCold: null
     },
     3: {
-        redImage: 'img/weather/neve.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/neve.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModCold: +4
     },
     4: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModCold: null
     },
     5: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     6: {
-        redImage: 'img/weather/nuvensPesadas.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nuvensPesadas.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     7: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     8: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModCold: +2
     },
     9: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     10: {
-        redImage: 'img/weather/encoberto.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/encoberto.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     11: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     12: {
-        redImage: 'img/weather/chuvaLeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaLeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +2
     },
     13: {
-        redImage: 'img/weather/chuvaForte.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaForte.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +3
     },
     14: {
-        redImage: 'img/weather/garoa.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/garoa.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +2
     },
     15: {
-        redImage: 'img/weather/garoa.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/garoa.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: +1
     },
     16: {
-        redImage: 'img/weather/nuvensClaras.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nuvensClaras.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     17: {
-        redImage: 'img/weather/encoberto.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/encoberto.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     18: {
-        redImage: 'img/weather/chuvaLeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/chuvaLeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +2
     },
     19: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModCold: null
     }
@@ -342,7 +342,7 @@ const hexagonDataIntermediate = {
 
 const hexagonDataWinter = {
     '1A': {
-        redImage: 'img/weather/bloqueioEsquerdo.png',
+        redImage: 'img/weather/bloqueioEsquerdo.webp',
         blueImage: null,
         //text: '1A',
         blocked: true,
@@ -351,7 +351,7 @@ const hexagonDataWinter = {
         r: -1
     },
     '0': {
-        redImage: 'img/weather/bloqueioSuperior.png',
+        redImage: 'img/weather/bloqueioSuperior.webp',
         blueImage: null,
         //text: '0',
         blocked: true,
@@ -360,7 +360,7 @@ const hexagonDataWinter = {
         r: -1
     },
     '3A': {
-        redImage: 'img/weather/bloqueioDireito.png',
+        redImage: 'img/weather/bloqueioDireito.webp',
         blueImage: null,
         //text: '3A',
         blocked: true,
@@ -369,7 +369,7 @@ const hexagonDataWinter = {
         r: -1
     },
     '1B': {
-        redImage: 'img/weather/bloqueioInferiorEsquerdo.png',
+        redImage: 'img/weather/bloqueioInferiorEsquerdo.webp',
         blueImage: null,
         //text: '1B',
         blocked: true,
@@ -378,7 +378,7 @@ const hexagonDataWinter = {
         r: 2
     },
     '2B': {
-        redImage: 'img/weather/bloqueioInferiorDireito.png',
+        redImage: 'img/weather/bloqueioInferiorDireito.webp',
         blueImage: null,
         //text: '2B',
         blocked: true,
@@ -387,7 +387,7 @@ const hexagonDataWinter = {
         r: 1
     },
     '19A': {
-        redImage: 'img/weather/bloqueioInferior.png',
+        redImage: 'img/weather/bloqueioInferior.webp',
         blueImage: null,
         //text: '19A',
         blocked: true,
@@ -396,116 +396,116 @@ const hexagonDataWinter = {
         r: 5
     },
     1: {
-        redImage: 'img/weather/diaDeFrioCortante.png',
+        redImage: 'img/weather/diaDeFrioCortante.webp',
         blueImage: null,
         text: '',
         temperatureModCold: null
     },
     2: {
-        redImage: 'img/weather/diaDeFrioCortante.png',
+        redImage: 'img/weather/diaDeFrioCortante.webp',
         blueImage: null,
         text: '',
         temperatureModCold: null
     },
     3: {
-        redImage: 'img/weather/nevasca.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/nevasca.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModCold: +4
     },
     4: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModCold: null
     },
     5: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     6: {
-        redImage: 'img/weather/nuvensPesadas.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nuvensPesadas.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     7: {
-        redImage: 'img/weather/encoberto.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/encoberto.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     8: {
-        redImage: 'img/weather/neve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/neve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +3
     },
     9: {
-        redImage: 'img/weather/ceuLimpo.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/ceuLimpo.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     10: {
-        redImage: 'img/weather/nuvensClaras.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/nuvensClaras.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     11: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     12: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: +1
     },
     13: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento3.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento3.webp',
         text: '',
         temperatureModCold: +3
     },
     14: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +2
     },
     15: {
-        redImage: 'img/weather/nuvensClaras.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nuvensClaras.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     16: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento1.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento1.webp',
         text: '',
         temperatureModCold: null
     },
     17: {
-        redImage: 'img/weather/encoberto.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/encoberto.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +1
     },
     18: {
-        redImage: 'img/weather/rajadaDeNeve.png',
-        blueImage: 'img/weather/vento2.png',
+        redImage: 'img/weather/rajadaDeNeve.webp',
+        blueImage: 'img/weather/vento2.webp',
         text: '',
         temperatureModCold: +2
     },
     19: {
-        redImage: 'img/weather/nebuloso.png',
-        blueImage: 'img/weather/vento0.png',
+        redImage: 'img/weather/nebuloso.webp',
+        blueImage: 'img/weather/vento0.webp',
         text: '',
         temperatureModCold: null
     }
@@ -530,24 +530,24 @@ const weatherEffects = {
 function getImageTitle(imagePath) {
     if (!imagePath) return '';
     const imageName = imagePath.split('/').pop();
-    if (imageName === 'ceuLimpo.png') return 'Céu Limpo';
-    if (imageName === 'chuvaForte.png') return 'Chuva Forte';
-    if (imageName === 'chuvaLeve.png') return 'Chuva Leve';
-    if (imageName === 'diaQuenteDeSol.png') return 'Dia Quente de Sol';
-    if (imageName === 'diaDeFrioCortante.png') return 'Dia de Frio Cortante';
-    if (imageName === 'encoberto.png') return 'Encoberto';
-    if (imageName === 'garoa.png') return 'Garoa';
-    if (imageName === 'nebuloso.png') return 'Nebuloso';
-    if (imageName === 'nevasca.png') return 'Nevasca';
-    if (imageName === 'neve.png') return 'Neve';
-    if (imageName === 'nuvensClaras.png') return 'Nuvens Claras';
-    if (imageName === 'nuvensPesadas.png') return 'Nuvens Pesadas';
-    if (imageName === 'rajadaDeNeve.png') return 'Rajada de Neve';
-    if (imageName === 'temporal.png') return 'Temporal';
-    if (imageName === 'vento0.png') return 'Sem Vento';
-    if (imageName === 'vento1.png') return 'Brisa';
-    if (imageName === 'vento2.png') return 'Ventando';
-    if (imageName === 'vento3.png') return 'Ventania Forte';
+    if (imageName === 'ceuLimpo.webp') return 'Céu Limpo';
+    if (imageName === 'chuvaForte.webp') return 'Chuva Forte';
+    if (imageName === 'chuvaLeve.webp') return 'Chuva Leve';
+    if (imageName === 'diaQuenteDeSol.webp') return 'Dia Quente de Sol';
+    if (imageName === 'diaDeFrioCortante.webp') return 'Dia de Frio Cortante';
+    if (imageName === 'encoberto.webp') return 'Encoberto';
+    if (imageName === 'garoa.webp') return 'Garoa';
+    if (imageName === 'nebuloso.webp') return 'Nebuloso';
+    if (imageName === 'nevasca.webp') return 'Nevasca';
+    if (imageName === 'neve.webp') return 'Neve';
+    if (imageName === 'nuvensClaras.webp') return 'Nuvens Claras';
+    if (imageName === 'nuvensPesadas.webp') return 'Nuvens Pesadas';
+    if (imageName === 'rajadaDeNeve.webp') return 'Rajada de Neve';
+    if (imageName === 'temporal.webp') return 'Temporal';
+    if (imageName === 'vento0.webp') return 'Sem Vento';
+    if (imageName === 'vento1.webp') return 'Brisa';
+    if (imageName === 'vento2.webp') return 'Ventando';
+    if (imageName === 'vento3.webp') return 'Ventania Forte';
     return '';
 }
 
@@ -610,8 +610,8 @@ function processDataSets(data, excludedPhrases = []) {
         const redImageName = hexagon.redImage ? hexagon.redImage.split('/').pop() : null;
         const blueImageName = hexagon.blueImage ? hexagon.blueImage.split('/').pop() : null;
 
-        const conditionRed = ['chuvaForte.png', 'temporal.png', 'neve.png', 'nevasca.png'].includes(redImageName);
-        const conditionBlue = blueImageName === 'vento3.png';
+        const conditionRed = ['chuvaForte.webp', 'temporal.webp', 'neve.webp', 'nevasca.webp'].includes(redImageName);
+        const conditionBlue = blueImageName === 'vento3.webp';
 
         if (conditionRed && conditionBlue) {
             if (effectsMap.has('CAMINHAR requer uma rolagem de Resiliência')) {
