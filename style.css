@@ -1,7 +1,7 @@
 :root {
     /* Strict 7-Color Palette */
-    --col-bg-main: #1E3138;
-    --col-bg-surface: #464243;
+    --col-bg-main: #18282D;
+    --col-bg-surface: #33373A;
     --col-accent-deep: #A84557;
     --col-accent-warm: #D97566;
     --col-text-highlight: #F9CE8A;
@@ -154,7 +154,7 @@ h6 {
 }
 
 #modal-map-container .hex-group:hover .hexagon {
-    stroke: var(--col-text-primary);
+    stroke: var(--col-accent-cool);
 }
 
 /* --- Solitary Hexagon --- */
@@ -807,6 +807,32 @@ button:hover {
     font-size: 0.9em;
     color: var(--col-text-highlight);
     margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.quarter-note-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    margin-left: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.quarter-note-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.quarter-note-btn img {
+    width: 16px;
+    height: 16px;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
 }
 
 .slot-detail {
@@ -848,6 +874,16 @@ button:hover {
     display: flex;
     gap: 10px;
     margin-top: 5px;
+}
+
+.quarter-detail.current-quarter {
+    background-color: rgba(249, 206, 138, 0.1);
+    border-left: 2px solid var(--col-text-highlight);
+    padding-left: 8px;
+    margin-left: -10px;
+    /* Counteract padding to align */
+    padding-right: 5px;
+    border-radius: 0 4px 4px 0;
 }
 
 .weather-images img {
@@ -1413,6 +1449,20 @@ button.disabled,
     gap: 15px;
     margin-bottom: 20px;
     width: 100%;
+}
+
+@keyframes flashHighlight {
+    0% {
+        background-color: rgba(249, 206, 138, 0.4);
+    }
+
+    100% {
+        background-color: var(--col-bg-main);
+    }
+}
+
+.flash-highlight {
+    animation: flashHighlight 1.5s ease-out;
 }
 
 .journal-entry {

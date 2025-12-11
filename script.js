@@ -29,14 +29,14 @@ let currentSelectedTerrainData = null;
 const CALENDAR_CONFIG = {
     startYear: 1165,
     months: [
-        { name: 'Cresceoutono', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Minguaoutono', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Cresceinverno', days: 45, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Minguainverno', days: 46, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] },
         { name: 'Cresceprimavera', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
         { name: 'Minguaprimavera', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
         { name: 'Cresceverão', days: 45, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
-        { name: 'Minguaverão', days: 46, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] }
+        { name: 'Minguaverão', days: 46, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
+        { name: 'Cresceoutono', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Minguaoutono', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Cresceinverno', days: 45, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Minguainverno', days: 46, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] }
     ]
 };
 
@@ -207,6 +207,17 @@ function handleAdvanceDay() {
     // if (weatherContainer) weatherContainer.innerHTML = '';
 
     renderCalendar(); // Update UI to show new day details
+
+    // Open Modal and focus on Weather Navigation
+    if (typeof startDayWeatherModal === 'function') {
+        startDayWeatherModal();
+        setTimeout(() => {
+            const weatherNav = document.getElementById('weather-navigation');
+            if (weatherNav) {
+                weatherNav.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 300); // Slight delay to ensure modal render
+    }
 }
 
 function updateTravelButtonState() {
@@ -1340,6 +1351,8 @@ function initializeModal() {
         autoSave();
     }
 
+    window.startDayWeatherModal = openModal;
+    window.startDayWeatherModalClose = closeModal;
     selectedHexagonContainer.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
     window.addEventListener('click', (e) => {
@@ -1683,8 +1696,21 @@ function showDayDetails(day) {
 
     day.quarters.forEach((q, qIdx) => {
         const lighting = day.lighting[qIdx];
-        html += `<div class="quarter-detail">
-                    <div class="quarter-title">${q.name} (${lighting})</div>`;
+        const isCurrent = qIdx === gameState.currentQuarterIndex;
+
+        const quarterEntries = (Array.isArray(day.journal)) ? day.journal.filter(e => e.quarterIndex === qIdx) : [];
+
+        html += `<div class="quarter-detail${isCurrent ? ' current-quarter' : ''}">
+                    <div class="quarter-title">
+                        ${q.name} (${lighting})`;
+
+        quarterEntries.forEach(entry => {
+            html += `<button class="quarter-note-btn view-note-btn" data-day-id="${day.id}" data-entry-id="${entry.id}" title="Ver nota">
+                        <img src="img/icons/note.svg">
+                      </button>`;
+        });
+
+        html += `   </div>`;
 
         if (q.actions.length === 0) {
             html += `<div class="slot-detail"><span>-</span></div>`;
@@ -1720,7 +1746,7 @@ function showDayDetails(day) {
 
         entries.forEach(entry => {
             const quarterName = QUARTERS[entry.quarterIndex] || 'Desconhecido';
-            journalHtml += `<div class="journal-entry">
+            journalHtml += `<div class="journal-entry" data-entry-id="${entry.id}">
                         <div class="journal-entry-header">
                             <span class="journal-entry-quarter">${quarterName}</span>
                             <button class="btn-edit-entry-modal" data-day-index="${day.id - 1}" data-entry-id="${entry.id}" style="background:none; border:none; color:var(--col-accent-cool); cursor:pointer; text-decoration:underline; font-size:0.85em;">Editar</button>
@@ -1767,29 +1793,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeEditFromModal() {
-    document.body.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-edit-entry-modal')) {
-            const dayIndex = parseInt(e.target.dataset.dayIndex);
-            const entryId = parseInt(e.target.dataset.entryId);
-
-            // Validate data
-            if (isNaN(dayIndex) || isNaN(entryId)) return;
-
-            const day = calendarData[dayIndex];
-            if (!day || !day.journal) return;
-
-            const entry = day.journal.find(en => en.id === entryId);
-            if (!entry) return;
-
-            // Close modal
-            const modal = document.getElementById('calendar-modal');
-            if (modal) modal.style.display = 'none';
-
-            // Set editing state
-            editingDayIndex = dayIndex;
-            loadEntryForEdit(entry);
-        }
-    });
+    // This function's previous logic is now handled in initializeModalJournal to ensure 
+    // editing happens within the modal itself. Keeping this function empty or removing its 
+    // internal listener prevents the modal from closing unexpectedly.
 }
 
 let editingEntryId = null;
@@ -1869,9 +1875,8 @@ function initializeJournal() {
 
         // If we were editing from the modal (or any non-current day), refresh modal visual
         // Only refresh modal if it's currently open (implied by editingDayIndex possibly)
-        if (editingDayIndex !== null) {
-            showDayDetails(calendarData[savedDayIndex]);
-        }
+        // Always refresh details to show new notes (buttons) immediately
+        showDayDetails(calendarData[savedDayIndex]);
 
         editingEntryId = null;
         editingDayIndex = null;
@@ -1911,6 +1916,7 @@ function renderJournalEntries() {
     entries.forEach(entry => {
         const entryEl = document.createElement('div');
         entryEl.className = 'journal-entry';
+        entryEl.dataset.entryId = entry.id;
 
         const quarterName = QUARTERS[entry.quarterIndex] || 'Desconhecido';
 
@@ -2120,6 +2126,8 @@ function setupStartGameModal() {
     const selectMonth = document.getElementById('start-month');
     const inputDay = document.getElementById('start-day');
 
+    const inputYear = document.getElementById('start-year');
+
     // Populate months
     CALENDAR_CONFIG.months.forEach((month, index) => {
         const option = document.createElement('option');
@@ -2141,7 +2149,13 @@ function setupStartGameModal() {
     btnStart.onclick = function () {
         const monthIndex = parseInt(selectMonth.value);
         const day = parseInt(inputDay.value);
+        const year = parseInt(inputYear.value);
         const monthData = CALENDAR_CONFIG.months[monthIndex];
+
+        if (isNaN(year) || year < 0) {
+            alert("Ano inválido.");
+            return;
+        }
 
         if (day < 1 || day > monthData.days) {
             alert(`Dia inválido para ${monthData.name}. Escolha entre 1 e ${monthData.days}.`);
@@ -2149,6 +2163,7 @@ function setupStartGameModal() {
         }
 
         // Set initial state
+        gameState.currentYear = year;
         gameState.currentMonthIndex = monthIndex;
         gameState.currentDayInMonth = day - 1; // startNewDay increments this, so we set to day-1
 
@@ -2612,6 +2627,17 @@ function initializeDiceRollerTemp() {
     btnRoll.parentNode.replaceChild(newBtn, btnRoll);
 
     newBtn.addEventListener('click', () => {
+        // Reset selection on roll start
+        const table = document.getElementById('temperature-table');
+        if (table) {
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(r => {
+                r.classList.remove('selected-row');
+                r.classList.remove('selected');
+            });
+        }
+        selectedTemperatureRowIndex = null;
+
         die.classList.add('shake');
         let counter = 0;
         const interval = setInterval(() => {
@@ -2665,6 +2691,18 @@ function initializeDiceRollerTemp() {
                     calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
                     showDayDetails(calendarData[gameState.currentDayIndex]);
                 }
+
+                // Auto-close modal after 2s and focus info-display
+                setTimeout(() => {
+                    if (typeof window.startDayWeatherModalClose === 'function') {
+                        window.startDayWeatherModalClose();
+                        // Focus info-display
+                        const infoDisplay = document.getElementById('info-display');
+                        if (infoDisplay) {
+                            infoDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                }, 2000);
             }
         }
     }
@@ -2761,6 +2799,7 @@ function restoreGameState(data) {
         }
 
         renderCalendar();
+        renderJournalEntries(); // Restore journal visibility
 
         // Restore info display content properly
         if (currentInfoMessage) {
@@ -2887,3 +2926,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // Adding another one works fine.
     setupPersistence();
 });
+
+// --- SCROLL TO NOTE ---
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.view-note-btn');
+    if (btn) {
+        const entryId = btn.dataset.entryId;
+        scrollToJournalEntry(entryId);
+    }
+});
+
+function scrollToJournalEntry(entryId) {
+    // Check if modal is open to prioritize finding the entry there
+    const modal = document.getElementById('calendar-modal');
+    let entryEl = null;
+
+    if (modal && modal.style.display !== 'none') {
+        entryEl = modal.querySelector(`.journal-entry[data-entry-id="${entryId}"]`);
+    }
+
+    // Fallback to searching globally if not found in modal (or modal closed)
+    if (!entryEl) {
+        entryEl = document.querySelector(`.journal-entry[data-entry-id="${entryId}"]`);
+    }
+
+    // If not found, it might be because the journal section isn't visible or rendered?
+    // But the quarter detail IS visible (that's where the button is), so the journal SHOULD be rendered in the same context usually.
+    // In "Day Details" modal, the journal is appended at the bottom.
+
+    if (entryEl) {
+        entryEl.setAttribute('tabindex', '-1');
+        entryEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        entryEl.focus({ preventScroll: true });
+
+        // Flash highlight
+        entryEl.classList.add('flash-highlight');
+        setTimeout(() => {
+            entryEl.classList.remove('flash-highlight');
+        }, 2000);
+    } else {
+        console.warn("Journal entry element not found for ID:", entryId);
+    }
+}
