@@ -65,6 +65,8 @@ function initializeCalendar() {
     setupTravelControls();
     setupCalendarModal();
     setupStartGameModal();
+    setupInfoModal();
+    setupWeatherInfoModal();
     updateTravelButtonState(); // Initial check
     updateTravelButtonState(); // Initial check
     renderWeatherNavigation();
@@ -210,11 +212,20 @@ function handleAdvanceDay() {
 
     // Open Modal and focus on Weather Navigation
     if (typeof startDayWeatherModal === 'function') {
+        const modal = document.getElementById('hexagon-modal');
+        if (modal) modal.dataset.preventClose = "true";
+
         startDayWeatherModal();
         setTimeout(() => {
             const weatherNav = document.getElementById('weather-navigation');
             if (weatherNav) {
                 weatherNav.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                weatherNav.classList.add('flash-highlight');
+                weatherNav.classList.add('awaiting-roll');
+
+                setTimeout(() => {
+                    weatherNav.classList.remove('flash-highlight');
+                }, 1500);
             }
         }, 300); // Slight delay to ensure modal render
     }
@@ -390,7 +401,7 @@ function getPreviousTerrain() {
 let currentInfoMessage = '';
 
 function updateInfoDisplay(content) {
-    const infoDisplay = document.getElementById('info-display');
+    const infoDisplay = document.getElementById('info-display-text');
     if (infoDisplay) {
         currentInfoMessage = content; // Store the base message
         let newContent = content;
@@ -774,6 +785,8 @@ function renderSelectedHexagon(displayNumber) {
             hexRed.setAttribute('points', polyRed_points);
             hexRed.setAttribute('stroke', 'none');
             hexRed.setAttribute('fill', `url(#${patternRedId})`);
+            hexRed.setAttribute('cursor', 'pointer');
+            hexRed.onclick = () => showWeatherPopup(redImageSrc);
             solitarySvg.appendChild(hexRed);
 
             // Draw blue polygon
@@ -781,6 +794,8 @@ function renderSelectedHexagon(displayNumber) {
             hexBlue.setAttribute('points', polyBlue_points);
             hexBlue.setAttribute('stroke', 'none');
             hexBlue.setAttribute('fill', `url(#${patternBlueId})`);
+            hexBlue.setAttribute('cursor', 'pointer');
+            hexBlue.onclick = () => showWeatherPopup(blueImageSrc);
             solitarySvg.appendChild(hexBlue);
 
             const hexOutline = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
@@ -789,6 +804,7 @@ function renderSelectedHexagon(displayNumber) {
             hexOutline.setAttribute('fill', 'transparent');
             hexOutline.setAttribute('stroke', 'var(--col-accent-cool)');
             hexOutline.setAttribute('stroke-width', '2');
+            hexOutline.style.pointerEvents = 'none'; // Ensure click goes through outline
             solitarySvg.appendChild(hexOutline);
         } else {
             const hex = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
@@ -797,6 +813,8 @@ function renderSelectedHexagon(displayNumber) {
             hex.setAttribute('fill', `url(#${patternRedId})`);
             hex.setAttribute('stroke', 'var(--col-accent-cool)');
             hex.setAttribute('stroke-width', '2');
+            hex.setAttribute('cursor', 'pointer');
+            hex.onclick = () => showWeatherPopup(redImageSrc);
             solitarySvg.appendChild(hex);
         }
     } else {
@@ -965,7 +983,6 @@ function renderGrid() {
     const modalMapContainer = document.getElementById('modal-map-container');
     const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
     modalMapContainer.innerHTML = `
-                <h2>Hexflower de Temperatura</h2>
                 <h3>${currentMonthName}</h3>
                 <div id="map-container">
                     <div class="controls">
@@ -1323,12 +1340,34 @@ function initializeModal() {
         const modalMapContainer = document.getElementById('modal-map-container');
         if (modalMapContainer) {
             modalMapContainer.addEventListener('click', (e) => {
+                // Unlock modal on manual map interaction
+                const modal = document.getElementById('hexagon-modal');
+                if (modal) modal.dataset.preventClose = "false";
+
+                // Remove highlight/border from weather navigation logic
+                const weatherNav = document.getElementById('weather-navigation');
+                if (weatherNav) weatherNav.classList.remove('awaiting-roll');
+
                 const target = e.target;
                 const hexGroup = target.closest('.hex-group');
                 if (hexGroup) {
                     const displayNumber = parseInt(hexGroup.dataset.displayNumber);
                     if (!isNaN(displayNumber)) {
                         selectHexagon(displayNumber);
+
+                        // Trigger Focus Temperature Animation (similar to dice roll)
+                        setTimeout(() => {
+                            const tempContainer = document.getElementById('temperature-container');
+                            if (tempContainer) {
+                                tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                tempContainer.classList.add('flash-highlight');
+                                tempContainer.classList.add('awaiting-roll');
+
+                                setTimeout(() => {
+                                    tempContainer.classList.remove('flash-highlight');
+                                }, 1500);
+                            }
+                        }, 2000); // 3rd delay increased
                     }
                 }
             });
@@ -1336,6 +1375,12 @@ function initializeModal() {
     }
 
     function closeModal() {
+        // Check for lock
+        if (modal.dataset.preventClose === "true") {
+            alert("Você deve rolar a navegação ou selecionar um clima no mapa antes de fechar.");
+            return;
+        }
+
         // Enforce temperature selection if a hexagon is selected
         if (currentSelectedHexagon !== null && selectedTemperatureRowIndex === null) {
             alert('Selecione uma opção na Tabela de Temperatura!');
@@ -1379,6 +1424,22 @@ function initializeModal() {
                 calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
                 showDayDetails(calendarData[gameState.currentDayIndex]);
             }
+
+            // Remove highlight/border if present
+            const tempCtx = document.getElementById('temperature-container');
+            if (tempCtx) tempCtx.classList.remove('awaiting-roll');
+
+            // Auto-close modal after 3s and focus info-display (same logic as dice roll)
+            setTimeout(() => {
+                if (typeof window.startDayWeatherModalClose === 'function') {
+                    window.startDayWeatherModalClose();
+                    // Focus info-display
+                    const infoDisplay = document.getElementById('info-display');
+                    if (infoDisplay) {
+                        infoDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 3000);
         }
     });
 }
@@ -1675,7 +1736,7 @@ function showDayDetails(day) {
     const detailsModal = document.getElementById('day-details');
     const detailsMain = document.getElementById('day-details-main');
 
-    let html = `<h3>${day.dayInMonth} de ${day.month} de ${day.year}</h3>`;
+    let html = ``;
     if (day.weather) {
         const redTitle = getImageTitle(day.weather.redImage);
         const blueTitle = getImageTitle(day.weather.blueImage);
@@ -1685,8 +1746,8 @@ function showDayDetails(day) {
         html += `<div class="weather-detail">
             <p><strong>Clima:</strong> ${weatherName}</p>
             <div class="weather-images">
-                ${day.weather.redImage ? `<img src="${day.weather.redImage}" alt="${redTitle}">` : ''}
-                ${day.weather.blueImage ? `<img src="${day.weather.blueImage}" alt="${blueTitle}">` : ''}
+                ${day.weather.redImage ? `<img src="${day.weather.redImage}" alt="${redTitle}" style="cursor: pointer;" onclick="showWeatherPopup('${day.weather.redImage}')">` : ''}
+                ${day.weather.blueImage ? `<img src="${day.weather.blueImage}" alt="${blueTitle}" style="cursor: pointer;" onclick="showWeatherPopup('${day.weather.blueImage}')">` : ''}
                 ${day.temperature ? `<div class="temp-badge">${day.temperature}</div>` : ''}
             </div>
         </div>`;
@@ -2294,6 +2355,14 @@ function renderWeatherNavigation(selectedHexName = '3N') {
 
         const navName = group.dataset.navName;
 
+        // Unlock modal
+        const modal = document.getElementById('hexagon-modal');
+        if (modal) modal.dataset.preventClose = "false";
+
+        // Remove highlight/border if present
+        const weatherNav = document.getElementById('weather-navigation');
+        if (weatherNav) weatherNav.classList.remove('awaiting-roll');
+
         // Immediate visual feedback on Nav
         renderWeatherNavigation(navName);
 
@@ -2307,14 +2376,32 @@ function renderWeatherNavigation(selectedHexName = '3N') {
             // Hexagon change after scroll starts
             setTimeout(() => {
                 handleNavigate(navName);
+
+                // NEW STEP: Focus Temperature
+                setTimeout(() => {
+                    const tempContainer = document.getElementById('temperature-container');
+                    if (tempContainer) {
+                        tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        tempContainer.classList.add('flash-highlight');
+                        tempContainer.classList.add('awaiting-roll');
+
+                        setTimeout(() => {
+                            tempContainer.classList.remove('flash-highlight');
+                        }, 1500);
+                    }
+                }, 2000); // 3rd delay
             }, 500);
-        }, 500);
+        }, 1500); // Main delay matches dice roll
     };
 
     // Add click listener for auto-save on map
     const mapContainer = document.getElementById('weather-nav-svg');
     if (mapContainer) {
         mapContainer.addEventListener('click', () => {
+            // Remove highlight/border if present when user interacts with hexes manually
+            const weatherNav = document.getElementById('weather-navigation');
+            if (weatherNav) weatherNav.classList.remove('awaiting-roll');
+
             // We can't easily hook into every internal click without specific logic,
             // but handleNavigate already calls autoSave.
             // If we want "click on anything", we might add a global listener or rely on logic points.
@@ -2436,8 +2523,8 @@ function handleNavigate(navName) {
 }
 
 function initializeDiceRoller(hexConfig) {
-    const die1 = document.getElementById('die-1');
-    const die2 = document.getElementById('die-2');
+    let die1 = document.getElementById('die-1');
+    let die2 = document.getElementById('die-2');
     const btnRoll = document.getElementById('btn-roll-nav');
     const resultDisplay = document.getElementById('dice-result-nav');
 
@@ -2446,10 +2533,31 @@ function initializeDiceRoller(hexConfig) {
     if (!die1.textContent) die1.textContent = '1';
     if (!die2.textContent) die2.textContent = '1';
 
+    // Clone dice to avoid duplicate listeners
+    const newDie1 = die1.cloneNode(true);
+    die1.parentNode.replaceChild(newDie1, die1);
+    die1 = newDie1;
+
+    const newDie2 = die2.cloneNode(true);
+    die2.parentNode.replaceChild(newDie2, die2);
+    die2 = newDie2;
+
     const newBtn = btnRoll.cloneNode(true);
     btnRoll.parentNode.replaceChild(newBtn, btnRoll);
 
+    // Click on dice triggers roll
+    die1.addEventListener('click', () => newBtn.click());
+    die2.addEventListener('click', () => newBtn.click());
+
     newBtn.addEventListener('click', () => {
+        // Unlock modal on dice roll
+        const modal = document.getElementById('hexagon-modal');
+        if (modal) modal.dataset.preventClose = "false";
+
+        // Remove highlight/border if present
+        const weatherNav = document.getElementById('weather-navigation');
+        if (weatherNav) weatherNav.classList.remove('awaiting-roll');
+
         die1.classList.add('shake');
         die2.classList.add('shake');
         let counter = 0;
@@ -2519,7 +2627,6 @@ function initializeDiceRoller(hexConfig) {
                 renderWeatherNavigation(match.name);
 
                 // Delayed navigation and focus shift
-                // Delayed focus shift
                 setTimeout(() => {
                     const mapContainer = document.getElementById('modal-map-container');
                     if (mapContainer) {
@@ -2529,6 +2636,20 @@ function initializeDiceRoller(hexConfig) {
                     // Hexagon change after scroll starts
                     setTimeout(() => {
                         handleNavigate(match.name);
+
+                        // NEW STEP: Focus Temperature
+                        setTimeout(() => {
+                            const tempContainer = document.getElementById('temperature-container');
+                            if (tempContainer) {
+                                tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                tempContainer.classList.add('flash-highlight');
+                                tempContainer.classList.add('awaiting-roll');
+
+                                setTimeout(() => {
+                                    tempContainer.classList.remove('flash-highlight');
+                                }, 1500);
+                            }
+                        }, 2000); // 3rd delay increased
                     }, 500);
                 }, 1500);
 
@@ -2612,12 +2733,19 @@ function updateTemperatureTable() {
 }
 
 function initializeDiceRollerTemp() {
-    const die = document.getElementById('die-d12');
-    const dieNumber = die ? die.querySelector('.die-number') : null;
+    let die = document.getElementById('die-d12');
     const btnRoll = document.getElementById('btn-roll-temp');
     const resultDisplay = document.getElementById('dice-result-temp');
 
-    if (!die || !dieNumber || !btnRoll) return;
+    if (!die || !btnRoll) return;
+
+    // Clone die to refresh listeners
+    const newDie = die.cloneNode(true);
+    die.parentNode.replaceChild(newDie, die);
+    die = newDie;
+
+    const dieNumber = die.querySelector('.die-number');
+    if (!dieNumber) return;
 
     // Reset content if empty
     if (!dieNumber.textContent) dieNumber.textContent = '1';
@@ -2626,7 +2754,18 @@ function initializeDiceRollerTemp() {
     const newBtn = btnRoll.cloneNode(true);
     btnRoll.parentNode.replaceChild(newBtn, btnRoll);
 
+    // Click on dice triggers roll
+    die.addEventListener('click', () => {
+        if (!newBtn.disabled && !newBtn.classList.contains('disabled')) {
+            newBtn.click();
+        }
+    });
+
     newBtn.addEventListener('click', () => {
+        // Remove awaiting-roll class
+        const tempCtx = document.getElementById('temperature-container');
+        if (tempCtx) tempCtx.classList.remove('awaiting-roll');
+
         // Reset selection on roll start
         const table = document.getElementById('temperature-table');
         if (table) {
@@ -2692,7 +2831,7 @@ function initializeDiceRollerTemp() {
                     showDayDetails(calendarData[gameState.currentDayIndex]);
                 }
 
-                // Auto-close modal after 2s and focus info-display
+                // Auto-close modal after 3s and focus info-display
                 setTimeout(() => {
                     if (typeof window.startDayWeatherModalClose === 'function') {
                         window.startDayWeatherModalClose();
@@ -2702,7 +2841,7 @@ function initializeDiceRollerTemp() {
                             infoDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                     }
-                }, 2000);
+                }, 3000);
             }
         }
     }
@@ -2966,5 +3105,67 @@ function scrollToJournalEntry(entryId) {
         }, 2000);
     } else {
         console.warn("Journal entry element not found for ID:", entryId);
+    }
+}
+
+function setupInfoModal() {
+    const modal = document.getElementById('info-modal');
+    const btn = document.getElementById('btn-info-game');
+    const closeSpan = modal.querySelector('.close-button');
+
+    if (btn) {
+        btn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+    }
+
+    if (closeSpan) {
+        closeSpan.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function setupWeatherInfoModal() {
+    const modal = document.getElementById('weather-info-modal');
+    if (!modal) return;
+    const closeBtn = modal.querySelector('.close-button');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function showWeatherPopup(imagePath) {
+    const title = getImageTitle(imagePath);
+    if (!title) return;
+
+    let content = weatherEffects[title];
+
+    if (!content) content = "Sem efeitos adicionais.";
+
+    const modalTitle = document.getElementById('weather-info-title');
+    const modalContent = document.getElementById('weather-info-content');
+    const modal = document.getElementById('weather-info-modal');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalContent) modalContent.innerHTML = content;
+
+    if (modal) {
+        modal.style.display = 'block';
     }
 }

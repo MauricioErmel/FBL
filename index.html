@@ -4,31 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companion para Forbidden Lands</title>
-    <link rel="icon" type="image/x-icon" href="img/icons/icon.ico">
+    <title>FBL Hexplorer Companion</title>
+    <link rel="icon" type="image/x-icon" href="img/icons/header/logo.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <header id="site-header">
-        <img src="img/icons/icon.webp" alt="Logo" id="header-logo">
-        <h1>Tracker de viagem para Forbidden Lands</h1>
         <div id="header-controls">
             <button id="btn-save-game" class="header-btn" title="Salvar Estado">
-                <img src="img/icons/save.svg" alt="" class="btn-icon">
+                <img src="img/icons/header/save.svg" alt="" class="btn-icon">
+                <span>Salvar</span>
             </button>
             <button id="btn-load-game" class="header-btn" title="Carregar Estado">
-                <img src="img/icons/load.svg" alt="" class="btn-icon">
+                <img src="img/icons/header/load.svg" alt="" class="btn-icon">
+                <span>Carregar</span>
             </button>
             <button id="btn-reset-game" class="header-btn" title="Resetar Jogo">
-                <img src="img/icons/reset.svg" alt="" class="btn-icon">
+                <img src="img/icons/header/reset.svg" alt="" class="btn-icon">
+                <span>Reset</span>
+            </button>
+            <button id="btn-info-game" class="header-btn" title="Informações">
+                <img src="img/icons/header/info.svg" alt="" class="btn-icon">
+                <span>Info</span>
             </button>
             <input type="file" id="file-input-load" accept=".json" style="display: none;">
+        </div>
+        <div id="header-branding">
+            <img src="img/icons/header/logo.svg" alt="Logo" id="header-logo">
+            <h1>FBL Hexplorer Companion</h1>
         </div>
     </header>
 
     <div id="info-container">
-        <div id="info-display"></div>
+        <div id="info-display">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
+                <div class="masthead-title">Procedimentos de Viagem</div>
+            </div>
+            <div id="info-display-text"></div>
+        </div>
     </div>
 
     <div id="bottom-container">
@@ -36,87 +51,102 @@
         <div id="bottom-left-column">
 
             <div id="selected-hexweather-container">
-                <h5 id="selected-hexagon-title">Selecione o Clima</h5>
+                <div class="masthead">
+                    <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
+                    <div class="masthead-title" id="selected-hexagon-title">Selecione o Clima</div>
+                </div>
                 <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
             </div>
 
             <div id="selected-terrain">
-                <h5 id="selected-terrain-title">Selecione o Terreno</h5>
+                <div class="masthead">
+                    <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
+                    <div class="masthead-title" id="selected-terrain-title">Selecione o Terreno</div>
+                </div>
                 <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
             </div>
 
         </div>
 
         <div id="calendar-container">
-
-            <div id="current-day-display">
-                Selecione o mês e dia para iniciar
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
+                <div class="masthead-title" id="current-day-display">Selecione o mês e dia para iniciar</div>
             </div>
 
-            <div id="travel-controls">
-                <div class="desbravar-container">
-                    <button id="btn-desbravar" class="travel-btn"><img src="img/icons/explore.svg" alt=""
-                            class="btn-icon">DESBRAVAR</button>
-                    <div class="mounted-switch-container">
-                        <label class="switch">
-                            <input type="checkbox" id="toggle-mounted">
-                            <span class="slider round"></span>
-                        </label>
-                        <label for="toggle-mounted">Todos Montados?</label>
+            <div id="calendar-content-wrapper">
+                <div id="travel-controls">
+                    <div class="desbravar-container">
+                        <button id="btn-desbravar" class="travel-btn"><img src="img/icons/explore.svg" alt=""
+                                class="btn-icon">DESBRAVAR</button>
+                        <div class="mounted-switch-container">
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-mounted">
+                                <span class="slider round"></span>
+                            </label>
+                            <label for="toggle-mounted">Todos Montados?</label>
+                        </div>
                     </div>
-                </div>
-                <button id="btn-permanecer" class="travel-btn"><img src="img/icons/stay.svg" alt=""
-                        class="btn-icon">PERMANECER</button>
-                <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
-            </div>
-
-            <div id="day-details-main"></div>
-
-            <div id="journal-section">
-                <h3>Diário do Dia</h3>
-
-                <div id="journal-entries-list" class="journal-entries-list"></div>
-
-                <div id="journal-controls" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                    <label for="journal-quarter-select">Momento:</label>
-                    <select id="journal-quarter-select"
-                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
-                        <option value="0">Manhã</option>
-                        <option value="1">Tarde</option>
-                        <option value="2">Anoitecer</option>
-                        <option value="3">Noite</option>
-                    </select>
+                    <button id="btn-permanecer" class="travel-btn"><img src="img/icons/stay.svg" alt=""
+                            class="btn-icon">PERMANECER</button>
+                    <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
                 </div>
 
-                <div class="editor-toolbar">
-                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
-                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
-                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
-                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
-                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
-                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
-                    <div class="color-picker-wrapper" title="Cor do Texto">
-                        <span>A</span>
-                        <input type="color" id="editor-color" value="#e0e0e0">
+                <div id="day-details-main"></div>
+
+                <div id="journal-section">
+                    <h3>Diário do Dia</h3>
+
+                    <div id="journal-entries-list" class="journal-entries-list"></div>
+
+                    <div id="journal-controls"
+                        style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <label for="journal-quarter-select">Momento:</label>
+                        <select id="journal-quarter-select"
+                            style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                            <option value="0">Manhã</option>
+                            <option value="1">Tarde</option>
+                            <option value="2">Anoitecer</option>
+                            <option value="3">Noite</option>
+                        </select>
                     </div>
+
+                    <div class="editor-toolbar">
+                        <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                        <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                        <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                        <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">•</button>
+                        <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
+                                src="img/icons/editor/left.svg" alt="Left"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
+                                src="img/icons/editor/center.svg" alt="Center"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyRight" title="Alinhar à Direita"><img
+                                src="img/icons/editor/right.svg" alt="Right"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
+                                src="img/icons/editor/justify.svg" alt="Justify"></button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <div class="color-picker-wrapper" title="Cor do Texto">
+                            <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
+                            <input type="color" id="editor-color" value="#e0e0e0">
+                        </div>
+                    </div>
+
+                    <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
+                    </div>
+
+                    <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button id="btn-save-entry">Salvar Entrada</button>
+                        <button id="btn-cancel-edit"
+                            style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
+                            Edição</button>
+                    </div>
+
                 </div>
-
-                <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada..."></div>
-
-                <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button id="btn-save-entry">Salvar Entrada</button>
-                    <button id="btn-cancel-edit"
-                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
-                        Edição</button>
-                </div>
-
             </div>
-
         </div>
 
 
@@ -124,135 +154,177 @@
 
     <div id="hexagon-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="modal-left-column">
-                <div id="modal-map-container"></div>
-                <div id="text-window"></div>
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
+                <div class="masthead-title">Hexflower de Temperatura</div>
+                <span class="close-button">&times;</span>
             </div>
-            <div id="modal-controls-container">
-                <div id="temperature-container">
-                    <h3>Tabela de Temperatura</h3>
-                    <p class="subtitle">Role 1d12 e some com o modificador do hexagono selecionado do Hexflower de
-                        Temperatura, se houver algum modificador.</p>
-                    <table id="temperature-table">
-                        <tr>
-                            <td>d12</td>
-                            <td>Calor (MESES QUENTES)</td>
-                        </tr>
-                        <tr>
-                            <td>1 - 8</td>
-                            <td><b>Ameno</b>. Sem alterações.</td>
-                        </tr>
-                        <tr>
-                            <td>9 - 11</td>
-                            <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>12</td>
-                            <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar
-                                DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em
-                                cada
-                                Quarto de Dia, falha significa -1 de AGILIDADE.</td>
-                        </tr>
-                    </table>
-                    <div id="dice-container-temp">
-                        <div class="dice-wrapper">
-                            <div class="die-d12" id="die-d12">
-                                <svg viewBox="0 0 100 100" class="d12-svg">
-                                    <polygon points="50,2 97,35 79,90 21,90 3,35" fill="var(--col-text-highlight)"
-                                        stroke="var(--col-bg-main)" stroke-width="2" />
-                                    <polygon points="50,25 74,42 65,70 35,70 26,42" fill="none"
-                                        stroke="var(--col-bg-main)" stroke-width="2" />
-                                    <line x1="50" y1="2" x2="50" y2="25" stroke="var(--col-bg-main)" stroke-width="2" />
-                                    <line x1="97" y1="35" x2="74" y2="42" stroke="var(--col-bg-main)"
-                                        stroke-width="2" />
-                                    <line x1="79" y1="90" x2="65" y2="70" stroke="var(--col-bg-main)"
-                                        stroke-width="2" />
-                                    <line x1="21" y1="90" x2="35" y2="70" stroke="var(--col-bg-main)"
-                                        stroke-width="2" />
-                                    <line x1="3" y1="35" x2="26" y2="42" stroke="var(--col-bg-main)" stroke-width="2" />
-                                </svg>
-                                <span class="die-number">1</span>
+            <div class="modal-body-split">
+                <div id="modal-left-column">
+                    <div id="modal-map-container"></div>
+                    <div id="text-window"></div>
+                </div>
+                <div id="modal-controls-container">
+                    <div id="temperature-container">
+                        <div class="masthead">
+                            <div class="masthead-icon"><img src="img/icons/mastheads/temperature-container.svg" alt="">
+                            </div>
+                            <div class="masthead-title">Tabela de Temperatura</div>
+                        </div>
+                        <div class="container-content">
+                            <p class="subtitle">Role 1d12 e some com o modificador do hexagono selecionado do Hexflower
+                                de
+                                Temperatura, se houver algum modificador.</p>
+                            <table id="temperature-table">
+                                <tr>
+                                    <td>d12</td>
+                                    <td>Calor (MESES QUENTES)</td>
+                                </tr>
+                                <tr>
+                                    <td>1 - 8</td>
+                                    <td><b>Ameno</b>. Sem alterações.</td>
+                                </tr>
+                                <tr>
+                                    <td>9 - 11</td>
+                                    <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar
+                                        DESIDRATADO.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não
+                                        ficar
+                                        DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de
+                                        Resiliência
+                                        em
+                                        cada
+                                        Quarto de Dia, falha significa -1 de AGILIDADE.</td>
+                                </tr>
+                            </table>
+                            <div id="dice-container-temp">
+                                <div class="dice-wrapper">
+                                    <div class="die-d12" id="die-d12">
+                                        <svg viewBox="0 0 100 100" class="d12-svg">
+                                            <polygon points="50,2 97,35 79,90 21,90 3,35"
+                                                fill="var(--col-text-highlight)" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                            <polygon points="50,25 74,42 65,70 35,70 26,42" fill="none"
+                                                stroke="var(--col-bg-main)" stroke-width="2" />
+                                            <line x1="50" y1="2" x2="50" y2="25" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                            <line x1="97" y1="35" x2="74" y2="42" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                            <line x1="79" y1="90" x2="65" y2="70" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                            <line x1="21" y1="90" x2="35" y2="70" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                            <line x1="3" y1="35" x2="26" y2="42" stroke="var(--col-bg-main)"
+                                                stroke-width="2" />
+                                        </svg>
+                                        <span class="die-number">1</span>
+                                    </div>
+                                </div>
+                                <button id="btn-roll-temp">Rolar 1d12</button>
+                                <div id="dice-result-temp"></div>
                             </div>
                         </div>
-                        <button id="btn-roll-temp">Rolar 1d12</button>
-                        <div id="dice-result-temp"></div>
                     </div>
-                </div>
 
-                <div id="weather-navigation">
-                    <h3>Navegação no Hexflower</h3>
-                    <p class="subtitle">Role 2d6 e some, compare o resultado com o hexflower abaixo e mova no hexflower
-                        de temperatura para o hexagono indicado.</p>
-                    <svg id="weather-nav-svg"></svg>
-                    <div id="dice-container-nav">
-                        <div class="dice-wrapper">
-                            <div class="die" id="die-1"></div>
-                            <div class="die" id="die-2"></div>
+                    <div id="weather-navigation">
+                        <div class="masthead">
+                            <div class="masthead-icon"><img src="img/icons/mastheads/weather-navigation.svg" alt="">
+                            </div>
+                            <div class="masthead-title">Navegação no Hexflower</div>
                         </div>
-                        <button id="btn-roll-nav">Rolar 2d6</button>
-                        <div id="dice-result-nav"></div>
+                        <div class="container-content">
+                            <p class="subtitle">Role 2d6 e some, compare o resultado com o hexflower abaixo e mova no
+                                hexflower
+                                de temperatura para o hexagono indicado.</p>
+                            <svg id="weather-nav-svg"></svg>
+                            <div id="dice-container-nav">
+                                <div class="dice-wrapper">
+                                    <div class="die" id="die-1"></div>
+                                    <div class="die" id="die-2"></div>
+                                </div>
+                                <button id="btn-roll-nav">Rolar 2d6</button>
+                                <div id="dice-result-nav"></div>
+                            </div>
+                        </div>
                     </div>
+
+
                 </div>
-
-
             </div>
         </div>
     </div>
 
     <div id="terrain-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Selecione o Terreno</h2>
-            <div id="terrain-grid"></div>
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
+                <div class="masthead-title">Terrenos Exploráveis</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div id="terrain-grid" style="padding: 20px;"></div>
         </div>
     </div>
 
     <div id="calendar-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Diário de Viagem</h2>
-            <div id="calendar-grid"></div>
-            <div id="day-details"></div>
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
+                <div class="masthead-title">Diário de Viagem</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div class="modal-body-column">
+                <div id="calendar-grid"></div>
+                <div id="day-details"></div>
 
-            <div id="modal-journal-section" style="display:none; margin-top: 20px;">
-                <div id="modal-journal-controls"
-                    style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                    <label for="modal-journal-quarter-select">Momento:</label>
-                    <select id="modal-journal-quarter-select"
-                        style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
-                        <option value="0">Manhã</option>
-                        <option value="1">Tarde</option>
-                        <option value="2">Anoitecer</option>
-                        <option value="3">Noite</option>
-                    </select>
-                </div>
-
-                <div class="editor-toolbar modal-editor-toolbar">
-                    <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                    <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                    <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                    <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                    <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">• List</button>
-                    <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1. List</button>
-                    <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                    <button class="tool-btn" data-cmd="justifyLeft" title="Alinhar à Esquerda">Left</button>
-                    <button class="tool-btn" data-cmd="justifyCenter" title="Centralizar">Center</button>
-                    <button class="tool-btn" data-cmd="justifyRight" title="Alinhar à Direita">Right</button>
-                    <button class="tool-btn" data-cmd="justifyFull" title="Justificar">Justify</button>
-                    <div class="color-picker-wrapper" title="Cor do Texto">
-                        <span>A</span>
-                        <input type="color" id="modal-editor-color" value="#e0e0e0">
+                <div id="modal-journal-section" style="display:none; margin-top: 20px;">
+                    <div id="modal-journal-controls"
+                        style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <label for="modal-journal-quarter-select">Momento:</label>
+                        <select id="modal-journal-quarter-select"
+                            style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                            <option value="0">Manhã</option>
+                            <option value="1">Tarde</option>
+                            <option value="2">Anoitecer</option>
+                            <option value="3">Noite</option>
+                        </select>
                     </div>
-                </div>
-                <div id="modal-journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
-                </div>
 
-                <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button id="modal-btn-save-entry">Salvar Entrada</button>
-                    <button id="modal-btn-cancel-edit"
-                        style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
+                    <div class="editor-toolbar modal-editor-toolbar">
+                        <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                        <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                        <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                        <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">•</button>
+                        <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
+                                src="img/icons/editor/left.svg" alt="Left"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
+                                src="img/icons/editor/center.svg" alt="Center"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyRight" title="Alinhar à Direita"><img
+                                src="img/icons/editor/right.svg" alt="Right"></button>
+                        <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
+                                src="img/icons/editor/justify.svg" alt="Justify"></button>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <div class="color-picker-wrapper" title="Cor do Texto">
+                            <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
+                            <input type="color" id="modal-editor-color" value="#e0e0e0">
+                        </div>
+                    </div>
+                    <div id="modal-journal-editor" contenteditable="true"
+                        placeholder="Escreva os detalhes da jornada...">
+                    </div>
+
+                    <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button id="modal-btn-save-entry">Salvar Entrada</button>
+                        <button id="modal-btn-cancel-edit"
+                            style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -275,6 +347,54 @@
                 <input type="number" id="start-day" min="1" max="46" value="1">
             </div>
             <button id="btn-start-game">Iniciar</button>
+        </div>
+    </div>
+
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/info2.svg" alt=""></div>
+                <div class="masthead-title">Informações</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div id="info-content" style="padding: 20px;">
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
+                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+                    torquent per conubia nostra inceptos himenaeos.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
+                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+                    torquent per conubia nostra inceptos himenaeos.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
+                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+                    torquent per conubia nostra inceptos himenaeos.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
+                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+                    torquent per conubia nostra inceptos himenaeos.</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
+                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+                    torquent per conubia nostra inceptos himenaeos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="weather-info-modal" class="modal">
+        <div class="modal-content">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
+                <div class="masthead-title" id="weather-info-title">Clima</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div id="weather-info-content" style="padding: 20px; font-size: 1.1em; line-height: 1.6;"></div>
         </div>
     </div>
 

@@ -35,9 +35,9 @@ h6 {
 /* --- Site Header --- */
 #site-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+    gap: 10px;
     margin: 0 auto 10px auto;
     width: 800px;
     box-sizing: border-box;
@@ -45,43 +45,69 @@ h6 {
 
 #header-controls {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-    align-items: flex-end;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+#header-branding {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    justify-content: flex-start;
+    /* Changed from center to flex-start */
+    position: relative;
+}
+
+#header-branding #header-logo {
+    position: static;
+    left: auto;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    /* Softer, matching div shadow style */
+}
+
+#header-branding h1 {
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    /* Softer text shadow */
 }
 
 .header-btn {
-    padding: 6px 12px;
-    font-size: 0.85em;
+    padding: 5px 10px;
+    font-size: 0.8em;
     font-weight: 600;
     cursor: pointer;
     background-color: var(--col-bg-surface);
     color: var(--col-text-primary);
     border: 1px solid var(--col-accent-cool);
-    border-radius: 4px;
+    border-radius: 0;
     transition: all 0.2s;
     text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
-    width: 40px;
-    height: 40px;
-    padding: 0;
+    gap: 6px;
+    width: auto;
+    height: auto;
+}
+
+.header-btn .btn-icon {
+    width: 14px;
+    height: 14px;
 }
 
 .header-btn:hover {
-    background-color: var(--col-accent-cool);
-    color: var(--col-bg-main);
-    border-color: var(--col-text-highlight);
+    opacity: 0.7;
+    background-color: var(--col-bg-surface);
+    color: var(--col-text-primary);
+    border-color: var(--col-accent-cool);
 }
 
 #header-logo {
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
-    background-color: var(--col-text-highlight);
-    border-radius: 8%;
 }
 
 /* --- Layout Principal --- */
@@ -198,20 +224,27 @@ h6 {
     margin: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     border: 1px solid var(--col-accent-cool);
-    border-radius: 8px;
+    border-radius: 0px;
     background-color: var(--col-bg-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     color: var(--col-text-primary);
     cursor: pointer;
     transition: border-color 0.3s, color 0.3s;
+    overflow: hidden;
 }
 
 #selected-hexweather-container:hover {
-    border-color: var(--col-text-highlight);
+    /* Border color change removed */
     color: var(--col-text-highlight);
+}
+
+#selected-hexweather-container:hover .hexagon {
+    stroke: var(--col-text-highlight);
+    filter: drop-shadow(0 0 5px var(--col-text-highlight));
 }
 
 #selected-hexweather-container img {
@@ -225,27 +258,21 @@ h6 {
     width: 100%;
     height: 50%;
     border: 1px solid var(--col-accent-cool);
-    border-radius: 8px;
+    border-radius: 0px;
     background-color: var(--col-bg-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     overflow: hidden;
     cursor: pointer;
     position: relative;
 }
 
-#selected-terrain-title {
-    /* Removed absolute positioning to match selected-hexagon-title */
-    text-align: center;
-    font-weight: bold;
-    margin-top: 22px;
-    color: var(--col-text-highlight);
-}
-
-#selected-terrain:hover {
-    border-color: var(--col-text-highlight);
+#selected-terrain:hover .hexagon {
+    stroke: var(--col-text-highlight);
+    filter: drop-shadow(0 0 5px var(--col-text-highlight));
 }
 
 #selected-terrain img {
@@ -258,19 +285,29 @@ h6 {
     /* Hidden by default */
 }
 
-
-
-/* Duplicate definition removed */
+#selected-terrain .masthead-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+}
 
 /* --- Info Display --- */
 #info-display {
-    padding: 15px;
+    padding: 0;
     border: 1px solid var(--col-accent-cool);
     background-color: var(--col-bg-surface);
-    border-radius: 8px;
+    border-radius: 0px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     min-height: 100px;
     font-size: 0.9em;
     color: var(--col-text-primary);
+    overflow: hidden;
+}
+
+#info-display-text {
+    padding: 15px;
 }
 
 /* --- Tables --- */
@@ -356,30 +393,37 @@ button:hover {
 .modal-content {
     background-color: var(--col-bg-surface);
     margin: 5% auto;
-    padding: 20px;
+    padding: 0;
     border: 1px solid var(--col-accent-cool);
     width: 90%;
     max-width: 1000px;
-    border-radius: 10px;
+    border-radius: 0;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     /* Keep shadow for depth, but could use color */
     display: flex;
-    flex-direction: row;
-    gap: 20px;
+    flex-direction: column;
+    /* Changed from row to column for Header/Body layout */
+    gap: 0;
     color: var(--col-text-primary);
     position: relative;
+    overflow: hidden;
     /* For absolute positioning of close button */
 }
 
 .close-button {
     color: var(--col-text-primary);
     position: absolute;
-    top: 10px;
-    left: 20px;
+    right: 15px;
+    /* Move to right */
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
     z-index: 10;
+    line-height: 1;
+    left: auto;
+    /* reset left */
 }
 
 .close-button:hover,
@@ -492,12 +536,11 @@ button:hover {
 #calendar-container {
     text-align: center;
     margin-top: 0;
-    padding: 20px;
+    padding: 0;
     background: var(--col-bg-surface);
     border: 1px solid var(--col-accent-cool);
-    border-radius: 12px;
+    border-radius: 0px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    /* width: 70%; Replaced with flex to fill remaining space properly */
     flex: 1;
     width: auto;
     max-width: none;
@@ -505,32 +548,37 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0;
+}
+
+#calendar-content-wrapper {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
 }
 
 #current-day-display {
-    font-size: 1.2em;
-    font-weight: 600;
+    font-size: 1em;
+    font-weight: bold;
     color: var(--col-text-highlight);
-    padding: 10px 15px;
-    background-color: var(--col-bg-main);
-    border-radius: 8px;
-    border: 1px solid var(--col-accent-cool);
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
     transition: all 0.2s ease;
-    width: 100%;
+    width: auto;
     box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    /* Added for absolute child */
-    min-height: 50px;
+    display: block;
+    min-height: auto;
+    flex-grow: 1;
+    text-align: center;
 }
 
-#current-day-display.has-reset-btn {
-    padding-left: 50px;
-}
+
 
 #btn-reset-day {
     position: absolute;
@@ -555,14 +603,6 @@ button:hover {
 #btn-reset-day img {
     width: 100%;
     height: 100%;
-}
-
-#current-day-display:hover {
-    background-color: var(--col-bg-main);
-    border-color: var(--col-text-highlight);
-    color: var(--col-text-highlight);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #travel-controls {
@@ -736,7 +776,6 @@ button:hover {
 #day-details,
 #day-details-main {
     border-top: 1px solid var(--col-accent-cool);
-    padding-top: 15px;
     text-align: left;
     width: 100%;
     color: var(--col-text-primary);
@@ -781,18 +820,16 @@ button:hover {
 #temperature-container {
     text-align: center;
     border: 1px solid var(--col-accent-cool);
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 0;
+    padding: 0;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-#temperature-container h3 {
-    margin: 5px 0;
-    font-size: 1.1em;
-}
+/* H3 styles removed from here as they are replaced by masthead title */
 
 #temperature-container .subtitle {
     font-size: 0.85em;
@@ -915,18 +952,25 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Was center, flex-start is better for masthead */
     border: 1px solid var(--col-accent-cool);
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 0;
+    padding: 0;
     margin-bottom: 20px;
-    /* Optional: ensures it stands out if on a different bg */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-#weather-navigation h3 {
-    margin: 5px 0;
-    font-size: 1.1em;
+.container-content {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+/* H3 styles removed from here as they are replaced by masthead title */
 
 #weather-navigation .subtitle {
     font-size: 0.85em;
@@ -988,6 +1032,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     transition: transform 0.2s;
+    cursor: pointer;
 }
 
 .d12-svg {
@@ -1030,6 +1075,7 @@ button:hover {
     box-sizing: border-box;
     border: 1px solid var(--col-accent-deep);
     transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
 }
 
 .d12-svg polygon,
@@ -1338,6 +1384,53 @@ button.disabled,
     background-color: var(--col-accent-deep);
 }
 
+/* --- Info Modal --- */
+#info-modal .modal-content {
+    max-width: 600px;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    /* Let body handle gap */
+    max-height: 80vh;
+    overflow-y: hidden;
+    /* Scroll body, not wrapper */
+}
+
+.modal-body-split {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: hidden;
+    /* Let children manage scroll if needed */
+}
+
+.modal-body-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#info-content {
+    text-align: justify;
+    line-height: 1.6;
+    padding: 20px;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#info-content p {
+    margin-bottom: 1em;
+}
+
 /* --- Journal Editor Styles --- */
 #journal-section {
     width: 100%;
@@ -1363,7 +1456,7 @@ button.disabled,
     margin-bottom: 10px;
     background-color: var(--col-bg-main);
     padding: 5px;
-    border-radius: 4px;
+    border-radius: 0;
     flex-wrap: wrap;
     align-items: center;
 }
@@ -1372,8 +1465,8 @@ button.disabled,
     background: transparent;
     border: 1px solid var(--col-border);
     color: var(--col-text-primary);
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 0px;
+    border-radius: 0;
     cursor: pointer;
     transition: background 0.2s;
     min-width: 30px;
@@ -1423,7 +1516,7 @@ button.disabled,
     min-height: 150px;
     background-color: var(--col-bg-main);
     border: 1px solid var(--col-border);
-    border-radius: 4px;
+    border-radius: 0;
     padding: 10px;
     color: var(--col-text-primary);
     overflow-y: auto;
@@ -1465,11 +1558,17 @@ button.disabled,
     animation: flashHighlight 1.5s ease-out;
 }
 
+.awaiting-roll {
+    border-color: var(--col-text-highlight) !important;
+    box-shadow: 0 0 10px rgba(249, 206, 138, 0.3);
+    transition: all 0.5s;
+}
+
 .journal-entry {
     background-color: var(--col-bg-main);
     /* Dark card background */
     border: 1px solid var(--col-bg-surface);
-    border-radius: 5px;
+    border-radius: 0;
     padding: 10px;
     position: relative;
     transition: border-color 0.2s;
@@ -1548,17 +1647,19 @@ button.disabled,
 
 #modal-journal-section {
     background-color: var(--col-text-primary);
-    border: 1px solid var(--col-bg-main);
-    border-radius: 8px;
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 0;
     padding: 15px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
+    margin-top: 20px;
+    color: var(--col-bg-main);
 }
 
 #modal-journal-editor {
     min-height: 150px;
     background-color: var(--col-bg-main);
     border: 1px solid var(--col-border);
-    border-radius: 4px;
+    border-radius: 0;
     padding: 10px;
     color: var(--col-text-primary);
     overflow-y: auto;
@@ -1618,7 +1719,143 @@ button.disabled,
     color: var(--col-text-highlight);
     display: block;
     margin-bottom: 5px;
+    color: var(--col-text-highlight);
+    display: block;
+    margin-bottom: 5px;
 }
+
+.tool-btn.icon-only {
+    padding: 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-btn img {
+    width: 13px;
+    height: 13px;
+    display: block;
+    padding: 0px 0px;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 0px;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid transparent;
+    border-radius: 0;
+    width: 15px;
+    height: 15px;
+}
+
+.color-picker-wrapper:hover {
+    background-color: var(--col-accent-cool);
+}
+
+.color-icon {
+    width: 20px;
+    height: 20px;
+}
+
+#editor-color {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* Journal Section Redesign */
+#journal-section {
+    border: 1px solid var(--col-accent-cool);
+    border-top: none;
+    /* Connects with calendar container visually or handled by layout */
+    border-radius: 0;
+    padding: 15px;
+    background-color: var(--col-text-primary);
+    margin-top: 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+
+/* --- Toast Notification --- */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: var(--col-text-primary);
+    color: var(--col-bg-main);
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    top: 30px;
+    font-size: 17px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--col-text-highlight);
+    opacity: 0;
+    transition: opacity 0.5s, top 0.5s;
+    font-weight: bold;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    top: 50px;
+}
+
+/* --- Masthead Styles --- */
+.masthead {
+    background-color: var(--col-bg-main);
+    color: var(--col-text-highlight);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--col-accent-cool);
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    position: relative;
+}
+
+.masthead-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Icon is no longer absolute in general usage unless specified, 
+       but for centering title with absolute icon we can keep it or use flex */
+    position: absolute;
+    left: 12px;
+}
+
+.masthead-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.masthead-title {
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+    width: 100%;
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
 
 /* Mobile / Portrait (9:16 approximation) */
 @media (max-width: 1120px) {
@@ -1632,38 +1869,50 @@ button.disabled,
 
     #site-header {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: left;
-        gap: 15px;
+        gap: 10px;
         margin-left: auto;
         margin-right: auto;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
         width: 95%;
     }
 
+    #header-branding {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        gap: 10px;
+        position: static;
+    }
+
+    #header-branding #header-logo {
+        position: static;
+    }
+
     #header-logo {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         object-fit: contain;
-        background-color: var(--col-text-highlight);
-        margin-left: 0px;
     }
 
     h1 {
         text-align: left;
         font-size: 1.3rem;
+        margin: 0;
     }
 
     .header-btn {
-        width: 25px;
-        height: 25px;
+        padding: 2px 2px;
+        font-size: 0.4em;
+        gap: 2px;
     }
 
     .header-btn .btn-icon {
-        width: 12px;
-        height: 12px;
+        width: 11px;
+        height: 11px;
     }
-
 
     #calendar-modal {
         overflow-x: hidden;
@@ -1675,25 +1924,20 @@ button.disabled,
         box-sizing: border-box;
     }
 
-
-
     #selected-terrain-title {
         text-align: center;
         font-weight: bold;
-        margin-bottom: 0px;
-        font-size: 0.5em;
+        font-size: 0.8em;
+    }
+
+    #selected-hexagon-title {
+        text-align: center;
+        font-size: 0.7em;
     }
 
     #info-container,
     #bottom-container {
         width: 95%;
-    }
-
-    #selected-hexagon-title {
-        text-align: center;
-        margin-bottom: 0px;
-        font-size: 0.5em;
-        margin-top: 22px;
     }
 
     #bottom-container {
@@ -1755,9 +1999,26 @@ button.disabled,
         margin: 0px;
     }
 
+    /* Modal Body Layout Reset for Mobile */
+    .modal-body-split {
+        flex-direction: column;
+        overflow-y: auto;
+        /* Allow full body scroll */
+        height: auto;
+    }
+
     #modal-left-column,
     #modal-controls-container {
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Original styles for map container reset ensuring it fits */
+    #modal-map-container {
+        width: 100%;
+        margin-bottom: 10px;
     }
 
     #temperature-container,
@@ -1768,14 +2029,15 @@ button.disabled,
 
     .close-button {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: -7px;
+        right: 2px;
         z-index: 9999;
         width: 50px;
         height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
+        transform: none;
     }
 
     .controls {
@@ -1804,32 +2066,22 @@ button.disabled,
     #terrain-tooltip {
         display: none !important;
     }
-}
 
-/* --- Toast Notification --- */
-.toast {
-    visibility: hidden;
-    min-width: 250px;
-    margin-left: -125px;
-    background-color: var(--col-text-primary);
-    color: var(--col-bg-main);
-    text-align: center;
-    border-radius: 8px;
-    padding: 16px;
-    position: fixed;
-    z-index: 2000;
-    left: 50%;
-    top: 30px;
-    font-size: 17px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--col-text-highlight);
-    opacity: 0;
-    transition: opacity 0.5s, top 0.5s;
-    font-weight: bold;
-}
+    /* Revert Masthead centering on mobile */
+    .masthead {
+        justify-content: flex-start;
+        position: static;
+    }
 
-.toast.show {
-    visibility: visible;
-    opacity: 1;
-    top: 50px;
+    .masthead-icon {
+        position: static;
+        left: auto;
+    }
+
+    .masthead-title {
+        text-align: left;
+        width: auto;
+        padding: 0;
+        flex-grow: 1;
+    }
 }
