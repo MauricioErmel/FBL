@@ -582,30 +582,40 @@ function processDataSets(data, excludedPhrases = []) {
 
         const redEffectStrings = (redTitle && weatherEffects[redTitle]) ? weatherEffects[redTitle].split('<br>') : [];
         const blueEffectStrings = (blueTitle && weatherEffects[blueTitle]) ? weatherEffects[blueTitle].split('<br>') : [];
-        const allEffectStrings = [...redEffectStrings, ...blueEffectStrings];
 
-        const effectsMap = new Map();
+        // Track effects and their sources
+        const effectsMap = new Map(); // Key: description, Value: { value: num, sources: [] }
 
-        for (const effectString of allEffectStrings) {
-            const parsed = parseEffect(effectString);
-            if (parsed) {
-                const { value, description } = parsed;
+        const addEffects = (strings, sourceImage) => {
+            for (const effectString of strings) {
+                const parsed = parseEffect(effectString);
+                if (parsed) {
+                    const { value, description } = parsed;
 
-                // Check exclusions
-                if (excludedPhrases.some(phrase => description.includes(phrase))) {
-                    continue;
-                }
-
-                if (effectsMap.has(description)) {
-                    const existing = effectsMap.get(description);
-                    if (existing.value !== null && value !== null) {
-                        existing.value += value;
+                    // Check exclusions
+                    if (excludedPhrases.some(phrase => description.includes(phrase))) {
+                        continue;
                     }
-                } else {
-                    effectsMap.set(description, { value });
+
+                    if (effectsMap.has(description)) {
+                        const existing = effectsMap.get(description);
+                        // Accumulate value if both are numeric
+                        if (existing.value !== null && value !== null) {
+                            existing.value += value;
+                        }
+                        if (sourceImage && !existing.sources.includes(sourceImage)) {
+                            existing.sources.push(sourceImage);
+                        }
+                    } else {
+                        // First time seeing this description
+                        effectsMap.set(description, { value, sources: sourceImage ? [sourceImage] : [] });
+                    }
                 }
             }
-        }
+        };
+
+        addEffects(redEffectStrings, hexagon.redImage);
+        addEffects(blueEffectStrings, hexagon.blueImage);
 
         const redImageName = hexagon.redImage ? hexagon.redImage.split('/').pop() : null;
         const blueImageName = hexagon.blueImage ? hexagon.blueImage.split('/').pop() : null;
@@ -615,20 +625,34 @@ function processDataSets(data, excludedPhrases = []) {
 
         if (conditionRed && conditionBlue) {
             if (effectsMap.has('CAMINHAR requer uma rolagem de Resiliência')) {
+                const oldEntry = effectsMap.get('CAMINHAR requer uma rolagem de Resiliência');
                 effectsMap.delete('CAMINHAR requer uma rolagem de Resiliência');
-                effectsMap.set('CAMINHAR requer uma rolagem de Resiliência com um redutor de -2', { value: null });
+
+                // Add new entry with combined sources
+                effectsMap.set('CAMINHAR requer uma rolagem de Resiliência com um redutor de -2', {
+                    value: null,
+                    sources: oldEntry.sources
+                });
             }
         }
 
         let effectsString = '';
-        for (const [description, { value }] of effectsMap.entries()) {
+        for (const [description, { value, sources }] of effectsMap.entries()) {
             if (effectsString) effectsString += '<br>';
+
+            // Build tags
+            let tagsHtml = '';
+            sources.forEach(src => {
+                tagsHtml += `<img src="${src}" class="source-tag" onclick="showGeneralPopup('${src}')">`;
+            });
+            // Fallback for no source? Should not happen given logic, but maybe for manual adds.
+            if (!tagsHtml) tagsHtml = `<span style="font-size:1.2em; vertical-align:middle; margin-right:5px;">✥</span>`;
 
             if (value !== null && value !== 0) {
                 const sign = value > 0 ? '+' : '';
-                effectsString += `✥ ${sign}${value} ${description}`;
+                effectsString += `${tagsHtml} ${sign}${value} ${description}`;
             } else if (value === null) {
-                effectsString += `✥ ${description}`;
+                effectsString += `${tagsHtml} ${description}`;
             }
         }
 

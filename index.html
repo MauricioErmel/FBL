@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FBL Hexplorer Companion</title>
-    <link rel="icon" type="image/x-icon" href="img/icons/header/logo.svg">
+    <link rel="icon" type="image/x-icon" href="img/icons/logo.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,154 +13,169 @@
     <header id="site-header">
         <div id="header-controls">
             <button id="btn-save-game" class="header-btn" title="Salvar Estado">
-                <img src="img/icons/header/save.svg" alt="" class="btn-icon">
+                <img src="img/icons/buttons/header/save.svg" alt="" class="btn-icon">
                 <span>Salvar</span>
             </button>
             <button id="btn-load-game" class="header-btn" title="Carregar Estado">
-                <img src="img/icons/header/load.svg" alt="" class="btn-icon">
+                <img src="img/icons/buttons/header/load.svg" alt="" class="btn-icon">
                 <span>Carregar</span>
             </button>
             <button id="btn-reset-game" class="header-btn" title="Resetar Jogo">
-                <img src="img/icons/header/reset.svg" alt="" class="btn-icon">
+                <img src="img/icons/buttons/header/reset.svg" alt="" class="btn-icon">
                 <span>Reset</span>
             </button>
             <button id="btn-info-game" class="header-btn" title="Informações">
-                <img src="img/icons/header/info.svg" alt="" class="btn-icon">
+                <img src="img/icons/buttons/header/info.svg" alt="" class="btn-icon">
                 <span>Info</span>
             </button>
             <input type="file" id="file-input-load" accept=".json" style="display: none;">
         </div>
         <div id="header-branding">
-            <img src="img/icons/header/logo.svg" alt="Logo" id="header-logo">
+            <img src="img/icons/logo.svg" alt="Logo" id="header-logo">
             <h1>FBL Hexplorer Companion</h1>
         </div>
     </header>
 
-    <div id="info-container">
-        <div id="info-display">
-            <div class="masthead">
-                <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
-                <div class="masthead-title">Procedimentos de Viagem</div>
-            </div>
-            <div id="info-display-text"></div>
-        </div>
+    <!-- Onboarding Button Container -->
+    <div id="start-journey-container" style="text-align: center; margin-top: 50px;">
+        <button id="btn-initial-start" class="travel-btn" style="margin: 0 auto; padding: 15px 30px; font-size: 1.2em;">
+            <img src="img/icons/mastheads/journal.svg" class="btn-icon" style="filter: brightness(0) invert(1);">
+            INICIAR JORNADA
+        </button>
     </div>
 
-    <div id="bottom-container">
+    <div id="main-content" style="display: none;">
 
-        <div id="bottom-left-column">
-
-            <div id="selected-hexweather-container">
+        <div id="info-container">
+            <div id="info-display">
                 <div class="masthead">
-                    <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                    <div class="masthead-title" id="selected-hexagon-title">Selecione o Clima</div>
+                    <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
+                    <div class="masthead-title">Procedimentos de Viagem</div>
                 </div>
-                <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
-            </div>
-
-            <div id="selected-terrain">
-                <div class="masthead">
-                    <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
-                    <div class="masthead-title" id="selected-terrain-title">Selecione o Terreno</div>
-                </div>
-                <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
-            </div>
-
-        </div>
-
-        <div id="calendar-container">
-            <div class="masthead">
-                <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
-                <div class="masthead-title" id="current-day-display">Selecione o mês e dia para iniciar</div>
-            </div>
-
-            <div id="calendar-content-wrapper">
-                <div id="travel-controls">
-                    <div class="desbravar-container">
-                        <button id="btn-desbravar" class="travel-btn"><img src="img/icons/explore.svg" alt=""
-                                class="btn-icon">DESBRAVAR</button>
-                        <div class="mounted-switch-container">
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-mounted">
-                                <span class="slider round"></span>
-                            </label>
-                            <label for="toggle-mounted">Todos Montados?</label>
-                        </div>
-                    </div>
-                    <button id="btn-permanecer" class="travel-btn"><img src="img/icons/stay.svg" alt=""
-                            class="btn-icon">PERMANECER</button>
-                    <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
-                </div>
-
-                <div id="day-details-main"></div>
-
-                <div id="journal-section">
-                    <h3>Diário do Dia</h3>
-
-                    <div id="journal-entries-list" class="journal-entries-list"></div>
-
-                    <div id="journal-controls"
-                        style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                        <label for="journal-quarter-select">Momento:</label>
-                        <select id="journal-quarter-select"
-                            style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
-                            <option value="0">Manhã</option>
-                            <option value="1">Tarde</option>
-                            <option value="2">Anoitecer</option>
-                            <option value="3">Noite</option>
-                        </select>
-                    </div>
-
-                    <div class="editor-toolbar">
-                        <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                        <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                        <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                        <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                        <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">•</button>
-                        <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                        <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
-                                src="img/icons/editor/left.svg" alt="Left"></button>
-                        <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
-                                src="img/icons/editor/center.svg" alt="Center"></button>
-                        <button class="tool-btn icon-only" data-cmd="justifyRight" title="Alinhar à Direita"><img
-                                src="img/icons/editor/right.svg" alt="Right"></button>
-                        <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
-                                src="img/icons/editor/justify.svg" alt="Justify"></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
-                        <div class="color-picker-wrapper" title="Cor do Texto">
-                            <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
-                            <input type="color" id="editor-color" value="#e0e0e0">
-                        </div>
-                    </div>
-
-                    <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
-                    </div>
-
-                    <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                        <button id="btn-save-entry">Salvar Entrada</button>
-                        <button id="btn-cancel-edit"
-                            style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
-                            Edição</button>
-                    </div>
-
-                </div>
+                <div id="info-display-text"></div>
             </div>
         </div>
 
+        <div id="bottom-container">
 
-    </div>
+            <div id="bottom-left-column">
+
+                <div id="selected-hexweather-container">
+                    <div class="masthead">
+                        <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
+                        <div class="masthead-title" id="selected-hexagon-title">Selecione o Clima</div>
+                    </div>
+                    <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
+                </div>
+
+                <div id="selected-terrain">
+                    <div class="masthead">
+                        <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
+                        <div class="masthead-title" id="selected-terrain-title">Selecione o Terreno</div>
+                    </div>
+                    <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
+                </div>
+
+            </div>
+
+            <div id="calendar-container">
+                <div class="masthead">
+                    <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
+                    <div class="masthead-title" id="current-day-display">Selecione o mês e dia para iniciar</div>
+                </div>
+
+                <div id="calendar-content-wrapper">
+                    <div id="travel-controls">
+                        <div class="desbravar-container">
+                            <button id="btn-desbravar" class="travel-btn"><img src="img/icons/buttons/explore.svg"
+                                    alt="" class="btn-icon">DESBRAVAR</button>
+                            <div class="mounted-switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-mounted">
+                                    <span class="slider round"></span>
+                                </label>
+                                <label for="toggle-mounted">Todos Montados?</label>
+                            </div>
+                        </div>
+                        <button id="btn-permanecer" class="travel-btn"><img src="img/icons/buttons/stay.svg" alt=""
+                                class="btn-icon">PERMANECER</button>
+                        <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
+                    </div>
+
+                    <div id="day-details-main"></div>
+
+                    <div id="journal-section">
+                        <h3>Registrar Anotação</h3>
+
+                        <div id="journal-entries-list" class="journal-entries-list"></div>
+
+                        <div id="journal-controls"
+                            style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <label for="journal-quarter-select">Momento:</label>
+                            <select id="journal-quarter-select"
+                                style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                                <option value="0">Manhã</option>
+                                <option value="1">Tarde</option>
+                                <option value="2">Anoitecer</option>
+                                <option value="3">Noite</option>
+                            </select>
+                        </div>
+
+                        <div class="editor-toolbar">
+                            <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
+                            <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
+                            <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
+                            <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                            </div>
+                            <button class="tool-btn" data-cmd="insertUnorderedList"
+                                title="Lista com Marcadores">•</button>
+                            <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
+                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                            </div>
+                            <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
+                                    src="img/icons/editor/left.svg" alt="Left"></button>
+                            <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
+                                    src="img/icons/editor/center.svg" alt="Center"></button>
+                            <button class="tool-btn icon-only" data-cmd="justifyRight" title="Alinhar à Direita"><img
+                                    src="img/icons/editor/right.svg" alt="Right"></button>
+                            <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
+                                    src="img/icons/editor/justify.svg" alt="Justify"></button>
+                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                            </div>
+                            <div class="color-picker-wrapper" title="Cor do Texto">
+                                <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
+                                <input type="color" id="editor-color" value="#e0e0e0">
+                            </div>
+                        </div>
+
+                        <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
+                        </div>
+
+                        <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+                            <button id="btn-save-entry">Salvar Entrada</button>
+                            <button id="btn-cancel-edit"
+                                style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
+                                Edição</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div> <!-- End of #bottom-container -->
+    </div> <!-- End of #main-content -->
 
     <div id="hexagon-modal" class="modal">
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                <div class="masthead-title">Hexflower de Temperatura</div>
+                <div class="masthead-title">Hexflower de Clima</div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="modal-body-split">
                 <div id="modal-left-column">
+                    <p id="initial-hex-subtitle" class="subtitle" style="display: none;">Selecione o Hexágono de Clima
+                        inicial</p>
                     <div id="modal-map-container"></div>
                     <div id="text-window"></div>
                 </div>
@@ -258,6 +273,8 @@
         </div>
     </div>
 
+
+
     <div id="terrain-modal" class="modal">
         <div class="modal-content">
             <div class="masthead">
@@ -265,6 +282,9 @@
                 <div class="masthead-title">Terrenos Exploráveis</div>
                 <span class="close-button">&times;</span>
             </div>
+            <p class="subtitle" style="text-align: center; padding: 20px 20px 0 20px; margin: 0;">Selecione o
+                Terreno
+                atual</p>
             <div id="terrain-grid" style="padding: 20px;"></div>
         </div>
     </div>
@@ -298,10 +318,12 @@
                         <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
                         <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
                         <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                        </div>
                         <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">•</button>
                         <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                        </div>
                         <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
                                 src="img/icons/editor/left.svg" alt="Left"></button>
                         <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
@@ -310,7 +332,8 @@
                                 src="img/icons/editor/right.svg" alt="Right"></button>
                         <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
                                 src="img/icons/editor/justify.svg" alt="Justify"></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;"></div>
+                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
+                        </div>
                         <div class="color-picker-wrapper" title="Cor do Texto">
                             <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
                             <input type="color" id="modal-editor-color" value="#e0e0e0">
@@ -332,21 +355,26 @@
 
     <div id="start-game-modal" class="modal">
         <div class="modal-content start-game-content">
-            <span class="close-button">&times;</span>
-            <h2>Iniciar Viagem</h2>
-            <div class="form-group">
-                <label for="start-year">Ano:</label>
-                <input type="number" id="start-year" value="1165">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
+                <div class="masthead-title">Iniciar Viagem</div>
+                <span class="close-button">&times;</span>
             </div>
-            <div class="form-group">
-                <label for="start-month">Mês:</label>
-                <select id="start-month"></select>
+            <div style="padding: 20px;">
+                <div class="form-group">
+                    <label for="start-year">Ano:</label>
+                    <input type="number" id="start-year" value="1165">
+                </div>
+                <div class="form-group">
+                    <label for="start-month">Mês:</label>
+                    <select id="start-month"></select>
+                </div>
+                <div class="form-group">
+                    <label for="start-day">Dia:</label>
+                    <input type="number" id="start-day" min="1" max="46" value="1">
+                </div>
+                <button id="btn-start-game">DATA DEFINIDA</button>
             </div>
-            <div class="form-group">
-                <label for="start-day">Dia:</label>
-                <input type="number" id="start-day" min="1" max="46" value="1">
-            </div>
-            <button id="btn-start-game">Iniciar</button>
         </div>
     </div>
 
@@ -358,43 +386,112 @@
                 <span class="close-button">&times;</span>
             </div>
             <div id="info-content" style="padding: 20px;">
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
-                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
-                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
-                    torquent per conubia nostra inceptos himenaeos.</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
-                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
-                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
-                    torquent per conubia nostra inceptos himenaeos.</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
-                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
-                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
-                    torquent per conubia nostra inceptos himenaeos.</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
-                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
-                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
-                    torquent per conubia nostra inceptos himenaeos.</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque
-                    sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
-                    tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
-                    lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
-                    torquent per conubia nostra inceptos himenaeos.</p>
+                <h2 data-path-to-node="2">Bem-vindo ao FBL Hexplorer Companion!</h2>
+                <p data-path-to-node="3">Como o nome sugere, esta p&aacute;gina foi feita para te ajudar na
+                    explora&ccedil;&atilde;o dos
+                    hex&aacute;gonos durante suas sess&otilde;es de <em>Forbidden Lands</em>.</p>
+                <h3 data-path-to-node="4">Como usar:</h3>
+                <ul data-path-to-node="5">
+                    <li>
+                        <p data-path-to-node="5,0,0"><strong>Configura&ccedil;&atilde;o Inicial:</strong> Comece
+                            escolhendo o dia,
+                            m&ecirc;s e ano de in&iacute;cio da campanha. Isso definir&aacute; o mapa em
+                            <em>Hexflower</em> que
+                            ser&aacute; utilizado.
+                        </p>
+                    </li>
+                    <li>
+                        <p data-path-to-node="5,1,0"><strong>Clima:</strong> Selecione o clima inicial no mapa.
+                            N&atilde;o tem jeito
+                            certo para isso, apenas defina um arbitrariamente.</p>
+                    </li>
+                    <li>
+                        <p data-path-to-node="5,2,0"><strong>Temperatura:</strong> Role <strong>1d12</strong>
+                            (somando
+                            b&ocirc;nus/redutores, se houver) para definir a temperatura aleatoriamente, ou clique
+                            diretamente em uma
+                            op&ccedil;&atilde;o na tabela.</p>
+                    </li>
+                    <li>
+                        <p data-path-to-node="5,3,0"><strong>Terreno:</strong> Selecione o tipo de terreno onde o
+                            personagem
+                            est&aacute;.</p>
+                    </li>
+                    <li>
+                        <p data-path-to-node="5,4,0"><strong>Viagem:</strong> Utilize das informa&ccedil;&otilde;es
+                            contidas em
+                            <strong>'Procedimentos de Viagem'</strong> para n&atilde;o esquecer nenhum detalhe
+                            importante enquanto
+                            estiver pelas <em>Terras Proibidas</em>.
+                        </p>
+                    </li>
+                </ul>
+                <p data-path-to-node="6"><strong>Navega&ccedil;&atilde;o e Di&aacute;rio:</strong> Use os
+                    bot&otilde;es
+                    <strong>DESBRAVAR</strong> e <strong>PERMANECER</strong> para avan&ccedil;ar o dia. Ao final do
+                    dia,
+                    o sistema
+                    pedir&aacute; o clima do dia seguinte. Basta rolar <strong>2d6</strong>: o resultado
+                    mover&aacute; o
+                    clima para um
+                    hex&aacute;gono adjacente (veja em <strong>'Navega&ccedil;&atilde;o no Hexflower'</strong>).
+                    Voc&ecirc; pode clicar
+                    tanto nos hex&aacute;gonos de navega&ccedil;&atilde;o quanto diretamente no mapa
+                    <em>hexflower</em>
+                    de clima.
+                    Voc&ecirc; tamb&eacute;m precisar&aacute; rolar na tabela de temperatura novamente.
+                </p>
+                <p data-path-to-node="7">N&atilde;o esque&ccedil;a do <strong>Di&aacute;rio</strong>: use-o para
+                    anotar
+                    encontros,
+                    tesouros, etc. Clicando na data atual, uma janela mostrar&aacute; o hist&oacute;rico dos dias
+                    anteriores.</p>
+                <hr data-path-to-node="8" />
+                <h3 data-path-to-node="9">Sobre o Projeto</h3>
+                <p data-path-to-node="10">Criei esta ferramenta pensando em jogos solo, mas a utilizo sempre que
+                    mestro
+                    para meu grupo.
+                    Espero que fa&ccedil;a bom proveito na sua mesa!</p>
+                <p data-path-to-node="11">A principal <em>feature</em> que me motivou a cria&ccedil;&atilde;o da
+                    ferramenta foi a
+                    <em>house-rule</em> de controle de clima atrav&eacute;s da navega&ccedil;&atilde;o por
+                    <em>hexflower</em>,
+                    ent&atilde;o esta &aacute;rea recebeu mais carinho, caso voc&ecirc; n&atilde;o conhe&ccedil;a,
+                    este
+                    &eacute; um
+                    m&eacute;todo j&aacute; famoso na comunidade <em>hexcrawl</em> que faz a progress&atilde;o do
+                    clima
+                    ser menos
+                    imprevis&iacute;vel e, com sorte, mais cr&iacute;vel. As regras, b&ocirc;nus e redutores que
+                    usei
+                    aqui s&atilde;o um
+                    am&aacute;lgama de informa&ccedil;&otilde;es do <em>Livro do Mestre</em>, <em>Book of
+                        Beasts</em> e
+                    materiais da
+                    comunidade, ajustados ao meu gosto pessoal.
+                </p>
+                <p data-path-to-node="12"><em>Este projeto &eacute; uma ferramenta independente criada por f&atilde;
+                        e
+                        n&atilde;o possui
+                        qualquer inten&ccedil;&atilde;o de violar direitos autorais. Ele n&atilde;o cont&eacute;m,
+                        reproduz ou distribui
+                        material protegido por copyright do sistema de RPG de mesa Forbidden Lands, que &eacute;
+                        propriedade da empresa
+                        Free League Publishing. Todos os direitos sobre Forbidden Lands pertencem exclusivamente aos
+                        seus respectivos
+                        detentores</em></p>
             </div>
         </div>
     </div>
 
-    <div id="weather-info-modal" class="modal">
+    <div id="general-info-modal" class="modal">
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                <div class="masthead-title" id="weather-info-title">Clima</div>
+                <div class="masthead-title" id="general-info-title">Clima</div>
                 <span class="close-button">&times;</span>
             </div>
-            <div id="weather-info-content" style="padding: 20px; font-size: 1.1em; line-height: 1.6;"></div>
+            <div id="general-info-content" style="padding: 20px; font-size: 1.1em; line-height: 1.6;"></div>
         </div>
     </div>
 

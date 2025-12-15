@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icons" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #aebaa6;
+      }
+
+      .st1 {
+        fill: #d97566;
+      }
+    </style>
+  </defs>
+  <ellipse class="st1" cx="401.52" cy="586.65" rx="112.52" ry="121.65"/>
+  <ellipse class="st1" cx="407.5" cy="330.89" rx="62.5" ry="237"/>
+  <path class="st0" d="M500,432.5V150c0-55-45-100-100-100s-100,45-100,100v282.5c-47.5,32.5-75,87.5-75,142.5,0,97.5,77.5,175,175,175s175-77.5,175-175c0-57.5-27.5-110-75-142.5ZM400,675c-55,0-100-45-100-100,0-47.5,32.5-85,75-97.5V150c0-15,10-25,25-25s25,10,25,25v327.5c42.5,10,75,50,75,97.5,0,55-45,100-100,100Z"/>
+</svg>

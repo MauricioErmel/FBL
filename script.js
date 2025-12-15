@@ -29,14 +29,14 @@ let currentSelectedTerrainData = null;
 const CALENDAR_CONFIG = {
     startYear: 1165,
     months: [
-        { name: 'Cresceprimavera', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Minguaprimavera', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Cresceverão', days: 45, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
-        { name: 'Minguaverão', days: 46, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
-        { name: 'Cresceoutono', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Minguaoutono', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Cresceinverno', days: 45, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] },
-        { name: 'Minguainverno', days: 46, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] }
+        { name: 'Cresceprimavera', image: 'img/months/cresceprimavera.webp', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Minguaprimavera', image: 'img/months/minguaprimavera.webp', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Cresceverão', image: 'img/months/cresceverao.webp', days: 45, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
+        { name: 'Minguaverão', image: 'img/months/minguaverao.webp', days: 46, lighting: ['Claro', 'Claro', 'Claro', 'Escuro'] },
+        { name: 'Cresceoutono', image: 'img/months/cresceoutono.webp', days: 45, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Minguaoutono', image: 'img/months/minguaoutono.webp', days: 46, lighting: ['Claro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Cresceinverno', image: 'img/months/cresceinverno.webp', days: 45, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] },
+        { name: 'Minguainverno', image: 'img/months/minguainverno.webp', days: 46, lighting: ['Escuro', 'Claro', 'Escuro', 'Escuro'] }
     ]
 };
 
@@ -57,6 +57,9 @@ let gameState = {
     waitingForTerrainSelection: false
 };
 
+let isOnboarding = false; // Flag to track onboarding state
+let onboardingStep = 0; // 0: None, 1: Date Selected (Weather Next), 2: Weather Selected (Terrain Next)
+
 function initializeCalendar() {
     // Start Day 1 - REMOVED to show placeholder
     // startNewDay();
@@ -66,7 +69,7 @@ function initializeCalendar() {
     setupCalendarModal();
     setupStartGameModal();
     setupInfoModal();
-    setupWeatherInfoModal();
+    setupGeneralInfoModal();
     updateTravelButtonState(); // Initial check
     updateTravelButtonState(); // Initial check
     renderWeatherNavigation();
@@ -173,6 +176,11 @@ function renderCalendar() {
     // Update main day details view
     if (typeof showDayDetails === 'function') {
         showDayDetails(day);
+    }
+
+    // Refresh info display (to update lighting based on new quarter)
+    if (typeof updateInfoDisplay === 'function' && typeof currentInfoMessage !== 'undefined') {
+        updateInfoDisplay(currentInfoMessage);
     }
 }
 
@@ -404,73 +412,159 @@ function updateInfoDisplay(content) {
     const infoDisplay = document.getElementById('info-display-text');
     if (infoDisplay) {
         currentInfoMessage = content; // Store the base message
-        let newContent = content;
+
+        // --- PRE-CLEAN INPUT CONTENT ---
+        // If content comes from updateTextWithTemperature, it might already have raw terrain info.
+        // We want to rebuild the Coletar/Cacar lines with our seasonal logic, so we strip them from the input.
+        let contentLines = content.split('<br>');
+        contentLines = contentLines.filter(line => {
+            if (line.includes('em rolagens de COLETAR')) return false;
+            if (line.includes('em rolagens de CAÇAR')) return false;
+            if (line.includes('Iluminação:')) return false; // Filter out old Lighting info
+            return true;
+        });
+        let newContent = contentLines.join('<br>');
 
         let terrainText = selectedTerrainInfo || '';
         let terrainColetarMod = 0;
+        let terrainCacarMod = 0; // NEW: Track Hunting Mod
         let terrainColetarForbidden = false;
+        let terrainCacarForbidden = false; // NEW: Track Forbidden Hunting
 
+        // --- 1. PRE-PARSE TERRAIN FORBIDDEN FLAGS ---
         if (terrainText.includes('Não é possível COLETAR')) {
             terrainColetarForbidden = true;
-        } else {
-            // Check for numeric modifiers in terrain text
-            // Matches "✥ -1 em rolagens de COLETAR" or similar
-            const match = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de COLETAR/);
-            if (match) {
-                terrainColetarMod = parseInt(match[1].replace('+', ''), 10);
+        }
+        if (terrainText.includes('Não é possível CAÇAR')) { // NEW
+            terrainCacarForbidden = true;
+        }
+
+        // --- 2. PARSE TERRAIN NUMERIC MODIFIERS ---
+        // We do this BEFORE any seasonal logic so we know what the base is.
+
+        // Coletar
+        if (!terrainColetarForbidden) {
+            const matchColetar = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de COLETAR/);
+            if (matchColetar) {
+                terrainColetarMod = parseInt(matchColetar[1].replace('+', ''), 10);
             }
         }
 
-        // Seasonal Logic
+        // Cacar (NEW)
+        if (!terrainCacarForbidden) {
+            const matchCacar = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de CAÇAR/);
+            if (matchCacar) {
+                terrainCacarMod = parseInt(matchCacar[1].replace('+', ''), 10);
+            }
+        }
+
+        // --- 3. DETERMINE SEASONAL MODIFIERS ---
         let monthColetarMod = 0;
+        let monthCacarMod = 0; // NEW
         let showSeasonal = false;
 
         if (calendarData.length > 0) {
             const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
             if (['Cresceprimavera', 'Minguaprimavera'].includes(currentMonthName)) {
                 monthColetarMod = -1;
+                monthCacarMod = -1; // NEW
                 showSeasonal = true;
             } else if (['Cresceoutono', 'Minguaoutono'].includes(currentMonthName)) {
                 monthColetarMod = +1;
+                monthCacarMod = +1; // NEW
                 showSeasonal = true;
             } else if (['Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
                 monthColetarMod = -2;
+                monthCacarMod = -2; // NEW
                 showSeasonal = true;
             }
         }
 
-        // Combinar modificadores se não for proibido
-        let finalModifierString = '';
+        // --- 4. COMBINE AND FORMAT OUTPUT STRINGS ---
+        let finalColetarString = '';
+        let finalCacarString = ''; // NEW
 
-        if (!terrainColetarForbidden) {
-            if (showSeasonal) {
-                // If month has info (showSeasonal), we perform combination.
-                const total = terrainColetarMod + monthColetarMod;
-                const sign = total > 0 ? '+' : '';
-                finalModifierString = `✥ ${sign}${total} em rolagens de COLETAR.`;
+        if (showSeasonal) {
+            const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
+            const monthIcon = `<img src="${currentMonth.image}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
 
-                // If terrain had a modifier, we should strip it from terrainText to avoid duplication
-                if (terrainColetarMod !== 0) {
-                    // Remove the specific line/block.
-                    // Patterns: "<br>✥ -1 em rolagens de COLETAR", "✥ -1 em rolagens de COLETAR<br>", etc.
-                    terrainText = terrainText.replace(/<br>\s*✥\s*[+-]?\d+\s*em rolagens de COLETAR/g, '');
-                    terrainText = terrainText.replace(/✥\s*[+-]?\d+\s*em rolagens de COLETAR(<br>)?/g, '');
+            // COLETAR Logic
+            if (!terrainColetarForbidden) {
+                const totalColetar = terrainColetarMod + monthColetarMod;
+                const signColetar = totalColetar > 0 ? '+' : '';
+
+                let sourceIcons = monthIcon;
+                if (terrainColetarMod !== 0 && currentSelectedTerrainData) {
+                    const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
+                    const tContentSafe = (selectedTerrainInfo || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
+                    const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${tContentSafe}\`)">`;
+                    sourceIcons = `${terrainIcon}${monthIcon}`;
+                }
+
+                finalColetarString = `${sourceIcons} ${signColetar}${totalColetar} em rolagens de COLETAR.`;
+            }
+
+            // CAÇAR Logic (NEW)
+            if (!terrainCacarForbidden) {
+                const totalCacar = terrainCacarMod + monthCacarMod;
+                const signCacar = totalCacar > 0 ? '+' : '';
+
+                let sourceIcons = monthIcon;
+                if (terrainCacarMod !== 0 && currentSelectedTerrainData) {
+                    const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
+                    const tContentSafe = (selectedTerrainInfo || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
+                    const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${tContentSafe}\`)">`;
+                    sourceIcons = `${terrainIcon}${monthIcon}`;
+                }
+
+                finalCacarString = `${sourceIcons} ${signCacar}${totalCacar} em rolagens de CAÇAR.`;
+            }
+
+            // ROBUST CLEANUP: Remove modifier lines from terrainText if they are being handled
+            let lines = terrainText.split(/<br>/);
+            lines = lines.filter(line => {
+                // If we are showing a final string for COLETAR, remove the raw COLETAR line
+                if (finalColetarString && line.includes('em rolagens de COLETAR')) return false;
+                // If we are showing a final string for CAÇAR, remove the raw CAÇAR line
+                if (finalCacarString && line.includes('em rolagens de CAÇAR')) return false;
+                return true;
+            });
+            terrainText = lines.join('<br>');
+        }
+
+        // --- 5. BUILD FINAL CONTENT ---
+
+        // Append remaining Terrain Info (cleaned) and avoid duplicates
+        if (terrainText) {
+            let uniqueLines = [];
+            const rawLines = terrainText.split(/<br>/);
+
+            rawLines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+
+                // Remove the bullet for logical comparison
+                const textCheck = trimmed.replace(/^✥\s*/, '').trim();
+                if (textCheck.length === 0) return;
+
+                // If newContent already has this text (likely from updateTextWithTemperature which adds icons), skip it to avoid duplication.
+                if (newContent && newContent.includes(textCheck)) {
+                    return;
+                }
+
+                uniqueLines.push(trimmed);
+            });
+
+            if (uniqueLines.length > 0) {
+                if (newContent) {
+                    newContent += '<br><br>' + uniqueLines.join('<br>');
+                } else {
+                    newContent = uniqueLines.join('<br>');
                 }
             }
         }
 
-        // Append Terrain Info
-        if (terrainText) {
-            // Cleanup potential double BRs or edges if replacement happened
-            // (Simple concatenation logic handles the spacing, we just need to ensure terrainText is clean)
-            if (newContent) {
-                newContent += '<br><br>' + terrainText;
-            } else {
-                newContent = terrainText;
-            }
-        }
-
-        // Conditional Prompts
+        // Conditional Prompts (Weather/Terrain selection warnings)
         const isWeatherSelected = currentSelectedHexagon !== null;
         const isTerrainSelected = !!selectedTerrainInfo;
         const isGameStarted = calendarData.length > 0;
@@ -494,10 +588,40 @@ function updateInfoDisplay(content) {
             }
         }
 
-        // Append Combined/Seasonal Modifier
-        if (finalModifierString) {
-            if (newContent) newContent += '<br><br>';
-            newContent += finalModifierString;
+        // Append Combined/Seasonal Modifiers
+        if (finalColetarString) {
+            if (newContent) newContent += '<br>';
+            newContent += finalColetarString;
+        }
+        if (finalCacarString) { // NEW
+            if (newContent) newContent += '<br>';
+            newContent += finalCacarString;
+        }
+
+        // --- 6. APPEND LIGHTING INFO (Dynamic Update) ---
+        if (calendarData.length > 0) {
+            const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
+            if (currentMonth) {
+                const lighting = currentMonth.lighting[gameState.currentQuarterIndex] || 'Desconhecido';
+
+                // Determine Icon
+                let lightingIconSrc = currentMonth.image;
+                if (lighting === 'Claro') {
+                    lightingIconSrc = 'img/icons/other/day.svg';
+                } else if (lighting === 'Escuro') {
+                    lightingIconSrc = 'img/icons/other/night.svg';
+                }
+
+                const lightingIcon = `<img src="${lightingIconSrc}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
+
+                let lightingText = `Iluminação: ${lighting}`;
+                if (lighting === 'Escuro') {
+                    lightingText += ' <b>*Caso não enxergue no escuro*</b> -2 para desbravar, e todas no grupo precisam fazer uma rolagem de PATRULHA — falhar significa que elas caíram e receberam 1 ponto de dano em Força.';
+                }
+
+                if (newContent) newContent += '<br>';
+                newContent += `${lightingIcon} ${lightingText}`;
+            }
         }
 
         infoDisplay.innerHTML = newContent;
@@ -620,7 +744,76 @@ function updateTextWithTemperature(row) {
 
     const newLines = linesWithoutTitle.filter(line => line && !line.includes('para rolar na tabela de'));
     const newEffect = row.cells[1].innerHTML;
-    newLines.push(`✥ ${newEffect}`);
+    const tempName = row.querySelector('b') ? row.querySelector('b').textContent : null;
+
+    const tempIcons = {
+        'Ameno': 'img/icons/other/mild.svg',
+        'Frio': 'img/icons/other/cold.svg',
+        'Calor': 'img/icons/other/hot.svg',
+        'Escaldante': 'img/icons/other/scorching.svg',
+        'Cortante': 'img/icons/other/biting.svg'
+    };
+
+    // We need to parse tempName if it's like "Ameno (modifiers)". But mostly it's just "Ameno".
+    // Actually the b tag content is "Ameno", "Calor", etc.
+    // We should safeguard against non-matches.
+
+    // Fallback if no icon found?
+    let iconHtml = '';
+    if (tempName) {
+        // Clean tempName just in case
+        const cleanedName = tempName.trim();
+        const iconSrc = tempIcons[cleanedName];
+        if (iconSrc) {
+            iconHtml = `<img src="${iconSrc}" class="source-tag" onclick="showSimplePopup('${cleanedName}', \`${newEffect.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`)">`;
+        } else {
+            iconHtml = `<span style="font-size:1.2em; vertical-align:middle; margin-right:5px;">✥</span>`;
+        }
+    } else {
+        iconHtml = `<span style="font-size:1.2em; vertical-align:middle; margin-right:5px;">✥</span>`;
+    }
+
+    newLines.push(`${iconHtml} ${newEffect}`);
+
+    // --- TERRAIN INFO ---
+    if (selectedTerrainInfo && currentSelectedTerrainData) {
+        const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
+        const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${selectedTerrainInfo.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`)">`;
+        // Split terrain info by <br> if it has multiple lines, but usually it's one block.  
+        // Actually terrainInfo in script.js has <br>. We should split it to add icon to each line?
+        // Let's split.
+        const tLines = selectedTerrainInfo.split('<br>');
+        tLines.forEach(line => {
+            if (line.trim().startsWith('✥')) {
+                newLines.push(`${terrainIcon} ${line.trim().substring(1).trim()}`);
+            } else {
+                newLines.push(`${terrainIcon} ${line.trim()}`);
+            }
+        });
+    }
+
+    // --- MONTH INFO ---
+    const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
+    if (currentMonth) {
+        const lighting = currentMonth.lighting[gameState.currentQuarterIndex] || 'Desconhecido';
+
+        // Determine Icon
+        let lightingIconSrc = currentMonth.image; // Default fallback
+        if (lighting === 'Claro') {
+            lightingIconSrc = 'img/icons/other/day.svg';
+        } else if (lighting === 'Escuro') {
+            lightingIconSrc = 'img/icons/other/night.svg';
+        }
+
+        const lightingIcon = `<img src="${lightingIconSrc}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
+
+        let lightingText = `Iluminação: ${lighting}`;
+        if (lighting === 'Escuro') {
+            lightingText += ' <b>*Caso não enxergue no escuro*</b> -2 para desbravar, e todas no grupo precisam fazer uma rolagem de PATRULHA — falhar significa que elas caíram e receberam 1 ponto de dano em Força.';
+        }
+
+        newLines.push(`${lightingIcon} ${lightingText}`);
+    }
 
     updateInfoDisplay(newLines.join('<br>'));
 }
@@ -785,8 +978,8 @@ function renderSelectedHexagon(displayNumber) {
             hexRed.setAttribute('points', polyRed_points);
             hexRed.setAttribute('stroke', 'none');
             hexRed.setAttribute('fill', `url(#${patternRedId})`);
-            hexRed.setAttribute('cursor', 'pointer');
-            hexRed.onclick = () => showWeatherPopup(redImageSrc);
+            // hexRed.setAttribute('cursor', 'pointer'); // Conflict with container click
+            // hexRed.onclick = () => showWeatherPopup(redImageSrc);
             solitarySvg.appendChild(hexRed);
 
             // Draw blue polygon
@@ -794,8 +987,8 @@ function renderSelectedHexagon(displayNumber) {
             hexBlue.setAttribute('points', polyBlue_points);
             hexBlue.setAttribute('stroke', 'none');
             hexBlue.setAttribute('fill', `url(#${patternBlueId})`);
-            hexBlue.setAttribute('cursor', 'pointer');
-            hexBlue.onclick = () => showWeatherPopup(blueImageSrc);
+            // hexBlue.setAttribute('cursor', 'pointer'); // Conflict with container click
+            // hexBlue.onclick = () => showWeatherPopup(blueImageSrc);
             solitarySvg.appendChild(hexBlue);
 
             const hexOutline = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
@@ -813,8 +1006,8 @@ function renderSelectedHexagon(displayNumber) {
             hex.setAttribute('fill', `url(#${patternRedId})`);
             hex.setAttribute('stroke', 'var(--col-accent-cool)');
             hex.setAttribute('stroke-width', '2');
-            hex.setAttribute('cursor', 'pointer');
-            hex.onclick = () => showWeatherPopup(redImageSrc);
+            // hex.setAttribute('cursor', 'pointer'); // Conflict with container click
+            // hex.onclick = () => showWeatherPopup(redImageSrc);
             solitarySvg.appendChild(hex);
         }
     } else {
@@ -981,9 +1174,12 @@ function highlightSelectedHexagon(targetDisplayNumber, updateMainDisplay = true)
 
 function renderGrid() {
     const modalMapContainer = document.getElementById('modal-map-container');
-    const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+    const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
     modalMapContainer.innerHTML = `
-                <h3>${currentMonthName}</h3>
+                <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <img src="${currentMonth.image}" alt="${currentMonth.name}" style="height: 1.5em;">
+                    ${currentMonth.name}
+                </h3>
                 <div id="map-container">
                     <div class="controls">
                         <label class="switch">
@@ -1317,6 +1513,11 @@ function initializeModal() {
         renderWeatherNavigation('3N'); // Reset nav selection and order on modal open
         highlightSelectedHexagon(currentSelectedHexagon, false); // Suppress main display update
 
+        const subtitle = document.getElementById('initial-hex-subtitle');
+        if (subtitle) {
+            subtitle.style.display = currentSelectedHexagon === null ? 'block' : 'none';
+        }
+
         if (selectedTemperatureRowIndex !== null) {
             const temperatureTable = document.getElementById('temperature-table');
             const rowToSelect = temperatureTable.getElementsByTagName('tr')[selectedTemperatureRowIndex];
@@ -1355,19 +1556,74 @@ function initializeModal() {
                     if (!isNaN(displayNumber)) {
                         selectHexagon(displayNumber);
 
-                        // Trigger Focus Temperature Animation (similar to dice roll)
-                        setTimeout(() => {
-                            const tempContainer = document.getElementById('temperature-container');
-                            if (tempContainer) {
-                                tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                tempContainer.classList.add('flash-highlight');
-                                tempContainer.classList.add('awaiting-roll');
+                        if (displayNumber === 1 || displayNumber === 2) {
+                            const temperatureTable = document.getElementById('temperature-table');
+                            if (temperatureTable && temperatureTable.rows.length > 3) {
+                                const targetRow = temperatureTable.rows[3];
 
+                                // Visual selection
+                                const currentSelected = temperatureTable.querySelectorAll('tr.selected-row');
+                                currentSelected.forEach(r => r.classList.remove('selected-row'));
+                                targetRow.classList.add('selected-row');
+                                selectedTemperatureRowIndex = targetRow.rowIndex;
+
+                                // Update Data
+                                updateTextWithTemperature(targetRow);
+
+                                const bTag = targetRow.querySelector('b');
+                                if (bTag && calendarData.length > 0) {
+                                    calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                                    const descCell = targetRow.cells[1];
+                                    if (descCell) {
+                                        calendarData[gameState.currentDayIndex].temperatureDesc = descCell.innerHTML;
+                                    }
+                                    showDayDetails(calendarData[gameState.currentDayIndex]);
+                                }
+
+                                // Focus Temperature Table (Visual Feedback)
+                                const tempContainer = document.getElementById('temperature-container');
+                                if (tempContainer) {
+                                    tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    tempContainer.classList.add('flash-highlight');
+                                    setTimeout(() => {
+                                        tempContainer.classList.remove('flash-highlight');
+                                    }, 1500);
+                                }
+
+                                // Proceed to close logic
                                 setTimeout(() => {
-                                    tempContainer.classList.remove('flash-highlight');
-                                }, 1500);
+                                    // Ensure lock is released
+                                    const modal = document.getElementById('hexagon-modal');
+                                    if (modal) modal.dataset.preventClose = 'false';
+
+                                    if (typeof window.startDayWeatherModalClose === 'function') {
+                                        window.startDayWeatherModalClose();
+                                    } else if (modal) {
+                                        modal.style.display = 'none';
+                                        if (typeof autoSave === 'function') autoSave();
+                                    }
+
+                                    const infoDisplay = document.getElementById('info-display');
+                                    if (infoDisplay) {
+                                        infoDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }
+                                }, 3500);
                             }
-                        }, 2000); // 3rd delay increased
+                        } else {
+                            // Trigger Focus Temperature Animation (similar to dice roll)
+                            setTimeout(() => {
+                                const tempContainer = document.getElementById('temperature-container');
+                                if (tempContainer) {
+                                    tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    tempContainer.classList.add('flash-highlight');
+                                    tempContainer.classList.add('awaiting-roll');
+
+                                    setTimeout(() => {
+                                        tempContainer.classList.remove('flash-highlight');
+                                    }, 1500);
+                                }
+                            }, 1500);
+                        }
                     }
                 }
             });
@@ -1384,6 +1640,36 @@ function initializeModal() {
         // Enforce temperature selection if a hexagon is selected
         if (currentSelectedHexagon !== null && selectedTemperatureRowIndex === null) {
             alert('Selecione uma opção na Tabela de Temperatura!');
+            return;
+        }
+
+        // Onboarding Logic: Transition from Weather to Terrain
+        if (isOnboarding && onboardingStep === 1) {
+            // Step 1 Complete (Weather Selected), Move to Step 2 (Terrain)
+            onboardingStep = 2;
+            modal.style.display = 'none'; // Close weather modal
+
+            // Open Terrain Modal
+            const terrainModal = document.getElementById('terrain-modal');
+            if (terrainModal) {
+                terrainModal.style.display = 'block';
+                // Update subtitle if needed? Default is "Selecione o Terreno atual"
+            }
+            return;
+        }
+
+        // Onboarding Logic: Transition from Weather to Terrain
+        if (isOnboarding && onboardingStep === 1) {
+            // Step 1 Complete (Weather Selected), Move to Step 2 (Terrain)
+            onboardingStep = 2;
+            modal.style.display = 'none'; // Close weather modal
+
+            // Open Terrain Modal
+            const terrainModal = document.getElementById('terrain-modal');
+            if (terrainModal) {
+                terrainModal.style.display = 'block';
+                // Update subtitle if needed? Default is "Selecione o Terreno atual"
+            }
             return;
         }
 
@@ -1422,6 +1708,11 @@ function initializeModal() {
             const bTag = targetRow.querySelector('b');
             if (bTag && calendarData.length > 0) {
                 calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                // Get full content from the second cell (index 1)
+                const descCell = targetRow.cells[1];
+                if (descCell) {
+                    calendarData[gameState.currentDayIndex].temperatureDesc = descCell.innerHTML;
+                }
                 showDayDetails(calendarData[gameState.currentDayIndex]);
             }
 
@@ -1623,6 +1914,25 @@ function initializeTerrainModal() {
             }
 
             updateTravelButtonState(); // Check if we can enable buttons
+            updateTravelButtonState(); // Check if we can enable buttons
+
+            // Onboarding Logic for Terrain Selection
+            if (isOnboarding && onboardingStep === 2) {
+                isOnboarding = false;
+                onboardingStep = 0;
+
+                // Finish Onboarding: Reveal Main Content
+                const mainContent = document.getElementById('main-content');
+                const startJourneyContainer = document.getElementById('start-journey-container');
+                const siteHeader = document.getElementById('site-header');
+
+                if (mainContent) mainContent.style.display = 'block'; // Show everything
+                if (startJourneyContainer) startJourneyContainer.style.display = 'none'; // Hide start button
+
+                closeModal();
+                return;
+            }
+
             closeModal();
         });
     });
@@ -1743,12 +2053,29 @@ function showDayDetails(day) {
         let weatherName = redTitle;
         if (blueTitle) weatherName += ` e ${blueTitle}`;
 
+        if (day.temperature) {
+            weatherName += ` (${day.temperature})`;
+        }
+
+        const tempIcons = {
+            'Ameno': 'img/icons/other/mild.svg',
+            'Frio': 'img/icons/other/cold.svg',
+            'Calor': 'img/icons/other/hot.svg',
+            'Escaldante': 'img/icons/other/scorching.svg',
+            'Cortante': 'img/icons/other/biting.svg'
+        };
+
+        const tempIconSrc = tempIcons[day.temperature];
+        const tempBadgeContent = tempIconSrc
+            ? `<img src="${tempIconSrc}" alt="${day.temperature}" style="max-height: 100%; max-width: 100%;">`
+            : day.temperature;
+
         html += `<div class="weather-detail">
             <p><strong>Clima:</strong> ${weatherName}</p>
             <div class="weather-images">
-                ${day.weather.redImage ? `<img src="${day.weather.redImage}" alt="${redTitle}" style="cursor: pointer;" onclick="showWeatherPopup('${day.weather.redImage}')">` : ''}
-                ${day.weather.blueImage ? `<img src="${day.weather.blueImage}" alt="${blueTitle}" style="cursor: pointer;" onclick="showWeatherPopup('${day.weather.blueImage}')">` : ''}
-                ${day.temperature ? `<div class="temp-badge">${day.temperature}</div>` : ''}
+                ${day.weather.redImage ? `<img src="${day.weather.redImage}" alt="${redTitle}" style="cursor: pointer;" onclick="showGeneralPopup('${day.weather.redImage}')">` : ''}
+                ${day.weather.blueImage ? `<img src="${day.weather.blueImage}" alt="${blueTitle}" style="cursor: pointer;" onclick="showGeneralPopup('${day.weather.blueImage}')">` : ''}
+                ${day.temperature ? `<div class="temp-badge" style="cursor: pointer;" onclick="showSimplePopup('${day.temperature}', \`${day.temperatureDesc ? day.temperatureDesc.replace(/<b>.*?<\/b>\.?\s*/, '').replace(/`/g, '\\`').replace(/'/g, "\\'") : ''}\`)">${tempBadgeContent}</div>` : ''}
             </div>
         </div>`;
     } else {
@@ -1767,7 +2094,7 @@ function showDayDetails(day) {
 
         quarterEntries.forEach(entry => {
             html += `<button class="quarter-note-btn view-note-btn" data-day-id="${day.id}" data-entry-id="${entry.id}" title="Ver nota">
-                        <img src="img/icons/note.svg">
+                        <img src="img/icons/buttons/note.svg">
                       </button>`;
         });
 
@@ -1827,6 +2154,31 @@ function showDayDetails(day) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initial state: Hide main content, show start button
+    const mainContent = document.getElementById('main-content');
+    const startJourneyContainer = document.getElementById('start-journey-container');
+    const initialStartBtn = document.getElementById('btn-initial-start');
+
+    // Check for Save State
+    const hasSave = !!localStorage.getItem('fbl_hexflower_save');
+
+    if (hasSave) {
+        // If save exists, show main content immediately (will be populated by auto-load)
+        if (mainContent) mainContent.style.display = 'block';
+        if (startJourneyContainer) startJourneyContainer.style.display = 'none';
+    } else {
+        // No save, show onboarding start button
+        if (mainContent) mainContent.style.display = 'none';
+        if (startJourneyContainer) startJourneyContainer.style.display = 'block';
+    }
+
+    if (initialStartBtn) {
+        initialStartBtn.addEventListener('click', () => {
+            const startModal = document.getElementById('start-game-modal');
+            if (startModal) startModal.style.display = 'block';
+        });
+    }
+
     initializeModal();
     // Initialize with null to ensure containers are disabled if no valid selection exists/persisted
     // logic in selectHexagon handles null check
@@ -2230,7 +2582,16 @@ function setupStartGameModal() {
 
         startNewDay(false);
         renderCalendar();
+
+        // Start Onboarding
+        isOnboarding = true;
+        onboardingStep = 1;
+
         modal.style.display = "none";
+
+        // Open Weather Modal
+        const weatherContainer = document.getElementById('selected-hexweather-container');
+        if (weatherContainer) weatherContainer.click();
 
         saveToLocalStorage(); // Auto-save initial state
     }
@@ -2377,17 +2738,72 @@ function renderWeatherNavigation(selectedHexName = '3N') {
             setTimeout(() => {
                 handleNavigate(navName);
 
-                // NEW STEP: Focus Temperature
+                // NEW STEP: Check logic for Hex 1 or 2 vs Normal Focus
                 setTimeout(() => {
-                    const tempContainer = document.getElementById('temperature-container');
-                    if (tempContainer) {
-                        tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        tempContainer.classList.add('flash-highlight');
-                        tempContainer.classList.add('awaiting-roll');
+                    if (currentSelectedHexagon === 1 || currentSelectedHexagon === 2) {
+                        const temperatureTable = document.getElementById('temperature-table');
+                        if (temperatureTable && temperatureTable.rows.length > 3) {
+                            const targetRow = temperatureTable.rows[3];
 
-                        setTimeout(() => {
-                            tempContainer.classList.remove('flash-highlight');
-                        }, 1500);
+                            // Visual selection
+                            const currentSelected = temperatureTable.querySelectorAll('tr.selected-row');
+                            currentSelected.forEach(r => r.classList.remove('selected-row'));
+                            targetRow.classList.add('selected-row');
+                            selectedTemperatureRowIndex = targetRow.rowIndex;
+
+                            // Update Data
+                            updateTextWithTemperature(targetRow);
+
+                            const bTag = targetRow.querySelector('b');
+                            if (bTag && calendarData.length > 0) {
+                                calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                                const descCell = targetRow.cells[1];
+                                if (descCell) {
+                                    calendarData[gameState.currentDayIndex].temperatureDesc = descCell.innerHTML;
+                                }
+                                showDayDetails(calendarData[gameState.currentDayIndex]);
+                            }
+
+                            // Focus Temperature Table (Visual Feedback)
+                            const tempContainer = document.getElementById('temperature-container');
+                            if (tempContainer) {
+                                tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                tempContainer.classList.add('flash-highlight');
+                                setTimeout(() => {
+                                    tempContainer.classList.remove('flash-highlight');
+                                }, 1500);
+                            }
+
+                            // Proceed to close logic
+                            setTimeout(() => {
+                                // Ensure lock is released
+                                const modal = document.getElementById('hexagon-modal');
+                                if (modal) modal.dataset.preventClose = 'false';
+
+                                if (typeof window.startDayWeatherModalClose === 'function') {
+                                    window.startDayWeatherModalClose();
+                                } else if (modal) {
+                                    modal.style.display = 'none';
+                                    if (typeof autoSave === 'function') autoSave();
+                                }
+
+                                const infoDisplay = document.getElementById('info-display');
+                                if (infoDisplay) {
+                                    infoDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+                            }, 3500);
+                        }
+                    } else {
+                        const tempContainer = document.getElementById('temperature-container');
+                        if (tempContainer) {
+                            tempContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            tempContainer.classList.add('flash-highlight');
+                            tempContainer.classList.add('awaiting-roll');
+
+                            setTimeout(() => {
+                                tempContainer.classList.remove('flash-highlight');
+                            }, 1500);
+                        }
                     }
                 }, 2000); // 3rd delay
             }, 500);
@@ -2828,6 +3244,11 @@ function initializeDiceRollerTemp() {
                 const bTag = rows[rowIndex].querySelector('b');
                 if (bTag && calendarData.length > 0) {
                     calendarData[gameState.currentDayIndex].temperature = bTag.textContent;
+                    // Get full content from the second cell (index 1) which is where description is
+                    const descCell = rows[rowIndex].cells[1];
+                    if (descCell) {
+                        calendarData[gameState.currentDayIndex].temperatureDesc = descCell.innerHTML;
+                    }
                     showDayDetails(calendarData[gameState.currentDayIndex]);
                 }
 
@@ -2907,27 +3328,38 @@ function restoreGameState(data) {
             if (selectedTerrainTitle) selectedTerrainTitle.textContent = 'Selecione o Terreno';
         }
 
-        if (currentSelectedHexagon) {
-            // This might trigger effects, so be careful. 
-            // renderWeatherNavigation depends on selection.
-            // Highlight might update text window.
-            renderWeatherNavigation(); // Reset or Restore? Maybe tricky.
-            // Let's rely on highlightSelectedHexagon to restore visual state
-            // But highlightSelectedHexagon uses originalTextWindowContent which we just restored.
-            highlightSelectedHexagon(currentSelectedHexagon, true);
-        } else {
-            const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
-            if (selectedHexagonTitle) selectedHexagonTitle.textContent = 'Selecione o Clima';
-            const solitarySvg = document.getElementById('solitary-hexagon-svg');
-            if (solitarySvg) solitarySvg.innerHTML = '';
-        }
+        // --- UI VISIBILITY UPDATE FOR LOADED GAME ---
+        const mainContent = document.getElementById('main-content');
+        const startJourneyContainer = document.getElementById('start-journey-container');
+        if (mainContent) mainContent.style.display = 'block';
+        if (startJourneyContainer) startJourneyContainer.style.display = 'none';
+        // ---------------------------------------------
 
         // Restore Temperature Table Selection
+        // 1. Ensure table is updated for current month modifiers
+        updateTemperatureTable();
+
+        // 2. Recovery: If index is missing but day has temperature recorded, try to find it in the table
+        if (selectedTemperatureRowIndex === null && calendarData.length > 0 && gameState.currentDayIndex > -1) {
+            const currentDay = calendarData[gameState.currentDayIndex];
+            if (currentDay && currentDay.temperature) {
+                const table = document.getElementById('temperature-table');
+                if (table) {
+                    const rows = table.querySelectorAll('tr');
+                    // Skip header (index 0)
+                    for (let i = 1; i < rows.length; i++) {
+                        // Check if row contains the temperature name (e.g. "Ameno", "Calor")
+                        if (rows[i].innerHTML.includes(currentDay.temperature)) {
+                            selectedTemperatureRowIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Apply Visual Selection to Table
         if (selectedTemperatureRowIndex !== null) {
-            // We need to wait for DOM updates? No, modification is direct.
-            // The table is re-rendered by updateTemperatureTable called in main flow?
-            // We should ensure table is correct for current month first.
-            updateTemperatureTable(); // Ensure table matches month
             const table = document.getElementById('temperature-table');
             if (table) {
                 const rows = table.querySelectorAll('tr');
@@ -2935,6 +3367,44 @@ function restoreGameState(data) {
                     rows[selectedTemperatureRowIndex].classList.add('selected-row');
                 }
             }
+        }
+
+        // 4. Restore Hexagon Visuals and Text
+        if (currentSelectedHexagon) {
+            // Ensure visual containers are enabled (similar to selectHexagon logic)
+            const tempContainer = document.getElementById('temperature-container');
+            const weatherNav = document.getElementById('weather-navigation');
+            if (tempContainer) tempContainer.classList.remove('disabled-container');
+            if (weatherNav) weatherNav.classList.remove('disabled-container');
+
+            // Now highlight hex. Because table row is selected above (if applicable), updateTextWithTemperature will work correctly.
+            highlightSelectedHexagon(currentSelectedHexagon, true);
+
+            // Explicitly restore title from original text content if available, as highlightSelectedHexagon might do it but we want to be sure
+            if (originalTextWindowContent) {
+                const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
+                if (selectedHexagonTitle) {
+                    const titleMatch = originalTextWindowContent.match(/<b>(.*?)<\/b>/);
+                    if (titleMatch) {
+                        selectedHexagonTitle.innerHTML = titleMatch[1];
+                    }
+                }
+            }
+
+            // Force visual persistence of sidebar
+            renderSelectedHexagon(currentSelectedHexagon);
+            renderWeatherNavigation();
+        } else {
+            const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
+            if (selectedHexagonTitle) selectedHexagonTitle.textContent = 'Selecione o Clima';
+            const solitarySvg = document.getElementById('solitary-hexagon-svg');
+            if (solitarySvg) solitarySvg.innerHTML = '';
+
+            // Ensure containers are disabled if no hex
+            const tempContainer = document.getElementById('temperature-container');
+            const weatherNav = document.getElementById('weather-navigation');
+            if (tempContainer) tempContainer.classList.add('disabled-container');
+            if (weatherNav) weatherNav.classList.add('disabled-container');
         }
 
         renderCalendar();
@@ -2951,13 +3421,6 @@ function restoreGameState(data) {
         // Also update text window content directly if needed
         const textWindow = document.getElementById('text-window');
         if (textWindow && originalTextWindowContent) textWindow.innerHTML = originalTextWindowContent;
-
-        // Force Visual Persistence of Selected Weather
-        if (currentSelectedHexagon !== null) {
-            const selectedHexagonTitle = document.getElementById('selected-hexagon-title');
-            renderSelectedHexagon(currentSelectedHexagon); // This re-draws the solitary hex and title
-            renderWeatherNavigation(); // Use default '3N' or just reset. Do NOT pass hex ID.
-        }
 
 
     } catch (e) {
@@ -3049,8 +3512,11 @@ function setupPersistence() {
     // Auto-load if data exists and user hasn't started (optional, maybe prompting is better? 
     // Usually web apps auto-load. Let's auto-load silently if state is found.)
     // Check if we have data
+    // Auto-load if data exists and user hasn't started (optional, maybe prompting is better? 
+    // Usually web apps auto-load. Let's auto-load silently if state is found.)
+    // Check if we have data
+    // Auto-load if data exists
     if (localStorage.getItem('fbl_hexflower_save')) {
-        // We load, but maybe we should ask? For now, let's load to restore session.
         loadFromLocalStorage();
     }
 }
@@ -3132,8 +3598,8 @@ function setupInfoModal() {
     });
 }
 
-function setupWeatherInfoModal() {
-    const modal = document.getElementById('weather-info-modal');
+function setupGeneralInfoModal() {
+    const modal = document.getElementById('general-info-modal');
     if (!modal) return;
     const closeBtn = modal.querySelector('.close-button');
 
@@ -3150,7 +3616,7 @@ function setupWeatherInfoModal() {
     });
 }
 
-function showWeatherPopup(imagePath) {
+function showGeneralPopup(imagePath) {
     const title = getImageTitle(imagePath);
     if (!title) return;
 
@@ -3158,12 +3624,25 @@ function showWeatherPopup(imagePath) {
 
     if (!content) content = "Sem efeitos adicionais.";
 
-    const modalTitle = document.getElementById('weather-info-title');
-    const modalContent = document.getElementById('weather-info-content');
-    const modal = document.getElementById('weather-info-modal');
+    const modalTitle = document.getElementById('general-info-title');
+    const modalContent = document.getElementById('general-info-content');
+    const modal = document.getElementById('general-info-modal');
 
     if (modalTitle) modalTitle.textContent = title;
     if (modalContent) modalContent.innerHTML = content;
+
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+function showSimplePopup(title, content) {
+    const modalTitle = document.getElementById('general-info-title');
+    const modalContent = document.getElementById('general-info-content');
+    const modal = document.getElementById('general-info-modal');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalContent) modalContent.innerHTML = content || "Sem detalhes disponíveis.";
 
     if (modal) {
         modal.style.display = 'block';
