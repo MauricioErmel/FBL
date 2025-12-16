@@ -74,41 +74,132 @@ h6 {
     /* Softer text shadow */
 }
 
-.header-btn {
-    padding: 5px 10px;
-    font-size: 0.8em;
-    font-weight: 600;
-    cursor: pointer;
-    background-color: var(--col-bg-surface);
-    color: var(--col-text-primary);
-    border: 1px solid var(--col-accent-cool);
-    border-radius: 0;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: auto;
-    height: auto;
-}
-
-.header-btn .btn-icon {
-    width: 14px;
-    height: 14px;
-}
-
-.header-btn:hover {
-    opacity: 0.7;
-    background-color: var(--col-bg-surface);
-    color: var(--col-text-primary);
-    border-color: var(--col-accent-cool);
-}
-
 #header-logo {
     width: 60px;
     height: 60px;
     object-fit: contain;
+}
+
+/* ========================================
+   ONBOARDING SCREEN
+   ======================================== */
+
+#onboarding-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#onboarding-header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+#onboarding-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+#onboarding-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+#onboarding-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0;
+    color: var(--col-text-highlight);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.onboarding-start-btn {
+    padding: 15px 40px;
+    font-size: 1.3em;
+    max-width: none !important;
+    width: fit-content !important;
+    margin-bottom: 40px;
+    background-color: var(--col-accent-deep);
+    white-space: nowrap;
+}
+
+.onboarding-start-btn:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+#onboarding-info {
+    background-color: var(--col-bg-surface);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 0;
+    padding: 30px;
+    max-width: 700px;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#onboarding-info h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+#onboarding-info h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+#onboarding-info ul {
+    padding-left: 20px;
+}
+
+#onboarding-info li {
+    margin-bottom: 10px;
+}
+
+#onboarding-info hr {
+    border: none;
+    border-top: 1px solid var(--col-accent-cool);
+    margin: 25px 0;
+}
+
+#onboarding-info p:last-child {
+    margin-bottom: 0;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+/* Hidden states for onboarding flow */
+body.onboarding-active #site-header,
+body.onboarding-active #main-content {
+    display: none !important;
+}
+
+body:not(.onboarding-active) #onboarding-screen {
+    display: none !important;
+}
+
+/* Ensure main content shows when not onboarding */
+body:not(.onboarding-active) #site-header {
+    display: flex;
+}
+
+body:not(.onboarding-active) #main-content {
+    display: block;
 }
 
 /* --- Layout Principal --- */
@@ -350,31 +441,85 @@ tr:hover:not(th) {
     cursor: pointer;
 }
 
-/* --- Buttons --- */
-button {
-    background-color: var(--col-accent-cool);
-    color: var(--col-bg-main);
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
+/* --- Standardized Buttons --- */
+.std-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: inherit;
     font-weight: bold;
-    transition: background-color 0.3s;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    color: var(--col-text-primary) !important;
+    /* Enforce text color */
+    transition: transform 0.1s ease, filter 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    flex: 1;
+    max-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-button:hover {
-    background-color: var(--col-text-highlight);
-    color: var(--col-bg-surface);
+.std-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+.std-btn img.btn-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    /* Optional: filter to match text if needed, but user just said text color */
+}
+
+/* Button Specific Backgrounds */
+#btn-initial-start,
+#btn-save-game,
+#btn-start-game,
+#btn-roll-nav,
+#btn-roll-temp,
+#btn-desbravar,
+#btn-advance-day,
+#btn-edit-entry,
+.btn-edit-entry,
+#btn-cancel-edit,
+.tool-btn.active,
+#modal-btn-cancel-edit,
+.btn-edit-entry-modal {
+    background-color: var(--col-accent-deep);
+}
+
+#btn-load-game,
 #btn-permanecer {
-    background-color: var(--col-text-primary);
-    color: var(--col-bg-main);
+    background-color: var(--col-btc-sec);
 }
 
-#btn-permanecer:hover {
+#btn-reset-game,
+#btn-info-game,
+#btn-save-entry,
+#modal-btn-save-entry,
+#btn-add-entry-modal {
     background-color: var(--col-accent-cool);
-    color: var(--col-text-highlight);
+}
+
+.header-btn {
+    background-color: var(--col-text-highlight) !important;
+    color: var(--col-bg-surface) !important;
+}
+
+.header-btn .btn-icon {
+    width: 14px;
+    height: 14px;
 }
 
 /* --- Modals --- */
@@ -476,7 +621,6 @@ button:hover {
     padding: 10px;
     background-color: var(--col-bg-main);
     border: 1px solid var(--col-accent-cool);
-    border-radius: 5px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
@@ -510,7 +654,6 @@ button:hover {
     cursor: pointer;
     padding: 10px;
     border: none;
-    border-radius: 8px;
     transition: background-color 0.2s;
 }
 
@@ -579,33 +722,6 @@ button:hover {
     text-align: center;
 }
 
-
-
-#btn-reset-day {
-    position: absolute;
-    left: 10px;
-    width: 30px;
-    height: 30px;
-    border: 1px solid var(--col-accent-cool);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-    transition: background-color 0.2s;
-    z-index: 10;
-}
-
-#btn-reset-day:hover {
-    background-color: var(--col-accent-warm-dim);
-}
-
-#btn-reset-day img {
-    width: 100%;
-    height: 100%;
-}
-
 #travel-controls {
     display: flex;
     gap: 15px;
@@ -614,41 +730,9 @@ button:hover {
     align-items: flex-start;
 }
 
-.travel-btn {
-    padding: 12px 24px;
-    font-size: 0.95em;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex: 1;
-    max-width: 200px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
 .btn-icon {
     width: 24px;
     height: 24px;
-}
-
-#btn-desbravar:hover .btn-icon {
-    filter: brightness(0) invert(1);
-}
-
-#btn-permanecer:hover .btn-icon {
-    filter: brightness(0) invert(1);
-}
-
-.travel-btn:active {
-    transform: translateY(1px);
-    box-shadow: none;
 }
 
 .travel-btn.disabled {
@@ -656,30 +740,6 @@ button:hover {
     pointer-events: none;
     cursor: not-allowed;
     box-shadow: none;
-}
-
-#btn-desbravar {
-    background-color: var(--col-accent-warm);
-    color: var(--col-bg-main);
-}
-
-#btn-desbravar:hover {
-    background-color: var(--col-accent-deep);
-    color: var(--col-text-highlight);
-}
-
-#btn-advance-day {
-    background-color: var(--col-accent-cool);
-    color: var(--col-text-primary);
-    width: 100%;
-    font-weight: bold;
-    display: none;
-    /* Hidden by default via class, but explicit here too */
-}
-
-#btn-advance-day:hover {
-    background-color: var(--col-text-highlight);
-    color: var(--col-bg-main);
 }
 
 #btn-advance-day.visible {
@@ -1081,7 +1141,7 @@ button:hover {
 .die {
     width: 50px;
     height: 50px;
-    background-color: var(--col-text-highlight);
+    background-color: var(--col-text-primary);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 5px var(--col-accent-deep);
     display: flex;
@@ -1100,6 +1160,10 @@ button:hover {
 .d12-svg polygon,
 .d12-svg line {
     stroke: var(--col-accent-deep) !important;
+}
+
+.d12-svg polygon:first-child {
+    fill: var(--col-text-primary) !important;
 }
 
 @keyframes shake {
@@ -1156,30 +1220,6 @@ button:hover {
 .die:hover {
     transform: scale(1.05);
     border-color: var(--col-text-highlight);
-}
-
-#btn-roll-nav,
-#btn-roll-temp {
-    background-color: var(--col-accent-deep);
-    color: var(--col-text-highlight);
-    padding: 8px 16px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-#btn-roll-nav:hover,
-#btn-roll-temp:hover {
-    background-color: var(--col-accent-warm);
-}
-
-#dice-result-nav,
-#dice-result-temp {
-    font-weight: bold;
-    color: var(--col-text-highlight);
-    min-height: 1.2em;
 }
 
 /* Selected State for Weather Navigation */
@@ -1393,16 +1433,6 @@ button.disabled,
     font-size: 1em;
 }
 
-#btn-start-game {
-    width: 100%;
-    margin-top: 10px;
-    background-color: var(--col-accent-warm);
-}
-
-#btn-start-game:hover {
-    background-color: var(--col-accent-deep);
-}
-
 /* --- Info Modal --- */
 #info-modal .modal-content {
     max-width: 600px;
@@ -1467,6 +1497,13 @@ button.disabled,
     /* Dark title for contrast */
     border-bottom: 1px solid var(--col-bg-main);
     padding-bottom: 10px;
+}
+
+#journal-controls {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .editor-toolbar {
@@ -1642,27 +1679,6 @@ button.disabled,
     filter: grayscale(100%);
 }
 
-#btn-save-entry {
-    color: var(--col-text-highlight);
-}
-
-#btn-save-entry:hover {
-    color: var(--col-bg-main);
-}
-
-.btn-edit-entry {
-    background: none;
-    border: none;
-    color: var(--col-accent-cool);
-    cursor: pointer;
-    font-size: 0.85em;
-    padding: 0;
-    text-decoration: underline;
-}
-
-.btn-edit-entry:hover {
-    color: var(--col-text-highlight);
-}
 
 #modal-journal-section {
     background-color: var(--col-text-primary);
@@ -1690,30 +1706,6 @@ button.disabled,
 #modal-journal-editor:focus {
     outline: 2px solid var(--col-accent-cool);
     border-color: transparent;
-}
-
-#modal-btn-save-entry {
-    color: var(--col-text-highlight);
-}
-
-#modal-btn-save-entry:hover {
-    color: var(--col-bg-main);
-}
-
-#btn-add-entry-modal {
-    background-color: var(--col-accent-cool);
-    color: var(--col-bg-main);
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.8em;
-    margin-left: 10px;
-}
-
-#btn-add-entry-modal:hover {
-    background-color: var(--col-text-highlight);
 }
 
 /* --- Tooltip --- */
@@ -1931,7 +1923,7 @@ button.disabled,
 
     h1 {
         text-align: left;
-        font-size: 1.3rem;
+        font-size: 1.6rem;
         margin: 0;
     }
 
@@ -2076,21 +2068,6 @@ button.disabled,
         display: none;
     }
 
-    .travel-btn,
-    .desbravar-container {
-        max-width: none;
-    }
-
-    .travel-btn {
-        padding: 8px 12px;
-        font-size: 0.8em;
-    }
-
-    .travel-btn .btn-icon {
-        width: 16px;
-        height: 16px;
-    }
-
     .mounted-switch-container {
         font-size: 0.7em;
     }
@@ -2129,4 +2106,109 @@ button.disabled,
         display: flex;
         flex-direction: column;
     }
+}
+
+/* ========================================
+   ESTILOS MIGRADOS DO HTML INLINE
+   ======================================== */
+
+/* Hidden file input */
+#file-input-load {
+    display: none;
+}
+
+/* Main content visibility is controlled by body.onboarding-active class */
+
+/* Quarter select styling */
+#journal-quarter-select,
+#modal-journal-quarter-select {
+    padding: 5px;
+    border-radius: 4px;
+    background: var(--col-bg-surface);
+    color: var(--col-text-primary);
+    border: 1px solid var(--col-accent-cool);
+}
+
+/* Editor toolbar separator */
+.editor-toolbar .separator {
+    width: 1px;
+    height: 20px;
+    background: #555;
+    margin: 0 5px;
+}
+
+/* Journal actions container */
+#journal-actions,
+#modal-journal-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Cancel edit button - initially hidden */
+#btn-cancel-edit,
+#modal-btn-cancel-edit {
+    display: none;
+}
+
+/* Initial hex subtitle - hidden by default */
+#initial-hex-subtitle {
+    display: none;
+}
+
+/* Terrain modal subtitle */
+#terrain-modal .subtitle {
+    text-align: center;
+    padding: 20px 20px 0 20px;
+    margin: 0;
+}
+
+/* Terrain grid padding */
+#terrain-grid {
+    padding: 20px;
+}
+
+/* Modal journal section - hidden by default */
+#modal-journal-section {
+    display: none;
+    margin-top: 20px;
+}
+
+/* Modal journal controls */
+#modal-journal-controls {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Start game modal padding */
+.start-game-content>div:not(.masthead) {
+    padding: 20px;
+}
+
+/* Info modal content padding */
+#info-content {
+    padding: 20px;
+}
+
+/* General info modal content */
+#general-info-content {
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+/* Start game form padding and layout */
+.start-game-form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+#btn-start-game {
+    width: 100%;
+    margin-top: 10px;
 }

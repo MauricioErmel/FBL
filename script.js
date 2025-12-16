@@ -3,17 +3,139 @@ const HEX_SIZE = 40; // Tamanho do lado de cada hexágono
 const GRID_WIDTH = 5;
 const GRID_HEIGHT = 5;
 
+// Estrutura de dados detalhada para terrenos
+const terrainDataConfig = {
+    'Planície': {
+        desbravar: 0,
+        deslocamento: 'ABERTO',
+        deslocamentoDescricao: 'Terreno aberto, é possível trafegar 2 hexágonos por quarto de dia a pé ou 3 hexágonos montado.',
+        acampar: 0,
+        coletar: { permitido: true, mod: -1 },
+        cacar: { permitido: true, mod: +1 },
+        outros: []
+    },
+    'Floresta': {
+        desbravar: 0,
+        deslocamento: 'ABERTO',
+        deslocamentoDescricao: 'Terreno aberto, é possível trafegar 2 hexágonos por quarto de dia a pé ou 3 hexágonos montado.',
+        acampar: 0,
+        coletar: { permitido: true, mod: +1 },
+        cacar: { permitido: true, mod: +1 },
+        outros: []
+    },
+    'Floresta Sombria': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Terreno dificultoso, é possível trafegar 1 hexágono por quarto de dia.',
+        acampar: 0,
+        coletar: { permitido: true, mod: -1 },
+        cacar: { permitido: true, mod: 0 },
+        outros: []
+    },
+    'Colinas': {
+        desbravar: 0,
+        deslocamento: 'ABERTO',
+        deslocamentoDescricao: 'Terreno aberto, é possível trafegar 2 hexágonos por quarto de dia a pé ou 3 hexágonos montado.',
+        acampar: 0,
+        coletar: { permitido: true, mod: 0 },
+        cacar: { permitido: true, mod: 0 },
+        outros: []
+    },
+    'Montanhas': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Terreno dificultoso, é possível trafegar 1 hexágono por quarto de dia.',
+        acampar: 0,
+        coletar: { permitido: true, mod: -2 },
+        cacar: { permitido: true, mod: -1 },
+        outros: []
+    },
+    'Montanhas Altas': {
+        desbravar: 0,
+        deslocamento: 'BLOQUEADO',
+        deslocamentoDescricao: 'Intransponível.',
+        acampar: 0,
+        coletar: { permitido: false, mod: 0 },
+        cacar: { permitido: false, mod: 0 },
+        outros: []
+    },
+    'Lago ou Rio': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Requer um barco ou balsa.',
+        acampar: 0,
+        coletar: { permitido: false, mod: 0 },
+        cacar: { permitido: true, mod: 0 },
+        outros: []
+    },
+    'Pantano': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Requer uma balsa.',
+        acampar: 0,
+        coletar: { permitido: true, mod: +1 },
+        cacar: { permitido: true, mod: -1 },
+        outros: []
+    },
+    'Charco': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Terreno dificultoso, é possível trafegar 1 hexágono por quarto de dia.',
+        acampar: 0,
+        coletar: { permitido: true, mod: -1 },
+        cacar: { permitido: true, mod: 0 },
+        outros: []
+    },
+    'Ruínas': {
+        desbravar: 0,
+        deslocamento: 'DIFICULTOSO',
+        deslocamentoDescricao: 'Terreno dificultoso, é possível trafegar 1 hexágono por quarto de dia.',
+        acampar: 0,
+        coletar: { permitido: true, mod: -2 },
+        cacar: { permitido: true, mod: -1 },
+        outros: []
+    }
+};
+
+// Função para gerar texto legível do terreno (retrocompatibilidade)
+function getTerrainInfoText(terrainName) {
+    const config = terrainDataConfig[terrainName];
+    if (!config) return '';
+
+    let lines = [];
+    lines.push(`✥ ${config.deslocamentoDescricao}`);
+
+    if (!config.coletar.permitido) {
+        lines.push('✥ Não é possível COLETAR');
+    } else if (config.coletar.mod !== 0) {
+        const sign = config.coletar.mod > 0 ? '+' : '';
+        lines.push(`✥ ${sign}${config.coletar.mod} em rolagens de COLETAR`);
+    }
+
+    if (!config.cacar.permitido) {
+        lines.push('✥ Não é possível CAÇAR');
+    } else if (config.cacar.mod !== 0) {
+        const sign = config.cacar.mod > 0 ? '+' : '';
+        lines.push(`✥ ${sign}${config.cacar.mod} em rolagens de CAÇAR`);
+    }
+
+    config.outros.forEach(o => lines.push(`✥ ${o}`));
+
+    return lines.join('<br>');
+}
+
+// Manter terrainInfo para retrocompatibilidade
 const terrainInfo = {
-    'Planície': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ -1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR',
-    'Floresta': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia<br>✥ +1 em rolagens de COLETAR<br>✥ +1 em rolagens de CAÇAR',
-    'Floresta Sombria': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
-    'Colinas': '✥ Terreno aberto, é possível trafegar 2 hexágonos por Quarto de Dia',
-    'Montanhas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
-    'Montanhas Altas': '✥ Intransponível<br>✥ Não é possível COLETAR ou CAÇAR',
-    'Lago ou Rio': '✥ Requer um barco ou balsa<br>✥ Não é possível COLETAR',
-    'Pantano': '✥ Requer uma balsa<br>✥ +1 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR',
-    'Charco': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -1 em rolagens de COLETAR',
-    'Ruínas': '✥ Terreno dificultoso, é possível trafegar 1 hexágono por Quarto de Dia<br>✥ -2 em rolagens de COLETAR<br>✥ -1 em rolagens de CAÇAR'
+    'Planície': getTerrainInfoText('Planície'),
+    'Floresta': getTerrainInfoText('Floresta'),
+    'Floresta Sombria': getTerrainInfoText('Floresta Sombria'),
+    'Colinas': getTerrainInfoText('Colinas'),
+    'Montanhas': getTerrainInfoText('Montanhas'),
+    'Montanhas Altas': getTerrainInfoText('Montanhas Altas'),
+    'Lago ou Rio': getTerrainInfoText('Lago ou Rio'),
+    'Pantano': getTerrainInfoText('Pantano'),
+    'Charco': getTerrainInfoText('Charco'),
+    'Ruínas': getTerrainInfoText('Ruínas')
 };
 
 // --- INICIALIZAÇÃO ---
@@ -59,6 +181,170 @@ let gameState = {
 
 let isOnboarding = false; // Flag to track onboarding state
 let onboardingStep = 0; // 0: None, 1: Date Selected (Weather Next), 2: Weather Selected (Terrain Next)
+
+// --- SISTEMA DE MODIFICADORES ACUMULADOS ---
+let currentModifiers = {
+    desbravar: { total: 0, sources: [] },
+    acampar: { total: 0, sources: [] },
+    coletar: { permitido: true, total: 0, sources: [] },
+    cacar: { permitido: true, total: 0, sources: [] },
+    deslocamento: { tipo: null, descricao: '', source: null },
+    iluminacao: { tipo: null, descricao: '', source: null },
+    outros: []  // Array de { text: string, source: string, icon: string }
+};
+
+function recalculateModifiers() {
+    // Reset
+    currentModifiers = {
+        desbravar: { total: 0, sources: [] },
+        acampar: { total: 0, sources: [] },
+        coletar: { permitido: true, total: 0, sources: [] },
+        cacar: { permitido: true, total: 0, sources: [] },
+        deslocamento: { tipo: null, descricao: '', source: null },
+        iluminacao: { tipo: null, descricao: '', source: null },
+        outros: []
+    };
+
+    // 1. Aplicar modificadores de TERRENO
+    if (currentSelectedTerrainData && terrainDataConfig[currentSelectedTerrainData.name]) {
+        const terrain = terrainDataConfig[currentSelectedTerrainData.name];
+        const icon = currentSelectedTerrainData.image;
+        const name = currentSelectedTerrainData.name;
+
+        // Deslocamento
+        currentModifiers.deslocamento = {
+            tipo: terrain.deslocamento,
+            descricao: terrain.deslocamentoDescricao,
+            source: { name, icon }
+        };
+
+        // Desbravar do terreno
+        if (terrain.desbravar !== 0) {
+            currentModifiers.desbravar.total += terrain.desbravar;
+            currentModifiers.desbravar.sources.push({ name, icon, value: terrain.desbravar });
+        }
+
+        // Acampar do terreno
+        if (terrain.acampar !== 0) {
+            currentModifiers.acampar.total += terrain.acampar;
+            currentModifiers.acampar.sources.push({ name, icon, value: terrain.acampar });
+        }
+
+        // Coletar
+        if (!terrain.coletar.permitido) {
+            currentModifiers.coletar.permitido = false;
+            currentModifiers.coletar.sources.push({ name, icon, value: null, forbidden: true });
+        } else if (terrain.coletar.mod !== 0) {
+            currentModifiers.coletar.total += terrain.coletar.mod;
+            currentModifiers.coletar.sources.push({ name, icon, value: terrain.coletar.mod });
+        }
+
+        // Caçar
+        if (!terrain.cacar.permitido) {
+            currentModifiers.cacar.permitido = false;
+            currentModifiers.cacar.sources.push({ name, icon, value: null, forbidden: true });
+        } else if (terrain.cacar.mod !== 0) {
+            currentModifiers.cacar.total += terrain.cacar.mod;
+            currentModifiers.cacar.sources.push({ name, icon, value: terrain.cacar.mod });
+        }
+
+        // Outros do terreno
+        terrain.outros.forEach(text => {
+            currentModifiers.outros.push({ text, source: name, icon });
+        });
+    }
+
+    // 2. Aplicar modificadores de CLIMA (hexágono selecionado)
+    if (currentSelectedHexagon && hexagonData[currentSelectedHexagon]?.modifiers) {
+        const hex = hexagonData[currentSelectedHexagon];
+        const mods = hex.modifiers;
+
+        // Usar ícones separados para clima e vento
+        const redIcon = mods.sources?.red?.image;
+        const redName = mods.sources?.red?.title || 'Clima';
+        const blueIcon = mods.sources?.blue?.image;
+        const blueName = mods.sources?.blue?.title || 'Vento';
+
+        if (mods.desbravar !== 0) {
+            currentModifiers.desbravar.total += mods.desbravar;
+            currentModifiers.desbravar.sources.push({ name: redName, icon: redIcon, value: mods.desbravar });
+        }
+
+        if (mods.acampar !== 0) {
+            currentModifiers.acampar.total += mods.acampar;
+            // Acampar geralmente vem do vento
+            currentModifiers.acampar.sources.push({ name: blueName, icon: blueIcon, value: mods.acampar });
+        }
+
+        if (mods.coletar !== 0 && currentModifiers.coletar.permitido) {
+            currentModifiers.coletar.total += mods.coletar;
+            currentModifiers.coletar.sources.push({ name: redName, icon: redIcon, value: mods.coletar });
+        }
+
+        if (mods.cacar !== 0 && currentModifiers.cacar.permitido) {
+            currentModifiers.cacar.total += mods.cacar;
+            currentModifiers.cacar.sources.push({ name: redName, icon: redIcon, value: mods.cacar });
+        }
+
+        mods.outros.forEach(text => {
+            currentModifiers.outros.push({ text, source: redName, icon: redIcon });
+        });
+    }
+
+    // 3. Aplicar modificadores SAZONAIS (mês)
+    if (calendarData.length > 0) {
+        const monthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+        const monthIcon = CALENDAR_CONFIG.months[gameState.currentMonthIndex].image;
+        let seasonalColetar = 0;
+        let seasonalCacar = 0;
+
+        if (['Cresceprimavera', 'Minguaprimavera'].includes(monthName)) {
+            seasonalColetar = -1;
+            seasonalCacar = -1;
+        } else if (['Cresceoutono', 'Minguaoutono'].includes(monthName)) {
+            seasonalColetar = +1;
+            seasonalCacar = +1;
+        } else if (['Cresceinverno', 'Minguainverno'].includes(monthName)) {
+            seasonalColetar = -2;
+            seasonalCacar = -2;
+        }
+
+        if (seasonalColetar !== 0 && currentModifiers.coletar.permitido) {
+            currentModifiers.coletar.total += seasonalColetar;
+            currentModifiers.coletar.sources.push({ name: monthName, icon: monthIcon, value: seasonalColetar });
+        }
+
+        if (seasonalCacar !== 0 && currentModifiers.cacar.permitido) {
+            currentModifiers.cacar.total += seasonalCacar;
+            currentModifiers.cacar.sources.push({ name: monthName, icon: monthIcon, value: seasonalCacar });
+        }
+    }
+
+    // 4. Aplicar modificadores de ILUMINAÇÃO
+    if (calendarData.length > 0) {
+        const month = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
+        const lighting = month.lighting[gameState.currentQuarterIndex];
+        const lightingIcon = lighting === 'Claro' ? 'img/icons/other/day.svg' : 'img/icons/other/night.svg';
+
+        currentModifiers.iluminacao = {
+            tipo: lighting,
+            descricao: `Iluminação: ${lighting}`,
+            source: { name: month.name, icon: lightingIcon }
+        };
+
+        if (lighting === 'Escuro') {
+            currentModifiers.desbravar.total += -2;
+            currentModifiers.desbravar.sources.push({ name: 'Escuro', icon: lightingIcon, value: -2 });
+            currentModifiers.outros.push({
+                text: 'Caso não enxergue no escuro, todas no grupo precisam fazer uma rolagem de PATRULHA — falhar significa que caíram e receberam 1 ponto de dano em Força.',
+                source: 'Escuro',
+                icon: lightingIcon
+            });
+        }
+    }
+
+    return currentModifiers;
+}
 
 function initializeCalendar() {
     // Start Day 1 - REMOVED to show placeholder
@@ -413,218 +699,208 @@ function updateInfoDisplay(content) {
     if (infoDisplay) {
         currentInfoMessage = content; // Store the base message
 
-        // --- PRE-CLEAN INPUT CONTENT ---
-        // If content comes from updateTextWithTemperature, it might already have raw terrain info.
-        // We want to rebuild the Coletar/Cacar lines with our seasonal logic, so we strip them from the input.
-        let contentLines = content.split('<br>');
-        contentLines = contentLines.filter(line => {
-            if (line.includes('em rolagens de COLETAR')) return false;
-            if (line.includes('em rolagens de CAÇAR')) return false;
-            if (line.includes('Iluminação:')) return false; // Filter out old Lighting info
-            return true;
-        });
-        let newContent = contentLines.join('<br>');
+        // Recalcular todos os modificadores
+        recalculateModifiers();
 
-        let terrainText = selectedTerrainInfo || '';
-        let terrainColetarMod = 0;
-        let terrainCacarMod = 0; // NEW: Track Hunting Mod
-        let terrainColetarForbidden = false;
-        let terrainCacarForbidden = false; // NEW: Track Forbidden Hunting
-
-        // --- 1. PRE-PARSE TERRAIN FORBIDDEN FLAGS ---
-        if (terrainText.includes('Não é possível COLETAR')) {
-            terrainColetarForbidden = true;
-        }
-        if (terrainText.includes('Não é possível CAÇAR')) { // NEW
-            terrainCacarForbidden = true;
-        }
-
-        // --- 2. PARSE TERRAIN NUMERIC MODIFIERS ---
-        // We do this BEFORE any seasonal logic so we know what the base is.
-
-        // Coletar
-        if (!terrainColetarForbidden) {
-            const matchColetar = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de COLETAR/);
-            if (matchColetar) {
-                terrainColetarMod = parseInt(matchColetar[1].replace('+', ''), 10);
-            }
-        }
-
-        // Cacar (NEW)
-        if (!terrainCacarForbidden) {
-            const matchCacar = terrainText.match(/✥\s*([+-]?\d+)\s*em rolagens de CAÇAR/);
-            if (matchCacar) {
-                terrainCacarMod = parseInt(matchCacar[1].replace('+', ''), 10);
-            }
-        }
-
-        // --- 3. DETERMINE SEASONAL MODIFIERS ---
-        let monthColetarMod = 0;
-        let monthCacarMod = 0; // NEW
-        let showSeasonal = false;
-
-        if (calendarData.length > 0) {
-            const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
-            if (['Cresceprimavera', 'Minguaprimavera'].includes(currentMonthName)) {
-                monthColetarMod = -1;
-                monthCacarMod = -1; // NEW
-                showSeasonal = true;
-            } else if (['Cresceoutono', 'Minguaoutono'].includes(currentMonthName)) {
-                monthColetarMod = +1;
-                monthCacarMod = +1; // NEW
-                showSeasonal = true;
-            } else if (['Cresceinverno', 'Minguainverno'].includes(currentMonthName)) {
-                monthColetarMod = -2;
-                monthCacarMod = -2; // NEW
-                showSeasonal = true;
-            }
-        }
-
-        // --- 4. COMBINE AND FORMAT OUTPUT STRINGS ---
-        let finalColetarString = '';
-        let finalCacarString = ''; // NEW
-
-        if (showSeasonal) {
-            const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
-            const monthIcon = `<img src="${currentMonth.image}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
-
-            // COLETAR Logic
-            if (!terrainColetarForbidden) {
-                const totalColetar = terrainColetarMod + monthColetarMod;
-                const signColetar = totalColetar > 0 ? '+' : '';
-
-                let sourceIcons = monthIcon;
-                if (terrainColetarMod !== 0 && currentSelectedTerrainData) {
-                    const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
-                    const tContentSafe = (selectedTerrainInfo || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
-                    const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${tContentSafe}\`)">`;
-                    sourceIcons = `${terrainIcon}${monthIcon}`;
-                }
-
-                finalColetarString = `${sourceIcons} ${signColetar}${totalColetar} em rolagens de COLETAR.`;
-            }
-
-            // CAÇAR Logic (NEW)
-            if (!terrainCacarForbidden) {
-                const totalCacar = terrainCacarMod + monthCacarMod;
-                const signCacar = totalCacar > 0 ? '+' : '';
-
-                let sourceIcons = monthIcon;
-                if (terrainCacarMod !== 0 && currentSelectedTerrainData) {
-                    const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
-                    const tContentSafe = (selectedTerrainInfo || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
-                    const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${tContentSafe}\`)">`;
-                    sourceIcons = `${terrainIcon}${monthIcon}`;
-                }
-
-                finalCacarString = `${sourceIcons} ${signCacar}${totalCacar} em rolagens de CAÇAR.`;
-            }
-
-            // ROBUST CLEANUP: Remove modifier lines from terrainText if they are being handled
-            let lines = terrainText.split(/<br>/);
-            lines = lines.filter(line => {
-                // If we are showing a final string for COLETAR, remove the raw COLETAR line
-                if (finalColetarString && line.includes('em rolagens de COLETAR')) return false;
-                // If we are showing a final string for CAÇAR, remove the raw CAÇAR line
-                if (finalCacarString && line.includes('em rolagens de CAÇAR')) return false;
-                return true;
-            });
-            terrainText = lines.join('<br>');
-        }
-
-        // --- 5. BUILD FINAL CONTENT ---
-
-        // Append remaining Terrain Info (cleaned) and avoid duplicates
-        if (terrainText) {
-            let uniqueLines = [];
-            const rawLines = terrainText.split(/<br>/);
-
-            rawLines.forEach(line => {
-                const trimmed = line.trim();
-                if (!trimmed) return;
-
-                // Remove the bullet for logical comparison
-                const textCheck = trimmed.replace(/^✥\s*/, '').trim();
-                if (textCheck.length === 0) return;
-
-                // If newContent already has this text (likely from updateTextWithTemperature which adds icons), skip it to avoid duplication.
-                if (newContent && newContent.includes(textCheck)) {
-                    return;
-                }
-
-                uniqueLines.push(trimmed);
-            });
-
-            if (uniqueLines.length > 0) {
-                if (newContent) {
-                    newContent += '<br><br>' + uniqueLines.join('<br>');
+        // Função para obter conteúdo do popup baseado no nome da fonte
+        const getSourcePopupContent = (sourceName, sourceIcon) => {
+            // Verificar se é um terreno
+            if (terrainDataConfig[sourceName]) {
+                const terrain = terrainDataConfig[sourceName];
+                let lines = [];
+                lines.push(`<b>Deslocamento:</b> ${terrain.deslocamento}`);
+                lines.push(`${terrain.deslocamentoDescricao}`);
+                if (terrain.coletar.permitido) {
+                    if (terrain.coletar.mod !== 0) {
+                        const sign = terrain.coletar.mod > 0 ? '+' : '';
+                        lines.push(`<b>Coletar:</b> ${sign}${terrain.coletar.mod}`);
+                    }
                 } else {
-                    newContent = uniqueLines.join('<br>');
+                    lines.push(`<b>Coletar:</b> Não permitido`);
                 }
+                if (terrain.cacar.permitido) {
+                    if (terrain.cacar.mod !== 0) {
+                        const sign = terrain.cacar.mod > 0 ? '+' : '';
+                        lines.push(`<b>Caçar:</b> ${sign}${terrain.cacar.mod}`);
+                    }
+                } else {
+                    lines.push(`<b>Caçar:</b> Não permitido`);
+                }
+                return lines.join('<br>');
             }
+
+            // Verificar se é um mês
+            const month = CALENDAR_CONFIG.months.find(m => m.name === sourceName);
+            if (month) {
+                let lines = [];
+                lines.push(`<b>Dias:</b> ${month.days}`);
+                lines.push(`<b>Iluminação:</b> ${month.lighting.join(', ')}`);
+
+                // Adicionar modificadores sazonais
+                let seasonalColetar = 0;
+                let seasonalCacar = 0;
+                if (['Cresceprimavera', 'Minguaprimavera'].includes(sourceName)) {
+                    seasonalColetar = -1;
+                    seasonalCacar = -1;
+                } else if (['Cresceoutono', 'Minguaoutono'].includes(sourceName)) {
+                    seasonalColetar = +1;
+                    seasonalCacar = +1;
+                } else if (['Cresceinverno', 'Minguainverno'].includes(sourceName)) {
+                    seasonalColetar = -2;
+                    seasonalCacar = -2;
+                }
+
+                if (seasonalColetar !== 0) {
+                    const sign = seasonalColetar > 0 ? '+' : '';
+                    lines.push(`<b>Coletar:</b> ${sign}${seasonalColetar}`);
+                }
+                if (seasonalCacar !== 0) {
+                    const sign = seasonalCacar > 0 ? '+' : '';
+                    lines.push(`<b>Caçar:</b> ${sign}${seasonalCacar}`);
+                }
+
+                return lines.join('<br>');
+            }
+
+            // Verificar se é clima/vento (usar weatherModifiers)
+            if (typeof weatherModifiers !== 'undefined' && weatherModifiers[sourceName]) {
+                const mods = weatherModifiers[sourceName];
+                let lines = [];
+                if (mods.desbravar !== 0) {
+                    const sign = mods.desbravar > 0 ? '+' : '';
+                    lines.push(`<b>Desbravar:</b> ${sign}${mods.desbravar}`);
+                }
+                if (mods.acampar !== 0) {
+                    const sign = mods.acampar > 0 ? '+' : '';
+                    lines.push(`<b>Acampar:</b> ${sign}${mods.acampar}`);
+                }
+                if (mods.temperaturaMod) {
+                    if (mods.temperaturaMod.hot !== 0) {
+                        const sign = mods.temperaturaMod.hot > 0 ? '+' : '';
+                        lines.push(`<b>Tabela de Calor:</b> ${sign}${mods.temperaturaMod.hot}`);
+                    }
+                    if (mods.temperaturaMod.cold !== 0) {
+                        const sign = mods.temperaturaMod.cold > 0 ? '+' : '';
+                        lines.push(`<b>Tabela de Frio:</b> ${sign}${mods.temperaturaMod.cold}`);
+                    }
+                }
+                if (mods.outros && mods.outros.length > 0) {
+                    lines.push(`<b>Efeitos:</b> ${mods.outros.join(', ')}`);
+                }
+                return lines.length > 0 ? lines.join('<br>') : sourceName;
+            }
+
+            // Iluminação
+            if (sourceName === 'Escuro') {
+                return '<b>Escuro:</b> -2 em rolagens de Desbravar. Rolagem de PATRULHA necessária para evitar quedas.';
+            }
+            if (sourceName === 'Claro') {
+                return '<b>Claro:</b> Sem penalidades de iluminação.';
+            }
+
+            return sourceName;
+        };
+
+        // Função auxiliar para criar ícone clicável
+        const createSourceIcon = (source) => {
+            if (!source || !source.icon) return '';
+            const bgStyle = source.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
+            const popupContent = getSourcePopupContent(source.name, source.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            return `<img src="${source.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${source.name}', '${popupContent}')">`;
+        };
+
+        // Função para criar linha de modificador com ícones
+        const createModifierLine = (label, modData, suffix = '') => {
+            if (modData.sources.length === 0) return '';
+
+            let icons = '';
+            modData.sources.forEach(s => {
+                if (s.icon) {
+                    const bgStyle = s.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
+                    const popupContent = getSourcePopupContent(s.name, s.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                    icons += `<img src="${s.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${s.name}', '${popupContent}')">`;
+                }
+            });
+
+            if (!icons) icons = '✥';
+
+            const sign = modData.total > 0 ? '+' : '';
+            return `${icons} ${sign}${modData.total} ${label}${suffix}`;
+        };
+
+        let outputLines = [];
+
+        // --- DESLOCAMENTO ---
+        if (currentModifiers.deslocamento.tipo) {
+            const icon = createSourceIcon(currentModifiers.deslocamento.source);
+            outputLines.push(`${icon} ${currentModifiers.deslocamento.descricao}`);
         }
 
-        // Conditional Prompts (Weather/Terrain selection warnings)
+        // --- DESBRAVAR ---
+        if (currentModifiers.desbravar.sources.length > 0 && currentModifiers.desbravar.total !== 0) {
+            outputLines.push(createModifierLine('em rolagens de DESBRAVAR', currentModifiers.desbravar, '.'));
+        }
+
+        // --- ACAMPAR ---
+        if (currentModifiers.acampar.sources.length > 0 && currentModifiers.acampar.total !== 0) {
+            outputLines.push(createModifierLine('em rolagens de MONTAR ACAMPAMENTO', currentModifiers.acampar, '.'));
+        }
+
+        // --- COLETAR ---
+        if (!currentModifiers.coletar.permitido) {
+            const forbiddenSource = currentModifiers.coletar.sources.find(s => s.forbidden);
+            const icon = forbiddenSource ? createSourceIcon(forbiddenSource) : '✥';
+            outputLines.push(`${icon} Não é possível COLETAR.`);
+        } else if (currentModifiers.coletar.sources.length > 0 && currentModifiers.coletar.total !== 0) {
+            outputLines.push(createModifierLine('em rolagens de COLETAR', currentModifiers.coletar, '.'));
+        }
+
+        // --- CAÇAR ---
+        if (!currentModifiers.cacar.permitido) {
+            const forbiddenSource = currentModifiers.cacar.sources.find(s => s.forbidden);
+            const icon = forbiddenSource ? createSourceIcon(forbiddenSource) : '✥';
+            outputLines.push(`${icon} Não é possível CAÇAR.`);
+        } else if (currentModifiers.cacar.sources.length > 0 && currentModifiers.cacar.total !== 0) {
+            outputLines.push(createModifierLine('em rolagens de CAÇAR', currentModifiers.cacar, '.'));
+        }
+
+        // --- OUTROS ---
+        currentModifiers.outros.forEach(item => {
+            const bgStyle = item.icon && item.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
+            const popupContent = getSourcePopupContent(item.source, item.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            const icon = item.icon ? `<img src="${item.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${item.source}', '${popupContent}')">` : '✥';
+            outputLines.push(`${icon} ${item.text}`);
+        });
+
+        // Nota: A linha "Iluminação: Claro/Escuro" foi removida.
+        // A mensagem sobre PATRULHA quando Escuro já está incluída em currentModifiers.outros.
+
+        // --- MENSAGENS DE SELEÇÃO ---
         const isWeatherSelected = currentSelectedHexagon !== null;
-        const isTerrainSelected = !!selectedTerrainInfo;
+        const isTerrainSelected = !!currentSelectedTerrainData;
         const isGameStarted = calendarData.length > 0;
 
         if (isGameStarted) {
             if (!isTerrainSelected) {
-                if (newContent) newContent += '<br><br>';
-                newContent += '✥ Selecione o terreno';
+                outputLines.push('✥ Selecione o terreno');
             }
             if (!isWeatherSelected) {
-                if (newContent) newContent += '<br><br>';
-                newContent += '✥ Selecione um hexagono de clima no hexflower de clima, mas não esqueça de selecionar a temperatura.';
+                outputLines.push('✥ Selecione um hexágono de clima no hexflower de clima, mas não esqueça de selecionar a temperatura.');
             }
         } else {
             if (isWeatherSelected && !isTerrainSelected) {
-                if (newContent) newContent += '<br><br>';
-                newContent += '✥ Selecione o terreno';
+                outputLines.push('✥ Selecione o terreno');
             } else if (isTerrainSelected && !isWeatherSelected) {
-                if (newContent) newContent += '<br><br>';
-                newContent += '✥ Selecione um hexagono de clima no hexflower de clima, mas não esqueça de selecionar a temperatura.';
+                outputLines.push('✥ Selecione um hexágono de clima no hexflower de clima, mas não esqueça de selecionar a temperatura.');
             }
         }
 
-        // Append Combined/Seasonal Modifiers
-        if (finalColetarString) {
-            if (newContent) newContent += '<br>';
-            newContent += finalColetarString;
+        // Se não há linhas e há conteúdo original, usar ele
+        if (outputLines.length === 0 && content) {
+            infoDisplay.innerHTML = content;
+        } else {
+            infoDisplay.innerHTML = outputLines.join('<br>');
         }
-        if (finalCacarString) { // NEW
-            if (newContent) newContent += '<br>';
-            newContent += finalCacarString;
-        }
-
-        // --- 6. APPEND LIGHTING INFO (Dynamic Update) ---
-        if (calendarData.length > 0) {
-            const currentMonth = CALENDAR_CONFIG.months[gameState.currentMonthIndex];
-            if (currentMonth) {
-                const lighting = currentMonth.lighting[gameState.currentQuarterIndex] || 'Desconhecido';
-
-                // Determine Icon
-                let lightingIconSrc = currentMonth.image;
-                if (lighting === 'Claro') {
-                    lightingIconSrc = 'img/icons/other/day.svg';
-                } else if (lighting === 'Escuro') {
-                    lightingIconSrc = 'img/icons/other/night.svg';
-                }
-
-                const lightingIcon = `<img src="${lightingIconSrc}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
-
-                let lightingText = `Iluminação: ${lighting}`;
-                if (lighting === 'Escuro') {
-                    lightingText += ' <b>*Caso não enxergue no escuro*</b> -2 para desbravar, e todas no grupo precisam fazer uma rolagem de PATRULHA — falhar significa que elas caíram e receberam 1 ponto de dano em Força.';
-                }
-
-                if (newContent) newContent += '<br>';
-                newContent += `${lightingIcon} ${lightingText}`;
-            }
-        }
-
-        infoDisplay.innerHTML = newContent;
     }
 }
 
@@ -1922,12 +2198,7 @@ function initializeTerrainModal() {
                 onboardingStep = 0;
 
                 // Finish Onboarding: Reveal Main Content
-                const mainContent = document.getElementById('main-content');
-                const startJourneyContainer = document.getElementById('start-journey-container');
-                const siteHeader = document.getElementById('site-header');
-
-                if (mainContent) mainContent.style.display = 'block'; // Show everything
-                if (startJourneyContainer) startJourneyContainer.style.display = 'none'; // Hide start button
+                document.body.classList.remove('onboarding-active');
 
                 closeModal();
                 return;
@@ -2125,7 +2396,8 @@ function showDayDetails(day) {
     let journalHtml = '';
 
     // Always show header and add button in modal
-    journalHtml += `<h3>Diário <button id="btn-add-entry-modal" data-day-index="${day.id - 1}">Adicionar Entrada</button></h3>`;
+    // Always show header and add button in modal
+    journalHtml += `<h3>Diário <button id="btn-add-entry-modal" class="std-btn" data-day-index="${day.id - 1}" style="font-size: 0.8em; padding: 5px 10px;"><img src="img/icons/buttons/addentry.svg" class="btn-icon"> ADICIONAR ENTRADA</button></h3>`;
 
     if (Array.isArray(day.journal) && day.journal.length > 0) {
         journalHtml += `<div class="journal-entries-list">`;
@@ -2137,7 +2409,7 @@ function showDayDetails(day) {
             journalHtml += `<div class="journal-entry" data-entry-id="${entry.id}">
                         <div class="journal-entry-header">
                             <span class="journal-entry-quarter">${quarterName}</span>
-                            <button class="btn-edit-entry-modal" data-day-index="${day.id - 1}" data-entry-id="${entry.id}" style="background:none; border:none; color:var(--col-accent-cool); cursor:pointer; text-decoration:underline; font-size:0.85em;">Editar</button>
+                            <button class="btn-edit-entry-modal std-btn" data-day-index="${day.id - 1}" data-entry-id="${entry.id}" style="font-size: 0.8em; padding: 5px 10px;"><img src="img/icons/buttons/quill.svg" class="btn-icon"> EDITAR</button>
                         </div>
                         <div class="journal-entry-content">${entry.content}</div>
                     </div>`;
@@ -2154,28 +2426,32 @@ function showDayDetails(day) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial state: Hide main content, show start button
-    const mainContent = document.getElementById('main-content');
-    const startJourneyContainer = document.getElementById('start-journey-container');
-    const initialStartBtn = document.getElementById('btn-initial-start');
-
     // Check for Save State
     const hasSave = !!localStorage.getItem('fbl_hexflower_save');
 
     if (hasSave) {
         // If save exists, show main content immediately (will be populated by auto-load)
-        if (mainContent) mainContent.style.display = 'block';
-        if (startJourneyContainer) startJourneyContainer.style.display = 'none';
+        document.body.classList.remove('onboarding-active');
     } else {
-        // No save, show onboarding start button
-        if (mainContent) mainContent.style.display = 'none';
-        if (startJourneyContainer) startJourneyContainer.style.display = 'block';
+        // No save, show onboarding screen
+        document.body.classList.add('onboarding-active');
     }
 
+    // Initial Start Button - opens date selection modal
+    const initialStartBtn = document.getElementById('btn-initial-start');
     if (initialStartBtn) {
         initialStartBtn.addEventListener('click', () => {
             const startModal = document.getElementById('start-game-modal');
             if (startModal) startModal.style.display = 'block';
+        });
+    }
+
+    // Load Button in Onboarding - triggers file input
+    const loadBtnOnboarding = document.getElementById('btn-load-game-onboarding');
+    const fileInputLoad = document.getElementById('file-input-load');
+    if (loadBtnOnboarding && fileInputLoad) {
+        loadBtnOnboarding.addEventListener('click', () => {
+            fileInputLoad.click();
         });
     }
 
@@ -2267,7 +2543,7 @@ function initializeJournal() {
                 // timestamp could be updated if we tracked edit time
             }
             editingEntryId = null;
-            btnSave.textContent = "Salvar Entrada";
+            btnSave.innerHTML = '<img src="img/icons/buttons/addentry.svg" class="btn-icon"> SALVAR ENTRADA';
             btnCancel.style.display = 'none';
         } else {
             // New Entry
@@ -2301,7 +2577,7 @@ function initializeJournal() {
         editingEntryId = null;
         editingDayIndex = null;
         editor.innerHTML = '';
-        btnSave.textContent = "Salvar Entrada";
+        btnSave.innerHTML = '<img src="img/icons/buttons/addentry.svg" class="btn-icon"> SALVAR ENTRADA';
         btnCancel.style.display = 'none';
     });
 }
@@ -2337,7 +2613,7 @@ function renderJournalEntries() {
             <div class="journal-entry-header">
                 <span class="journal-entry-quarter">${quarterName}</span>
                 <div class="journal-entry-actions">
-                    <button class="btn-edit-entry" data-id="${entry.id}">Editar</button>
+                    <button class="btn-edit-entry std-btn" data-id="${entry.id}"><img src="img/icons/buttons/quill.svg" class="btn-icon"> EDITAR</button>
                 </div>
             </div>
             <div class="journal-entry-content">${entry.content}</div>
@@ -2365,8 +2641,8 @@ function loadEntryForEdit(entry) {
     editor.innerHTML = entry.content;
     selectQuarter.value = entry.quarterIndex;
 
-    btnSave.textContent = "Atualizar Entrada";
-    btnCancel.style.display = 'block';
+    btnSave.innerHTML = '<img src="img/icons/buttons/addentry.svg" class="btn-icon"> ATUALIZAR ENTRADA';
+    btnCancel.style.display = 'flex'; // Flex for std-btn
 
     // Scroll to editor
     editor.scrollIntoView({ behavior: 'smooth' });
@@ -2377,7 +2653,7 @@ function initializeModalJournal() {
     const modalEditorContainer = document.getElementById('modal-journal-section');
     const modalEditor = document.getElementById('modal-journal-editor');
     const modalToolbar = document.querySelector('.modal-editor-toolbar');
-    const modalColorPicker = document.getElementById('modal-editor-color');
+    const modalColorPicker = document.getElementById('modal-editor-color'); // Optional if separate
     const modalBtnSave = document.getElementById('modal-btn-save-entry');
     const modalBtnCancel = document.getElementById('modal-btn-cancel-edit');
     const modalSelectQuarter = document.getElementById('modal-journal-quarter-select');
@@ -2392,8 +2668,11 @@ function initializeModalJournal() {
             }
         });
     }
-    if (modalColorPicker) {
-        modalColorPicker.addEventListener('input', (e) => {
+    // Note: If using the same color picker ID, this might conflict, but usually IDs are unique.
+    // Assuming 'modal-editor-color' exists.
+    const modalColorInput = document.getElementById('modal-editor-color');
+    if (modalColorInput) {
+        modalColorInput.addEventListener('input', (e) => {
             document.execCommand('foreColor', false, e.target.value);
             modalEditor.focus();
         });
@@ -2402,16 +2681,17 @@ function initializeModalJournal() {
     // --- Global Click Listener for Dynamic Buttons in Modal ---
     document.body.addEventListener('click', (e) => {
         // "Adicionar Entrada" Button
-        if (e.target.id === 'btn-add-entry-modal') {
-            const dayIndex = parseInt(e.target.dataset.dayIndex);
+        const btnAdd = e.target.closest('#btn-add-entry-modal');
+        if (btnAdd) {
+            const dayIndex = parseInt(btnAdd.dataset.dayIndex);
             if (!isNaN(dayIndex)) {
                 editingDayIndex = dayIndex; // Set context
                 editingEntryId = null; // New entry
 
                 modalEditor.innerHTML = ''; // Clear editor
-                if (modalSelectQuarter) modalSelectQuarter.value = 0; // Default or maybe try to guess?
+                if (modalSelectQuarter) modalSelectQuarter.value = 0; // Default
 
-                modalBtnSave.textContent = "Salvar Entrada";
+                modalBtnSave.innerHTML = '<img src="img/icons/buttons/addentry.svg" class="btn-icon"> SALVAR ENTRADA';
                 modalEditorContainer.style.display = 'block'; // Show editor
                 // Scroll to editor
                 modalEditorContainer.scrollIntoView({ behavior: 'smooth' });
@@ -2419,9 +2699,10 @@ function initializeModalJournal() {
         }
 
         // "Editar" Button (inside journal entry list in modal)
-        if (e.target.classList.contains('btn-edit-entry-modal')) {
-            const dayIndex = parseInt(e.target.dataset.dayIndex);
-            const entryId = parseInt(e.target.dataset.entryId);
+        const btnEdit = e.target.closest('.btn-edit-entry-modal');
+        if (btnEdit) {
+            const dayIndex = parseInt(btnEdit.dataset.dayIndex);
+            const entryId = parseInt(btnEdit.dataset.entryId);
 
             if (!isNaN(dayIndex) && !isNaN(entryId)) {
                 editingDayIndex = dayIndex;
@@ -2433,7 +2714,7 @@ function initializeModalJournal() {
                 if (entry) {
                     modalEditor.innerHTML = entry.content;
                     if (modalSelectQuarter) modalSelectQuarter.value = entry.quarterIndex;
-                    modalBtnSave.textContent = "Atualizar Entrada";
+                    modalBtnSave.innerHTML = '<img src="img/icons/buttons/addentry.svg" class="btn-icon"> ATUALIZAR ENTRADA';
                     modalEditorContainer.style.display = 'block';
                     modalEditorContainer.scrollIntoView({ behavior: 'smooth' });
                 }
@@ -3329,10 +3610,7 @@ function restoreGameState(data) {
         }
 
         // --- UI VISIBILITY UPDATE FOR LOADED GAME ---
-        const mainContent = document.getElementById('main-content');
-        const startJourneyContainer = document.getElementById('start-journey-container');
-        if (mainContent) mainContent.style.display = 'block';
-        if (startJourneyContainer) startJourneyContainer.style.display = 'none';
+        document.body.classList.remove('onboarding-active');
         // ---------------------------------------------
 
         // Restore Temperature Table Selection

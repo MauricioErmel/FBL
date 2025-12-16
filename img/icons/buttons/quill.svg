@@ -1,6 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve">
-	<path fill="#000000" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 17.4167,53.8333C 17.4167,53.8333 39.5833,22.1667 58.5833,22.1667C 60.1667,23.75 60.1667,25.3333 58.5833,26.9167C 57,28.5 55.0208,26.5209 53.4375,28.1042C 51.8541,29.6875 55.8804,28.9638 57,30.0833C 58.5833,31.6667 51.4583,33.6459 48.2916,32.0625C 48.2916,32.0625 47.5,32.4583 50.6667,35.625C 47.5,36.4167 42.3541,36.8125 42.3541,36.8125C 42.3541,36.8125 41.1667,39.5833 47.5,39.5833C 47.5,41.1667 40.7708,44.3334 32.8541,43.1459C 32.8541,43.1459 25.3333,47.5 22.1667,52.25L 17.4167,53.8333 Z "/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #aebaa6;
+      }
+    </style>
+  </defs>
+  <path class="st0" d="M183.33,566.67s233.33-333.33,433.33-333.33c16.67,16.67,16.67,33.33,0,50-16.67,16.67-37.5-4.17-54.17,12.5-16.67,16.67,25.71,9.05,37.5,20.83,16.67,16.67-58.33,37.5-91.67,20.83,0,0-8.33,4.17,25,37.5-33.33,8.33-87.5,12.5-87.5,12.5,0,0-12.5,29.17,54.17,29.17,0,16.67-70.83,50-154.17,37.5,0,0-79.17,45.83-112.5,95.83l-50,16.67Z"/>
 </svg>

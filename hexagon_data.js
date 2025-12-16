@@ -511,6 +511,158 @@ const hexagonDataWinter = {
     }
 };
 
+// Estrutura de modificadores para condições climáticas e de vento
+const weatherModifiers = {
+    // --- CONDIÇÕES CLIMÁTICAS (redImage) ---
+    'Dia Quente de Sol': {
+        desbravar: +1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Dia de Frio Cortante': {
+        desbravar: -1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Céu Limpo': {
+        desbravar: +1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Garoa': {
+        desbravar: -1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -1, cold: +1 },
+        outros: []
+    },
+    'Chuva Leve': {
+        desbravar: -1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -1, cold: +1 },
+        outros: []
+    },
+    'Chuva Forte': {
+        desbravar: -2,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -2, cold: +2 },
+        outros: ['CAMINHAR requer uma rolagem de Resiliência.']
+    },
+    'Temporal': {
+        desbravar: -2,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -2, cold: +2 },
+        outros: ['CAMINHAR requer uma rolagem de Resiliência.']
+    },
+    'Rajada de Neve': {
+        desbravar: -1,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: +1 },
+        outros: []
+    },
+    'Neve': {
+        desbravar: -2,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: +2 },
+        outros: ['CAMINHAR requer uma rolagem de Resiliência.']
+    },
+    'Nevasca': {
+        desbravar: -2,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: +2 },
+        outros: ['CAMINHAR requer uma rolagem de Resiliência.']
+    },
+    'Nebuloso': {
+        desbravar: 0,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Encoberto': {
+        desbravar: 0,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Nuvens Claras': {
+        desbravar: 0,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Nuvens Pesadas': {
+        desbravar: 0,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+
+    // --- CONDIÇÕES DE VENTO (blueImage) ---
+    'Sem Vento': {
+        desbravar: 0,
+        acampar: +1,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: +1, cold: 0 },
+        outros: []
+    },
+    'Brisa': {
+        desbravar: 0,
+        acampar: 0,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: 0, cold: 0 },
+        outros: []
+    },
+    'Ventando': {
+        desbravar: 0,
+        acampar: -1,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -1, cold: +1 },
+        outros: []
+    },
+    'Ventania Forte': {
+        desbravar: 0,
+        acampar: -2,
+        coletar: 0,
+        cacar: 0,
+        temperaturaMod: { hot: -2, cold: +2 },
+        outros: ['CAMINHAR requer uma rolagem de Resiliência.']
+    }
+};
+
+// Manter weatherEffects para retrocompatibilidade com exibição de texto
 const weatherEffects = {
     'Dia Quente de Sol': '✥ +1 em rolagens de DESBRAVAR',
     'Dia de Frio Cortante': '✥ -1 em rolagens de DESBRAVAR',
@@ -565,7 +717,7 @@ function parseEffect(effectString) {
     return null;
 }
 
-function processDataSets(data, excludedPhrases = []) {
+function processDataSets(data, excludedPhrases = [], seasonType = 'hot') {
     for (const key in data) {
         const hexagon = data[key];
         const redTitle = getImageTitle(hexagon.redImage);
@@ -580,6 +732,53 @@ function processDataSets(data, excludedPhrases = []) {
             title = blueTitle;
         }
 
+        // --- CALCULAR CAMPO MODIFIERS ESTRUTURADO ---
+        const redMods = weatherModifiers[redTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
+        const blueMods = weatherModifiers[blueTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
+
+        // Combinar outros - verificar condição especial de Resiliência combinada
+        const redImageName = hexagon.redImage ? hexagon.redImage.split('/').pop() : null;
+        const blueImageName = hexagon.blueImage ? hexagon.blueImage.split('/').pop() : null;
+        const conditionRed = ['chuvaForte.webp', 'temporal.webp', 'neve.webp', 'nevasca.webp'].includes(redImageName);
+        const conditionBlue = blueImageName === 'vento3.webp';
+
+        let combinedOutros = [];
+        if (conditionRed && conditionBlue) {
+            // Combinação especial: Resiliência com redutor de -2
+            combinedOutros.push('CAMINHAR requer uma rolagem de Resiliência com um redutor de -2.');
+        } else {
+            // Adicionar outros sem duplicação
+            redMods.outros.forEach(o => {
+                if (!combinedOutros.includes(o)) combinedOutros.push(o);
+            });
+            blueMods.outros.forEach(o => {
+                if (!combinedOutros.includes(o)) combinedOutros.push(o);
+            });
+        }
+
+        // Calcular modificador de temperatura baseado na estação
+        let tempMod = 0;
+        if (seasonType === 'hot') {
+            tempMod = (redMods.temperaturaMod?.hot || 0) + (blueMods.temperaturaMod?.hot || 0);
+        } else {
+            tempMod = (redMods.temperaturaMod?.cold || 0) + (blueMods.temperaturaMod?.cold || 0);
+        }
+
+        hexagon.modifiers = {
+            desbravar: redMods.desbravar + blueMods.desbravar,
+            acampar: redMods.acampar + blueMods.acampar,
+            coletar: redMods.coletar + blueMods.coletar,
+            cacar: redMods.cacar + blueMods.cacar,
+            temperaturaMod: tempMod,
+            outros: combinedOutros,
+            // Manter referências para ícones
+            sources: {
+                red: { title: redTitle, image: hexagon.redImage },
+                blue: { title: blueTitle, image: hexagon.blueImage }
+            }
+        };
+
+        // --- MANTER LÓGICA DE GERAÇÃO DE TEXTO HTML PARA RETROCOMPATIBILIDADE ---
         const redEffectStrings = (redTitle && weatherEffects[redTitle]) ? weatherEffects[redTitle].split('<br>') : [];
         const blueEffectStrings = (blueTitle && weatherEffects[blueTitle]) ? weatherEffects[blueTitle].split('<br>') : [];
 
@@ -616,12 +815,6 @@ function processDataSets(data, excludedPhrases = []) {
 
         addEffects(redEffectStrings, hexagon.redImage);
         addEffects(blueEffectStrings, hexagon.blueImage);
-
-        const redImageName = hexagon.redImage ? hexagon.redImage.split('/').pop() : null;
-        const blueImageName = hexagon.blueImage ? hexagon.blueImage.split('/').pop() : null;
-
-        const conditionRed = ['chuvaForte.webp', 'temporal.webp', 'neve.webp', 'nevasca.webp'].includes(redImageName);
-        const conditionBlue = blueImageName === 'vento3.webp';
 
         if (conditionRed && conditionBlue) {
             if (effectsMap.has('CAMINHAR requer uma rolagem de Resiliência')) {
@@ -666,9 +859,9 @@ function processDataSets(data, excludedPhrases = []) {
 }
 
 // Process all sets
-processDataSets(hexagonDataWarm, ['para rolar na tabela de FRIO']);
-processDataSets(hexagonDataIntermediate, ['para rolar na tabela de CALOR']);
-processDataSets(hexagonDataWinter, ['para rolar na tabela de CALOR']);
+processDataSets(hexagonDataWarm, ['para rolar na tabela de FRIO'], 'hot');
+processDataSets(hexagonDataIntermediate, ['para rolar na tabela de CALOR'], 'cold');
+processDataSets(hexagonDataWinter, ['para rolar na tabela de CALOR'], 'cold');
 
 // Initialize with a default, but script.js will update it
 let hexagonData = hexagonDataWarm;

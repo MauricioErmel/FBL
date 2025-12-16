@@ -10,41 +10,104 @@
 </head>
 
 <body>
+    <!-- Onboarding Screen -->
+    <div id="onboarding-screen">
+        <div id="onboarding-header">
+            <button id="btn-load-game-onboarding" class="header-btn std-btn" title="Carregar Estado">
+                <img src="img/icons/buttons/header/load.svg" alt="" class="btn-icon">
+                <span>CARREGAR</span>
+            </button>
+            <input type="file" id="file-input-load" accept=".json">
+        </div>
+
+        <div id="onboarding-branding">
+            <img src="img/icons/logo.svg" alt="Logo" id="onboarding-logo">
+            <h1 id="onboarding-title">FBL Hexplorer Companion</h1>
+        </div>
+
+        <button id="btn-initial-start" class="std-btn onboarding-start-btn">
+            <img src="img/icons/buttons/journal2.svg" class="btn-icon">
+            INICIAR JORNADA
+        </button>
+
+        <div id="onboarding-info">
+            <h2>Bem-vindo ao FBL Hexplorer Companion!</h2>
+            <p>Como o nome sugere, esta página foi feita para te ajudar na exploração dos hexágonos durante suas sessões
+                de <em>Forbidden Lands</em>.</p>
+
+            <h3>Como usar:</h3>
+            <ul>
+                <li><strong>Configuração Inicial:</strong> Comece escolhendo o dia, mês e ano de início da campanha.
+                    Isso definirá o mapa em <em>Hexflower</em> que será utilizado.</li>
+                <li><strong>Clima:</strong> Selecione o clima inicial no mapa. Não tem jeito certo para isso, apenas
+                    defina um arbitrariamente.</li>
+                <li><strong>Temperatura:</strong> Role <strong>1d12</strong> (somando bônus/redutores, se houver) para
+                    definir a temperatura aleatoriamente, ou clique diretamente em uma opção na tabela.</li>
+                <li><strong>Terreno:</strong> Selecione o tipo de terreno onde o personagem está.</li>
+                <li><strong>Viagem:</strong> Utilize das informações contidas em <strong>'Procedimentos de
+                        Viagem'</strong> para não esquecer nenhum detalhe importante enquanto estiver pelas <em>Terras
+                        Proibidas</em>.</li>
+            </ul>
+
+            <p><strong>Navegação e Diário:</strong> Use os botões <strong>DESBRAVAR</strong> e
+                <strong>PERMANECER</strong> para avançar o dia. Ao final do dia, o sistema pedirá o clima do dia
+                seguinte. Basta rolar <strong>2d6</strong>: o resultado moverá o clima para um hexágono adjacente (veja
+                em <strong>'Navegação no Hexflower'</strong>). Você pode clicar tanto nos hexágonos de navegação quanto
+                diretamente no mapa <em>hexflower</em> de clima. Você também precisará rolar na tabela de temperatura
+                novamente.
+            </p>
+
+            <p>Não esqueça do <strong>Diário</strong>: use-o para anotar encontros, tesouros, etc. Clicando na data
+                atual, uma janela mostrará o histórico dos dias anteriores.</p>
+
+            <hr>
+
+            <h3>Sobre o Projeto</h3>
+            <p>Criei esta ferramenta pensando em jogos solo, mas a utilizo sempre que mestro para meu grupo. Espero que
+                faça bom proveito na sua mesa!</p>
+
+            <p>A principal <em>feature</em> que me motivou a criação da ferramenta foi a <em>house-rule</em> de controle
+                de clima através da navegação por <em>hexflower</em>, então esta área recebeu mais carinho, caso você
+                não conheça, este é um método já famoso na comunidade <em>hexcrawl</em> que faz a progressão do clima
+                ser menos imprevisível e, com sorte, mais crível. As regras, bônus e redutores que usei aqui são um
+                amálgama de informações do <em>Livro do Mestre</em>, <em>Book of Beasts</em> e materiais da comunidade,
+                ajustados ao meu gosto pessoal.</p>
+
+            <p><em>Este projeto é uma ferramenta independente criada por fã e não possui qualquer intenção de violar
+                    direitos autorais. Ele não contém, reproduz ou distribui material protegido por copyright do sistema
+                    de RPG de mesa Forbidden Lands, que é propriedade da empresa Free League Publishing. Todos os
+                    direitos sobre Forbidden Lands pertencem exclusivamente aos seus respectivos detentores</em></p>
+        </div>
+    </div>
+
+    <!-- Main Application Header (hidden during onboarding) -->
     <header id="site-header">
         <div id="header-controls">
-            <button id="btn-save-game" class="header-btn" title="Salvar Estado">
+            <button id="btn-save-game" class="header-btn std-btn" title="Salvar Estado">
                 <img src="img/icons/buttons/header/save.svg" alt="" class="btn-icon">
-                <span>Salvar</span>
+                <span>SALVAR</span>
             </button>
-            <button id="btn-load-game" class="header-btn" title="Carregar Estado">
+            <button id="btn-load-game" class="header-btn std-btn" title="Carregar Estado">
                 <img src="img/icons/buttons/header/load.svg" alt="" class="btn-icon">
-                <span>Carregar</span>
+                <span>CARREGAR</span>
             </button>
-            <button id="btn-reset-game" class="header-btn" title="Resetar Jogo">
+            <button id="btn-reset-game" class="header-btn std-btn" title="Resetar Jogo">
                 <img src="img/icons/buttons/header/reset.svg" alt="" class="btn-icon">
-                <span>Reset</span>
+                <span>RESET</span>
             </button>
-            <button id="btn-info-game" class="header-btn" title="Informações">
+            <button id="btn-info-game" class="header-btn std-btn" title="Informações">
                 <img src="img/icons/buttons/header/info.svg" alt="" class="btn-icon">
-                <span>Info</span>
+                <span>INFO</span>
             </button>
-            <input type="file" id="file-input-load" accept=".json" style="display: none;">
         </div>
+
         <div id="header-branding">
             <img src="img/icons/logo.svg" alt="Logo" id="header-logo">
             <h1>FBL Hexplorer Companion</h1>
         </div>
     </header>
 
-    <!-- Onboarding Button Container -->
-    <div id="start-journey-container" style="text-align: center; margin-top: 50px;">
-        <button id="btn-initial-start" class="travel-btn" style="margin: 0 auto; padding: 15px 30px; font-size: 1.2em;">
-            <img src="img/icons/mastheads/journal.svg" class="btn-icon" style="filter: brightness(0) invert(1);">
-            INICIAR JORNADA
-        </button>
-    </div>
-
-    <div id="main-content" style="display: none;">
+    <div id="main-content">
 
         <div id="info-container">
             <div id="info-display">
@@ -87,8 +150,8 @@
                 <div id="calendar-content-wrapper">
                     <div id="travel-controls">
                         <div class="desbravar-container">
-                            <button id="btn-desbravar" class="travel-btn"><img src="img/icons/buttons/explore.svg"
-                                    alt="" class="btn-icon">DESBRAVAR</button>
+                            <button id="btn-desbravar" class="travel-btn std-btn"><img
+                                    src="img/icons/buttons/explore.svg" alt="" class="btn-icon">DESBRAVAR</button>
                             <div class="mounted-switch-container">
                                 <label class="switch">
                                     <input type="checkbox" id="toggle-mounted">
@@ -97,9 +160,11 @@
                                 <label for="toggle-mounted">Todos Montados?</label>
                             </div>
                         </div>
-                        <button id="btn-permanecer" class="travel-btn"><img src="img/icons/buttons/stay.svg" alt=""
-                                class="btn-icon">PERMANECER</button>
-                        <button id="btn-advance-day" class="travel-btn hidden">AVANÇAR PARA O PRÓXIMO DIA</button>
+                        <button id="btn-permanecer" class="travel-btn std-btn"><img src="img/icons/buttons/stay.svg"
+                                alt="" class="btn-icon">PERMANECER</button>
+                        <button id="btn-advance-day" class="travel-btn std-btn hidden"><img
+                                src="img/icons/buttons/twilight.svg" class="btn-icon"> AVANÇAR PARA O PRÓXIMO
+                            DIA</button>
                     </div>
 
                     <div id="day-details-main"></div>
@@ -109,11 +174,9 @@
 
                         <div id="journal-entries-list" class="journal-entries-list"></div>
 
-                        <div id="journal-controls"
-                            style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <div id="journal-controls">
                             <label for="journal-quarter-select">Momento:</label>
-                            <select id="journal-quarter-select"
-                                style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                            <select id="journal-quarter-select">
                                 <option value="0">Manhã</option>
                                 <option value="1">Tarde</option>
                                 <option value="2">Anoitecer</option>
@@ -126,13 +189,11 @@
                             <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
                             <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
                             <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                            </div>
+                            <div class="separator"></div>
                             <button class="tool-btn" data-cmd="insertUnorderedList"
                                 title="Lista com Marcadores">•</button>
                             <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
-                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                            </div>
+                            <div class="separator"></div>
                             <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
                                     src="img/icons/editor/left.svg" alt="Left"></button>
                             <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
@@ -141,8 +202,7 @@
                                     src="img/icons/editor/right.svg" alt="Right"></button>
                             <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
                                     src="img/icons/editor/justify.svg" alt="Justify"></button>
-                            <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                            </div>
+                            <div class="separator"></div>
                             <div class="color-picker-wrapper" title="Cor do Texto">
                                 <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
                                 <input type="color" id="editor-color" value="#e0e0e0">
@@ -152,11 +212,11 @@
                         <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
                         </div>
 
-                        <div id="journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                            <button id="btn-save-entry">Salvar Entrada</button>
-                            <button id="btn-cancel-edit"
-                                style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep); display: none;">Cancelar
-                                Edição</button>
+                        <div id="journal-actions">
+                            <button id="btn-save-entry" class="std-btn"><img src="img/icons/buttons/addentry.svg"
+                                    class="btn-icon"> SALVAR ENTRADA</button>
+                            <button id="btn-cancel-edit" class="std-btn"><img src="img/icons/buttons/cancel.svg"
+                                    class="btn-icon"> CANCELAR EDIÇÃO</button>
                         </div>
 
                     </div>
@@ -174,7 +234,7 @@
             </div>
             <div class="modal-body-split">
                 <div id="modal-left-column">
-                    <p id="initial-hex-subtitle" class="subtitle" style="display: none;">Selecione o Hexágono de Clima
+                    <p id="initial-hex-subtitle" class="subtitle">Selecione o Hexágono de Clima
                         inicial</p>
                     <div id="modal-map-container"></div>
                     <div id="text-window"></div>
@@ -239,7 +299,8 @@
                                         <span class="die-number">1</span>
                                     </div>
                                 </div>
-                                <button id="btn-roll-temp">Rolar 1d12</button>
+                                <button id="btn-roll-temp" class="std-btn"><img src="img/icons/buttons/d12.svg"
+                                        class="btn-icon"> ROLAR 1D12</button>
                                 <div id="dice-result-temp"></div>
                             </div>
                         </div>
@@ -261,7 +322,8 @@
                                     <div class="die" id="die-1"></div>
                                     <div class="die" id="die-2"></div>
                                 </div>
-                                <button id="btn-roll-nav">Rolar 2d6</button>
+                                <button id="btn-roll-nav" class="std-btn"><img src="img/icons/buttons/2d6.svg"
+                                        class="btn-icon"> ROLAR 2D6</button>
                                 <div id="dice-result-nav"></div>
                             </div>
                         </div>
@@ -282,10 +344,10 @@
                 <div class="masthead-title">Terrenos Exploráveis</div>
                 <span class="close-button">&times;</span>
             </div>
-            <p class="subtitle" style="text-align: center; padding: 20px 20px 0 20px; margin: 0;">Selecione o
+            <p class="subtitle">Selecione o
                 Terreno
                 atual</p>
-            <div id="terrain-grid" style="padding: 20px;"></div>
+            <div id="terrain-grid"></div>
         </div>
     </div>
 
@@ -300,12 +362,10 @@
                 <div id="calendar-grid"></div>
                 <div id="day-details"></div>
 
-                <div id="modal-journal-section" style="display:none; margin-top: 20px;">
-                    <div id="modal-journal-controls"
-                        style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <div id="modal-journal-section">
+                    <div id="modal-journal-controls">
                         <label for="modal-journal-quarter-select">Momento:</label>
-                        <select id="modal-journal-quarter-select"
-                            style="padding: 5px; border-radius: 4px; background: var(--col-bg-surface); color: var(--col-text-primary); border: 1px solid var(--col-accent-cool);">
+                        <select id="modal-journal-quarter-select">
                             <option value="0">Manhã</option>
                             <option value="1">Tarde</option>
                             <option value="2">Anoitecer</option>
@@ -318,12 +378,10 @@
                         <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
                         <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
                         <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                        </div>
+                        <div class="separator"></div>
                         <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista com Marcadores">•</button>
                         <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                        </div>
+                        <div class="separator"></div>
                         <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
                                 src="img/icons/editor/left.svg" alt="Left"></button>
                         <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
@@ -332,8 +390,7 @@
                                 src="img/icons/editor/right.svg" alt="Right"></button>
                         <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
                                 src="img/icons/editor/justify.svg" alt="Justify"></button>
-                        <div class="separator" style="width: 1px; height: 20px; background: #555; margin: 0 5px;">
-                        </div>
+                        <div class="separator"></div>
                         <div class="color-picker-wrapper" title="Cor do Texto">
                             <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
                             <input type="color" id="modal-editor-color" value="#e0e0e0">
@@ -343,10 +400,11 @@
                         placeholder="Escreva os detalhes da jornada...">
                     </div>
 
-                    <div id="modal-journal-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-                        <button id="modal-btn-save-entry">Salvar Entrada</button>
-                        <button id="modal-btn-cancel-edit"
-                            style="background-color: var(--col-bg-surface); border: 1px solid var(--col-accent-deep);">Cancelar</button>
+                    <div id="modal-journal-actions">
+                        <button id="modal-btn-save-entry" class="std-btn"><img src="img/icons/buttons/addentry.svg"
+                                class="btn-icon"> SALVAR ENTRADA</button>
+                        <button id="modal-btn-cancel-edit" class="std-btn"><img src="img/icons/buttons/cancel.svg"
+                                class="btn-icon"> CANCELAR EDIÇÃO</button>
                     </div>
                 </div>
             </div>
@@ -360,7 +418,7 @@
                 <div class="masthead-title">Iniciar Viagem</div>
                 <span class="close-button">&times;</span>
             </div>
-            <div style="padding: 20px;">
+            <div class="start-game-form">
                 <div class="form-group">
                     <label for="start-year">Ano:</label>
                     <input type="number" id="start-year" value="1165">
@@ -373,7 +431,8 @@
                     <label for="start-day">Dia:</label>
                     <input type="number" id="start-day" min="1" max="46" value="1">
                 </div>
-                <button id="btn-start-game">DATA DEFINIDA</button>
+                <button id="btn-start-game" class="std-btn"><img src="img/icons/buttons/correct.svg" class="btn-icon">
+                    DATA DEFINIDA</button>
             </div>
         </div>
     </div>
@@ -385,7 +444,7 @@
                 <div class="masthead-title">Informações</div>
                 <span class="close-button">&times;</span>
             </div>
-            <div id="info-content" style="padding: 20px;">
+            <div id="info-content">
                 <h2 data-path-to-node="2">Bem-vindo ao FBL Hexplorer Companion!</h2>
                 <p data-path-to-node="3">Como o nome sugere, esta p&aacute;gina foi feita para te ajudar na
                     explora&ccedil;&atilde;o dos
@@ -491,7 +550,7 @@
                 <div class="masthead-title" id="general-info-title">Clima</div>
                 <span class="close-button">&times;</span>
             </div>
-            <div id="general-info-content" style="padding: 20px; font-size: 1.1em; line-height: 1.6;"></div>
+            <div id="general-info-content"></div>
         </div>
     </div>
 

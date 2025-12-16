@@ -1,5 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M10 0H0V10H10V0ZM3 4C3.55228 4 4 3.55228 4 3C4 2.44772 3.55228 2 3 2C2.44772 2 2 2.44772 2 3C2 3.55228 2.44772 4 3 4ZM8 7C8 7.55228 7.55228 8 7 8C6.44772 8 6 7.55228 6 7C6 6.44772 6.44772 6 7 6C7.55228 6 8 6.44772 8 7Z" fill="#000000"/>
-<path d="M6 16V12H12V6H16V16H6Z" fill="#000000"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0, .st1 {
+        fill: #aebaa6;
+      }
+
+      .st1 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path class="st1" d="M500,0H0v500h500V0ZM150,200c27.61,0,50-22.39,50-50s-22.39-50-50-50-50,22.39-50,50,22.39,50,50,50ZM400,350c0,27.61-22.39,50-50,50s-50-22.39-50-50,22.39-50,50-50,50,22.39,50,50Z"/>
+  <path class="st0" d="M300,800v-200h300v-300h200v500h-500Z"/>
 </svg>
