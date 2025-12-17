@@ -165,7 +165,29 @@ const CALENDAR_CONFIG = {
 const QUARTERS = ['Manhã', 'Tarde', 'Anoitecer', 'Noite'];
 
 const HOT_MONTHS = ['Minguaprimavera', 'Cresceverão', 'Minguaverão', 'Cresceoutono'];
+
 const COLD_MONTHS = ['Cresceprimavera', 'Minguaoutono', 'Cresceinverno', 'Minguainverno'];
+
+const TEMP_ICONS = {
+    'Ameno': 'img/icons/other/mild.svg',
+    'Frio': 'img/icons/other/cold.svg',
+    'Calor': 'img/icons/other/hot.svg',
+    'Escaldante': 'img/icons/other/scorching.svg',
+    'Cortante': 'img/icons/other/biting.svg'
+};
+
+const temperatureDataConfig = {
+    hot: [
+        { range: '1 - 8', name: 'Ameno', description: 'Sem alterações.', full: '<b>Ameno</b>. Sem alterações.' },
+        { range: '9 - 11', name: 'Calor', description: 'Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.', full: '<b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.' },
+        { range: '12', name: 'Escaldante', description: 'Água precisa ser consumida em cada Quarto de Dia para não ficar DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em cada Quarto de Dia, falha significa -1 de AGILIDADE.', full: '<b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em cada Quarto de Dia, falha significa -1 de AGILIDADE.' }
+    ],
+    cold: [
+        { range: '1 - 8', name: 'Ameno', description: 'Sem alterações.', full: '<b>Ameno</b>. Sem alterações.' },
+        { range: '9 - 11', name: 'Frio', description: 'Se não tiver proteção adequada, role RESILIÊNCIA em cada Quarto de dia para não ficar HIPOTÉRMICO.', full: '<b>Frio</b>. Se não tiver proteção adequada, role RESILIÊNCIA em cada Quarto de dia para não ficar HIPOTÉRMICO.' },
+        { range: '12', name: 'Cortante', description: 'Se não tiver proteção adequada, role RESILIÊNCIA em cada <u>hora</u> do dia para não ficar HIPOTÉRMICO.', full: '<b>Cortante</b>. Se não tiver proteção adequada, role RESILIÊNCIA em cada <u>hora</u> do dia para não ficar HIPOTÉRMICO.' }
+    ]
+};
 
 // --- CALENDAR & TRAVEL STATE ---
 let calendarData = [];
@@ -177,6 +199,37 @@ let gameState = {
     currentQuarterIndex: 0, // 0-3
     currentActionCount: 0, // Actions taken in current quarter
     waitingForTerrainSelection: false
+};
+
+const COMMON_ROLLS_CONFIG = {
+    'DESBRAVAR': {
+        description: 'Sempre que você adentra um novo hexágono do mapa, a desbravadora realiza uma rolagem de SOBREVIVÊNCIA. Em caso de sucesso, ela encontra uma rota segura pelo hexágono e segue adiante sem dificuldades. Em caso de falha, o grupo ainda entra no hexágono, mas enfrenta um infortúnio.',
+        modKey: 'desbravar'
+    },
+    'MONTAR ACAMPAMENTO': {
+        description: 'Faça um teste de SOBREVIVÊNCIA. Se a rolagem for bem-sucedida, você encontra um local protegido e confortável para passar a noite, permitindo que todas possam DESCANSAR e DORMIR. Se a rolagem falhar, o acampamento será menos agradável: ainda será possível DESCANSAR e DORMIR, mas a MdJ fará uma rolagem oculta na tabela de infortúnios.',
+        modKey: 'acampar'
+    },
+    'COLETAR': {
+        description: 'Para COLETAR, você deve escolher se está em busca de comida ou de água. Em seguida, realize uma rolagem de SOBREVIVÊNCIA, modificada pelo tipo de Terreno. A rolagem também sofre modificações de acordo com o mês.',
+        modKey: 'coletar'
+    },
+    'CAÇAR': {
+        description: 'Várias pessoas podem CAÇAR ao mesmo tempo. Caso optem por rolar separadamente, não será possível CAÇAR no mesmo local, o que significa que qualquer infortúnio afetará cada uma individualmente. Uma alternativa é que uma de vocês CAÇE enquanto as demais oferecem ajuda.<br>Para CAÇAR, é necessário algum tipo de equipamento, como uma arma à distância ou uma armadilha de caça. O primeiro passo é localizar a presa, o que é feito com uma rolagem de SOBREVIVÊNCIA. Um sucesso indica que você encontrou uma presa; então, role na tabela correspondente para determinar o tipo de animal. Se forem obtidos múltiplos x, você pode rolar novamente na tabela de caça, uma vez para cada x, sem poder retornar a resultados anteriores após decidir rolar de novo.<br>Para abater a presa, faça uma nova rolagem: PONTARIA, se estiver usando uma arma, ou SOBREVIVÊNCIA, se estiver utilizando uma armadilha. Modifique a rolagem conforme a dificuldade do animal, de acordo com a tabela CAÇAR.',
+        modKey: 'cacar'
+    },
+    'PATRULHA': {
+        description: 'Perícia ligada a ASTUCIA rolada para descobrir alguém tentando passar furtivamente. Também pode usar essa perícia quando vê algo ou alguém à distância e quer saber mais.',
+        modKey: null
+    },
+    'RESILIÊNCIA': {
+        description: 'Perícia ligada a FORÇA Utilizada esta perícia quando viajar em climas extremos ou quando for forçada a ir além dos seus limites.',
+        modKey: null
+    },
+    'SOBREVIVÊNCIA': {
+        description: 'Perícia ligada a ASTUCIA rolada SOBREVIVÊNCIA em um número de situações diferentes quando viaja através da área selvagem.',
+        modKey: null
+    }
 };
 
 let isOnboarding = false; // Flag to track onboarding state
@@ -202,6 +255,7 @@ function recalculateModifiers() {
         cacar: { permitido: true, total: 0, sources: [] },
         deslocamento: { tipo: null, descricao: '', source: null },
         iluminacao: { tipo: null, descricao: '', source: null },
+        temperatura: { name: '', description: '', source: null }, // Added temperature field
         outros: []
     };
 
@@ -340,6 +394,27 @@ function recalculateModifiers() {
                 source: 'Escuro',
                 icon: lightingIcon
             });
+        }
+    }
+
+    // 5. Aplicar modificadores de TEMPERATURA
+    if (selectedTemperatureRowIndex !== null) {
+        const currentMonthName = CALENDAR_CONFIG.months[gameState.currentMonthIndex].name;
+        const isHot = HOT_MONTHS.includes(currentMonthName);
+        const configKey = isHot ? 'hot' : 'cold';
+        // selectedTemperatureRowIndex is 1-based (header is 0), data is 0-based
+        const dataIndex = selectedTemperatureRowIndex - 1;
+
+        if (temperatureDataConfig[configKey][dataIndex]) {
+            const tempInfo = temperatureDataConfig[configKey][dataIndex];
+            // Use the correct icon if available, otherwise fallback to masthead
+            const iconPath = TEMP_ICONS[tempInfo.name] || 'img/icons/mastheads/temperature-container.svg';
+
+            currentModifiers.temperatura = {
+                name: tempInfo.name,
+                description: tempInfo.full, // Use full text
+                source: { name: 'Temperatura', icon: iconPath }
+            };
         }
     }
 
@@ -694,6 +769,75 @@ function getPreviousTerrain() {
 
 let currentInfoMessage = '';
 
+function highlightRollTerms(text) {
+    if (!text) return text;
+    // Split by tags to only modify text content
+    const parts = text.split(/(<[^>]+>)/g);
+
+    return parts.map(part => {
+        if (part.startsWith('<')) return part; // Return tags as-is
+
+        let modifiedPart = part;
+        Object.keys(COMMON_ROLLS_CONFIG).forEach(key => {
+            // Regex to match whole word/phrase, ensuring we don't match inside other words if possible
+            // Using a simple replace for exact match as keys are quite specific
+            // Escaping special characters in key just in case
+            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(?<![\\wÀ-ÿ])(${escapedKey})(?![\\wÀ-ÿ])`, 'g');
+            modifiedPart = modifiedPart.replace(regex, `<span class="roll-term" onclick="showRollModal('$1')">$1</span>`);
+        });
+        return modifiedPart;
+    }).join('');
+}
+
+function showRollModal(rollName) {
+    const config = COMMON_ROLLS_CONFIG[rollName];
+    if (!config) return;
+
+    const modalTitle = document.getElementById('general-info-title');
+    const modalContent = document.getElementById('general-info-content');
+    const modal = document.getElementById('general-info-modal');
+    const mastheadIcon = modal.querySelector('.masthead-icon img');
+
+    if (modalTitle) modalTitle.textContent = rollName;
+    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/rolls.svg';
+
+    let contentHTML = `<p>${config.description}</p>`;
+
+    // Add Modifiers if applicable
+    if (config.modKey && currentModifiers[config.modKey]) {
+        const modData = currentModifiers[config.modKey];
+        if (modData.sources.length > 0) {
+            contentHTML += `<hr class="modal-divider">`;
+            contentHTML += `<h4>Modificadores Atuais:</h4>`;
+            contentHTML += `<div class="modifiers-list">`;
+
+            // Re-use logic to show sources similar to updateInfoDisplay or create custom list
+            modData.sources.forEach(s => {
+                const sign = s.value > 0 ? '+' : '';
+                const valueText = s.value !== null ? `<b>${sign}${s.value}</b>` : '';
+
+                // Use existing helper icon creation (needs to be accessible or duplicated)
+                // For simplicity, we create specific HTML here
+                const bgStyle = s.icon && s.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
+                const iconHTML = s.icon ? `<img src="${s.icon}" class="source-tag" ${bgStyle} style="vertical-align: middle; margin-right: 5px;">` : '✥';
+
+                contentHTML += `<div style="margin-bottom: 5px; display: flex; align-items: center;">
+                    ${iconHTML} <span>${s.name}: ${valueText}</span>
+                 </div>`;
+            });
+            contentHTML += `<p><strong>Total: ${modData.total > 0 ? '+' : ''}${modData.total}</strong></p>`;
+            contentHTML += `</div>`;
+        }
+    }
+
+    if (modalContent) modalContent.innerHTML = contentHTML;
+
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
 function updateInfoDisplay(content) {
     const infoDisplay = document.getElementById('info-display-text');
     if (infoDisplay) {
@@ -805,7 +949,11 @@ function updateInfoDisplay(content) {
         const createSourceIcon = (source) => {
             if (!source || !source.icon) return '';
             const bgStyle = source.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
-            const popupContent = getSourcePopupContent(source.name, source.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            const popupContent = getSourcePopupContent(source.name, source.icon)
+                .replace(/'/g, "\\'")
+                .replace(/"/g, "&quot;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
             return `<img src="${source.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${source.name}', '${popupContent}')">`;
         };
 
@@ -817,7 +965,11 @@ function updateInfoDisplay(content) {
             modData.sources.forEach(s => {
                 if (s.icon) {
                     const bgStyle = s.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
-                    const popupContent = getSourcePopupContent(s.name, s.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                    const popupContent = getSourcePopupContent(s.name, s.icon)
+                        .replace(/'/g, "\\'")
+                        .replace(/"/g, "&quot;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
                     icons += `<img src="${s.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${s.name}', '${popupContent}')">`;
                 }
             });
@@ -867,13 +1019,33 @@ function updateInfoDisplay(content) {
         // --- OUTROS ---
         currentModifiers.outros.forEach(item => {
             const bgStyle = item.icon && item.icon.includes('terrain/') ? `style="background-color: ${currentSelectedTerrainData?.color || 'var(--col-bg-main)'};"` : '';
-            const popupContent = getSourcePopupContent(item.source, item.icon).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            const popupContent = getSourcePopupContent(item.source, item.icon)
+                .replace(/'/g, "\\'")
+                .replace(/"/g, "&quot;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
             const icon = item.icon ? `<img src="${item.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${item.source}', '${popupContent}')">` : '✥';
             outputLines.push(`${icon} ${item.text}`);
         });
 
         // Nota: A linha "Iluminação: Claro/Escuro" foi removida.
         // A mensagem sobre PATRULHA quando Escuro já está incluída em currentModifiers.outros.
+
+        // --- TEMPERATURA ---
+        // --- TEMPERATURA ---
+        if (currentModifiers.temperatura && currentModifiers.temperatura.name && currentModifiers.temperatura.name !== 'Ameno') {
+            // Create clickable icon
+            const popupContent = currentModifiers.temperatura.description
+                .replace(/'/g, "\\'")
+                .replace(/"/g, "&quot;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+            const icon = `<img src="${currentModifiers.temperatura.source.icon}" class="source-tag" onclick="showSimplePopup('${currentModifiers.temperatura.name}', '${popupContent}')">`;
+
+            // Only show description if it's not just "Ameno. Sem alterações." or similar safe state if desired,
+            // but user wants detailed info.
+            outputLines.push(`${icon} ${currentModifiers.temperatura.description}`);
+        }
 
         // --- MENSAGENS DE SELEÇÃO ---
         const isWeatherSelected = currentSelectedHexagon !== null;
@@ -896,11 +1068,14 @@ function updateInfoDisplay(content) {
         }
 
         // Se não há linhas e há conteúdo original, usar ele
+        let finalText = '';
         if (outputLines.length === 0 && content) {
-            infoDisplay.innerHTML = content;
+            finalText = content;
         } else {
-            infoDisplay.innerHTML = outputLines.join('<br>');
+            finalText = outputLines.join('<br>');
         }
+
+        infoDisplay.innerHTML = highlightRollTerms(finalText);
     }
 }
 
@@ -1975,8 +2150,11 @@ function initializeModal() {
         }
         const targetRow = e.target.closest('tr');
         if (targetRow && targetRow.rowIndex !== 0) {
-            const rows = temperatureTable.querySelectorAll('tr.selected-row');
-            rows.forEach(r => r.classList.remove('selected-row'));
+            const allRows = temperatureTable.querySelectorAll('tr');
+            allRows.forEach(r => {
+                r.classList.remove('selected-row');
+                r.classList.remove('selected');
+            });
             targetRow.classList.add('selected-row');
             selectedTemperatureRowIndex = targetRow.rowIndex;
             updateTextWithTemperature(targetRow);
@@ -2397,7 +2575,7 @@ function showDayDetails(day) {
 
     // Always show header and add button in modal
     // Always show header and add button in modal
-    journalHtml += `<h3>Diário <button id="btn-add-entry-modal" class="std-btn" data-day-index="${day.id - 1}" style="font-size: 0.8em; padding: 5px 10px;"><img src="img/icons/buttons/addentry.svg" class="btn-icon"> ADICIONAR ENTRADA</button></h3>`;
+    journalHtml += `<h3>Diário <button id="btn-add-entry-modal" class="std-btn" data-day-index="${day.id - 1}" ><img src="img/icons/buttons/addentry.svg" class="btn-icon"> ADICIONAR ENTRADA</button></h3>`;
 
     if (Array.isArray(day.journal) && day.journal.length > 0) {
         journalHtml += `<div class="journal-entries-list">`;
@@ -2409,7 +2587,7 @@ function showDayDetails(day) {
             journalHtml += `<div class="journal-entry" data-entry-id="${entry.id}">
                         <div class="journal-entry-header">
                             <span class="journal-entry-quarter">${quarterName}</span>
-                            <button class="btn-edit-entry-modal std-btn" data-day-index="${day.id - 1}" data-entry-id="${entry.id}" style="font-size: 0.8em; padding: 5px 10px;"><img src="img/icons/buttons/quill.svg" class="btn-icon"> EDITAR</button>
+                            <button class="btn-edit-entry-modal std-btn" data-day-index="${day.id - 1}" data-entry-id="${entry.id}"><img src="img/icons/buttons/quill.svg" class="btn-icon"> EDITAR</button>
                         </div>
                         <div class="journal-entry-content">${entry.content}</div>
                     </div>`;
@@ -3386,45 +3564,25 @@ function updateTemperatureTable() {
 
     let html = '';
 
-    if (HOT_MONTHS.includes(currentMonthName)) {
-        html = `
+    const isHot = HOT_MONTHS.includes(currentMonthName);
+    const configKey = isHot ? 'hot' : 'cold';
+    const monthLabel = isHot ? 'Calor (MESES QUENTES)' : 'Frio (MESES FRIOS)';
+
+    html = `
+        <tr>
+            <td>d12${modString}</td>
+            <td>${monthLabel}</td>
+        </tr>
+    `;
+
+    temperatureDataConfig[configKey].forEach(item => {
+        html += `
             <tr>
-                <td>d12${modString}</td>
-                <td>Calor (MESES QUENTES)</td>
-            </tr>
-            <tr>
-                <td>1 - 8</td>
-                <td><b>Ameno</b>. Sem alterações.</td>
-            </tr>
-            <tr>
-                <td>9 - 11</td>
-                <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar DESIDRATADO.</td>
-            </tr>
-            <tr>
-                <td>12</td>
-                <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não ficar DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de Resiliência em cada Quarto de Dia, falha significa -1 de AGILIDADE.</td>
-            </tr>
-        `;
-    } else {
-        html = `
-            <tr>
-                <td>d12${modString}</td>
-                <td>Frio (MESES FRIOS)</td>
-            </tr>
-            <tr>
-                <td>1 - 8</td>
-                <td><b>Ameno</b>. Sem alterações.</td>
-            </tr>
-            <tr>
-                <td>9 - 11</td>
-                <td><b>Frio</b>. Se não tiver proteção adequada, role RESILIÊNCIA em cada Quarto de dia para não ficar HIPOTÉRMICO.</td>
-            </tr>
-            <tr>
-                <td>12</td>
-                <td><b>Cortante</b>. Se não tiver proteção adequada, role RESILIÊNCIA em cada <u>hora</u> do dia para não ficar HIPOTÉRMICO.</td>
+                <td>${item.range}</td>
+                <td>${item.full}</td>
             </tr>
         `;
-    }
+    });
 
     table.innerHTML = html;
 }
@@ -3905,8 +4063,10 @@ function showGeneralPopup(imagePath) {
     const modalTitle = document.getElementById('general-info-title');
     const modalContent = document.getElementById('general-info-content');
     const modal = document.getElementById('general-info-modal');
+    const mastheadIcon = modal ? modal.querySelector('.masthead-icon img') : null;
 
     if (modalTitle) modalTitle.textContent = title;
+    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/weather.svg';
     if (modalContent) modalContent.innerHTML = content;
 
     if (modal) {
@@ -3918,8 +4078,11 @@ function showSimplePopup(title, content) {
     const modalTitle = document.getElementById('general-info-title');
     const modalContent = document.getElementById('general-info-content');
     const modal = document.getElementById('general-info-modal');
+    const mastheadIcon = modal ? modal.querySelector('.masthead-icon img') : null;
 
     if (modalTitle) modalTitle.textContent = title;
+    // Default to weather or info icon for generic popups
+    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/weather.svg';
     if (modalContent) modalContent.innerHTML = content || "Sem detalhes disponíveis.";
 
     if (modal) {

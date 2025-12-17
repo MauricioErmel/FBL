@@ -139,6 +139,18 @@
                     <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
                 </div>
 
+                <div id="deck-container">
+                    <div class="masthead">
+                        <div class="masthead-icon"><img src="img/icons/mastheads/deck.svg" alt=""></div>
+                        <div class="masthead-title" id="deck-container-title">Baralho Oráculo</div>
+                    </div>
+                    <div id="deck-container-content">
+                        <div id="deck-card-preview">
+                            <div class="card-back card-mini"><img src="img/icons/other/cardback.svg" alt=""></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div id="calendar-container">
@@ -554,10 +566,56 @@
         </div>
     </div>
 
+    <div id="deck-modal" class="modal">
+        <div class="modal-content deck-modal-content">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/deck.svg" alt=""></div>
+                <div class="masthead-title">Baralho Oráculo</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div class="deck-modal-body">
+                <div id="oracle-message" class="oracle-message"></div>
+
+                <div id="displayed-cards" class="displayed-cards"></div>
+
+                <div class="deck-piles">
+                    <div class="pile-section">
+                        <div class="pile-visual deck-pile">
+                            <div class="card-back"><img src="img/icons/other/cardback.svg" alt=""></div>
+                        </div>
+                        <div class="pile-info">
+                            <span class="pile-label">Baralho</span>
+                            <span id="deck-count" class="pile-count">52</span>
+                        </div>
+                    </div>
+                    <div class="pile-section">
+                        <div class="pile-visual discard-pile">
+                            <div class="card-back discard-empty">∅</div>
+                        </div>
+                        <div class="pile-info">
+                            <span class="pile-label">Descarte</span>
+                            <span id="discard-count" class="pile-count">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deck-buttons">
+                    <button id="btn-oracle-5050" class="std-btn deck-btn">Oráculo 50/50</button>
+                    <button id="btn-oracle-provavel" class="std-btn deck-btn">Oráculo Provável</button>
+                    <button id="btn-oracle-improvavel" class="std-btn deck-btn">Oráculo Improvável</button>
+                    <button id="btn-deck-shuffle" class="std-btn deck-btn">Embaralhar</button>
+                    <button id="btn-draw-1" class="std-btn deck-btn">Retirar 1 Carta</button>
+                    <button id="btn-draw-2" class="std-btn deck-btn">Retirar 2 Cartas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-notification" class="toast"></div>
 
     <script src="hexagon_data.js"></script>
     <script src="script.js"></script>
+    <script src="scripts/deck.js"></script>
 </body>
 
 </html>
