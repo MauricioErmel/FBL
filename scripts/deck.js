@@ -218,6 +218,7 @@ function drawOnly(count) {
     drawCards(count);
     const names = displayedCards.map(getCardDisplayName).join(', ');
     showOracleMessage(names);
+    updateDeckContainerTitle('Baralho Oráculo');
 }
 
 // --- Show Oracle Message ---

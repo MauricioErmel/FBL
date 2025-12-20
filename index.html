@@ -112,7 +112,7 @@
         <div id="info-container">
             <div id="info-display">
                 <div class="masthead">
-                    <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
+                    <div class="masthead-icon"><img src="img/icons/mastheads/hexagons.svg" alt=""></div>
                     <div class="masthead-title">Procedimentos de Viagem</div>
                 </div>
                 <div id="info-display-text"></div>
@@ -151,6 +151,18 @@
                     </div>
                 </div>
 
+                <div id="roller-container">
+                    <div class="masthead">
+                        <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
+                        <div class="masthead-title" id="roller-container-title">Rolador de Dados</div>
+                    </div>
+                    <div id="roller-container-content">
+                        <div id="roller-result-preview">
+                            <span class="roller-placeholder">Clique para rolar dados</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div id="calendar-container">
@@ -181,10 +193,22 @@
 
                     <div id="day-details-main"></div>
 
-                    <div id="journal-section">
-                        <h3>Registrar Anotação</h3>
 
-                        <div id="journal-entries-list" class="journal-entries-list"></div>
+                    <div id="journal-entries-list" class="journal-entries-list"></div>
+
+                    <div class="journal-toggle-container">
+                        <button id="btn-toggle-journal" class="std-btn journal-toggle-btn">
+                            <img src="img/icons/buttons/addentry.svg" class="btn-icon"> ADICIONAR ANOTAÇÃO
+                        </button>
+                    </div>
+
+                    <div id="journal-section" class="hidden">
+                        <div class="journal-section-header">
+                            <h3>Registrar Anotação</h3>
+                            <button id="btn-close-journal" class="journal-close-btn" title="Fechar">
+                                <img src="img/icons/buttons/cancel.svg" alt="Fechar">
+                            </button>
+                        </div>
 
                         <div id="journal-controls">
                             <label for="journal-quarter-select">Momento:</label>
@@ -311,8 +335,9 @@
                                         <span class="die-number">1</span>
                                     </div>
                                 </div>
-                                <button id="btn-roll-temp" class="std-btn"><img src="img/icons/buttons/d12.svg"
-                                        class="btn-icon"> ROLAR 1D12</button>
+                                <button id="btn-roll-temp" class="std-btn">
+                                    <img src="img/icons/buttons/d12.svg" class="btn-icon"> ROLAR 1D12
+                                </button>
                                 <div id="dice-result-temp"></div>
                             </div>
                         </div>
@@ -600,12 +625,167 @@
                 </div>
 
                 <div class="deck-buttons">
-                    <button id="btn-oracle-5050" class="std-btn deck-btn">Oráculo 50/50</button>
-                    <button id="btn-oracle-provavel" class="std-btn deck-btn">Oráculo Provável</button>
-                    <button id="btn-oracle-improvavel" class="std-btn deck-btn">Oráculo Improvável</button>
+                    <button id="btn-oracle-5050" class="std-btn deck-btn">50% de Chance</button>
+                    <button id="btn-oracle-provavel" class="std-btn deck-btn">É Provável</button>
+                    <button id="btn-oracle-improvavel" class="std-btn deck-btn">É Improvável</button>
                     <button id="btn-deck-shuffle" class="std-btn deck-btn">Embaralhar</button>
-                    <button id="btn-draw-1" class="std-btn deck-btn">Retirar 1 Carta</button>
-                    <button id="btn-draw-2" class="std-btn deck-btn">Retirar 2 Cartas</button>
+                    <button id="btn-draw-1" class="std-btn deck-btn">Sacar 1 Carta</button>
+                    <button id="btn-draw-2" class="std-btn deck-btn">Sacar 2 Cartas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dice-roller-modal" class="modal">
+        <div class="modal-content dice-roller-modal-content">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
+                <div class="masthead-title">Rolador de Dados</div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div class="dice-roller-modal-body">
+                <!-- Quick Roll Buttons Section -->
+                <div class="dice-roller-quick-section">
+                    <div class="quick-roll-buttons">
+                        <div class="quick-roll-row">
+                            <button class="std-btn quick-roll-btn" data-roll-type="desbravar">DESBRAVAR</button>
+                            <span class="quick-roll-bonus" id="bonus-desbravar">+0</span>
+                        </div>
+                        <div class="quick-roll-row">
+                            <button class="std-btn quick-roll-btn" data-roll-type="acampar">MONTAR ACAMPAMENTO</button>
+                            <span class="quick-roll-bonus" id="bonus-acampar">+0</span>
+                        </div>
+                        <div class="quick-roll-row">
+                            <button class="std-btn quick-roll-btn" data-roll-type="coletar">COLETAR</button>
+                            <span class="quick-roll-bonus" id="bonus-coletar">+0</span>
+                        </div>
+                        <div class="quick-roll-row">
+                            <button class="std-btn quick-roll-btn" data-roll-type="cacar">CAÇAR</button>
+                            <span class="quick-roll-bonus" id="bonus-cacar">+0</span>
+                        </div>
+                    </div>
+                    <div class="modifier-input-section">
+                        <label for="custom-modifier">Modificador Adicional:</label>
+                        <div class="modifier-controls">
+                            <button class="modifier-btn" id="modifier-minus"><img src="img/icons/other/minus.svg"
+                                    alt="-"></button>
+                            <input type="number" id="custom-modifier" value="0" min="-10" max="10">
+                            <button class="modifier-btn" id="modifier-plus"><img src="img/icons/other/plus.svg"
+                                    alt="+"></button>
+                        </div>
+                        <div class="applied-modifier-display">
+                            <span id="applied-modifier-label">Modificador Total: </span>
+                            <span id="applied-modifier-value">+0</span>
+                        </div>
+                        <button id="btn-reset-all-dice" class="std-btn global-reset-btn" title="Resetar Tudo">
+                            <img src="img/icons/buttons/header/reset.svg" class="btn-icon" alt="Reset"> RESET
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dice Slots Section -->
+                <!-- Action Buttons (Top) -->
+                <div class="dice-action-buttons">
+                    <button id="btn-roll-dice-top" class="std-btn roll-btn">
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> ROLAR DADOS
+                    </button>
+                    <button id="btn-force-roll-top" class="std-btn force-roll-btn" disabled>
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> FORÇAR ROLAGEM
+                    </button>
+                </div>
+
+                <div class="dice-slots-section">
+                    <div class="dice-slots-container">
+                        <!-- Atributo Slot -->
+                        <div class="dice-slot" data-dice-type="atributo">
+                            <div class="dice-slot-header">
+                                <span class="dice-slot-label">Atributo</span>
+                                <div class="dice-amount-controls">
+                                    <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
+                                            alt="-"></button>
+                                    <input type="number" class="dice-amount-input" id="diceAmountAtrib" value="1"
+                                        min="1" max="10">
+                                    <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
+                                            alt="+"></button>
+                                </div>
+                            </div>
+                            <div class="dice-display" id="atributo-dice-display"></div>
+                        </div>
+
+                        <!-- Perícia Slot -->
+                        <div class="dice-slot" data-dice-type="pericia">
+                            <div class="dice-slot-header">
+                                <span class="dice-slot-label">Perícia</span>
+                                <div class="dice-amount-controls">
+                                    <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
+                                            alt="-"></button>
+                                    <input type="number" class="dice-amount-input" id="diceAmountSkill" value="0"
+                                        min="0" max="10">
+                                    <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
+                                            alt="+"></button>
+                                </div>
+                            </div>
+                            <div class="dice-display" id="pericia-dice-display"></div>
+                        </div>
+
+                        <!-- Equipamento Slot -->
+                        <div class="dice-slot" data-dice-type="equipamento">
+                            <div class="dice-slot-header">
+                                <span class="dice-slot-label">Equipamento</span>
+                                <div class="dice-amount-controls">
+                                    <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
+                                            alt="-"></button>
+                                    <input type="number" class="dice-amount-input" id="diceAmountEquip" value="0"
+                                        min="0" max="10">
+                                    <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
+                                            alt="+"></button>
+                                </div>
+                                <div class="artifact-die-select">
+                                    <label for="artifact-die-type">Artefato: </label>
+                                    <select id="artifact-die-type">
+                                        <option value="none">Não</option>
+                                        <option value="d8">d8</option>
+                                        <option value="d10">d10</option>
+                                        <option value="d12">d12</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="dice-display" id="equipamento-dice-display"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="dice-results-section">
+                    <div class="dice-results-main">
+                        <div class="result-item success-result">
+                            <img src="img/icons/other/success.svg" alt="Sucesso" class="result-icon">
+                            <span id="success-count" class="result-value">0</span>
+                            <span class="result-label">Sucessos</span>
+                        </div>
+                    </div>
+                    <div class="dice-results-skulls faded" id="skull-results">
+                        <div class="result-item skull-result atributo-skull">
+                            <img src="img/icons/other/caveira.svg" alt="Caveira" class="result-icon">
+                            <span id="atributo-skull-count" class="result-value">0</span>
+                            <span class="result-label">Dano(s) no Atributo</span>
+                        </div>
+                        <div class="result-item skull-result equipamento-skull">
+                            <img src="img/icons/other/caveira.svg" alt="Caveira" class="result-icon">
+                            <span id="equipamento-skull-count" class="result-value">0</span>
+                            <span class="result-label">Dano(s) no Equipamento</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="dice-action-buttons">
+                    <button id="btn-roll-dice" class="std-btn roll-btn">
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> ROLAR DADOS
+                    </button>
+                    <button id="btn-force-roll" class="std-btn force-roll-btn" disabled>
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> FORÇAR ROLAGEM
+                    </button>
                 </div>
             </div>
         </div>
@@ -616,6 +796,7 @@
     <script src="hexagon_data.js"></script>
     <script src="script.js"></script>
     <script src="scripts/deck.js"></script>
+    <script src="scripts/dice-roller.js"></script>
 </body>
 
 </html>

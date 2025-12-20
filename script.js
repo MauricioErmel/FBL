@@ -215,7 +215,7 @@ const COMMON_ROLLS_CONFIG = {
         modKey: 'coletar'
     },
     'CAÇAR': {
-        description: 'Várias pessoas podem CAÇAR ao mesmo tempo. Caso optem por rolar separadamente, não será possível CAÇAR no mesmo local, o que significa que qualquer infortúnio afetará cada uma individualmente. Uma alternativa é que uma de vocês CAÇE enquanto as demais oferecem ajuda.<br>Para CAÇAR, é necessário algum tipo de equipamento, como uma arma à distância ou uma armadilha de caça. O primeiro passo é localizar a presa, o que é feito com uma rolagem de SOBREVIVÊNCIA. Um sucesso indica que você encontrou uma presa; então, role na tabela correspondente para determinar o tipo de animal. Se forem obtidos múltiplos x, você pode rolar novamente na tabela de caça, uma vez para cada x, sem poder retornar a resultados anteriores após decidir rolar de novo.<br>Para abater a presa, faça uma nova rolagem: PONTARIA, se estiver usando uma arma, ou SOBREVIVÊNCIA, se estiver utilizando uma armadilha. Modifique a rolagem conforme a dificuldade do animal, de acordo com a tabela CAÇAR.',
+        description: 'Várias pessoas podem CAÇAR ao mesmo tempo. Caso optem por rolar separadamente, não será possível CAÇAR no mesmo local, o que significa que qualquer infortúnio afetará cada uma individualmente. Uma alternativa é que uma de vocês CACE enquanto as demais oferecem ajuda.<br>Para CAÇAR, é necessário algum tipo de equipamento, como uma arma à distância ou uma armadilha de caça. O primeiro passo é localizar a presa, o que é feito com uma rolagem de SOBREVIVÊNCIA. Um sucesso indica que você encontrou uma presa; então, role na tabela correspondente para determinar o tipo de animal. Se forem obtidos múltiplos x, você pode rolar novamente na tabela de caça, uma vez para cada x, sem poder retornar a resultados anteriores após decidir rolar de novo.<br>Para abater a presa, faça uma nova rolagem: PONTARIA, se estiver usando uma arma, ou SOBREVIVÊNCIA, se estiver utilizando uma armadilha. Modifique a rolagem conforme a dificuldade do animal, de acordo com a tabela CAÇAR.',
         modKey: 'cacar'
     },
     'PATRULHA': {
@@ -800,7 +800,7 @@ function showRollModal(rollName) {
     const mastheadIcon = modal.querySelector('.masthead-icon img');
 
     if (modalTitle) modalTitle.textContent = rollName;
-    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/rolls.svg';
+    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/hexagons.svg';
 
     let contentHTML = `<p>${config.description}</p>`;
 
@@ -954,7 +954,8 @@ function updateInfoDisplay(content) {
                 .replace(/"/g, "&quot;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
-            return `<img src="${source.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${source.name}', '${popupContent}')">`;
+            const mastheadIcon = source.icon.includes('terrain/') ? 'img/icons/mastheads/terrain.svg' : source.icon.includes('months/') ? 'img/icons/mastheads/journal.svg' : 'img/icons/mastheads/weather.svg';
+            return `<img src="${source.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${source.name}', '${popupContent}', '${mastheadIcon}')">`;
         };
 
         // Função para criar linha de modificador com ícones
@@ -970,7 +971,9 @@ function updateInfoDisplay(content) {
                         .replace(/"/g, "&quot;")
                         .replace(/</g, "&lt;")
                         .replace(/>/g, "&gt;");
-                    icons += `<img src="${s.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${s.name}', '${popupContent}')">`;
+                    const mastheadIcon = s.icon.includes('terrain/') ? 'img/icons/mastheads/terrain.svg' :
+                        s.icon.includes('months/') ? 'img/icons/mastheads/journal.svg' : 'img/icons/mastheads/weather.svg';
+                    icons += `<img src="${s.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${s.name}', '${popupContent}', '${mastheadIcon}')">`;
                 }
             });
 
@@ -1024,7 +1027,9 @@ function updateInfoDisplay(content) {
                 .replace(/"/g, "&quot;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
-            const icon = item.icon ? `<img src="${item.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${item.source}', '${popupContent}')">` : '✥';
+            const mastheadIcon = (item.icon && item.icon.includes('terrain/')) ? 'img/icons/mastheads/terrain.svg' :
+                (item.icon && item.icon.includes('months/')) ? 'img/icons/mastheads/journal.svg' : 'img/icons/mastheads/weather.svg';
+            const icon = item.icon ? `<img src="${item.icon}" class="source-tag" ${bgStyle} onclick="showSimplePopup('${item.source}', '${popupContent}', '${mastheadIcon}')">` : '✥';
             outputLines.push(`${icon} ${item.text}`);
         });
 
@@ -1229,7 +1234,7 @@ function updateTextWithTemperature(row) {
     // --- TERRAIN INFO ---
     if (selectedTerrainInfo && currentSelectedTerrainData) {
         const bgColor = currentSelectedTerrainData.color || 'var(--col-bg-main)';
-        const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${selectedTerrainInfo.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`)">`;
+        const terrainIcon = `<img src="${currentSelectedTerrainData.image}" class="source-tag" style="background-color: ${bgColor};" onclick="showSimplePopup('${currentSelectedTerrainData.name}', \`${selectedTerrainInfo.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`, 'img/icons/mastheads/terrain.svg')">`;
         // Split terrain info by <br> if it has multiple lines, but usually it's one block.  
         // Actually terrainInfo in script.js has <br>. We should split it to add icon to each line?
         // Let's split.
@@ -1256,7 +1261,7 @@ function updateTextWithTemperature(row) {
             lightingIconSrc = 'img/icons/other/night.svg';
         }
 
-        const lightingIcon = `<img src="${lightingIconSrc}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}')">`;
+        const lightingIcon = `<img src="${lightingIconSrc}" class="source-tag" onclick="showSimplePopup('${currentMonth.name}', 'Dias: ${currentMonth.days}<br>Iluminação: ${currentMonth.lighting.join(', ')}', 'img/icons/mastheads/journal.svg')">`;
 
         let lightingText = `Iluminação: ${lighting}`;
         if (lighting === 'Escuro') {
@@ -2677,6 +2682,27 @@ function initializeJournal() {
     const btnCancel = document.getElementById('btn-cancel-edit');
     const selectQuarter = document.getElementById('journal-quarter-select');
 
+    // Journal section toggle
+    const journalSection = document.getElementById('journal-section');
+    const btnToggleJournal = document.getElementById('btn-toggle-journal');
+    const btnCloseJournal = document.getElementById('btn-close-journal');
+
+    if (btnToggleJournal && journalSection) {
+        btnToggleJournal.addEventListener('click', () => {
+            journalSection.classList.remove('hidden');
+            btnToggleJournal.classList.add('hidden');
+        });
+    }
+
+    if (btnCloseJournal && journalSection) {
+        btnCloseJournal.addEventListener('click', () => {
+            journalSection.classList.add('hidden');
+            if (btnToggleJournal) {
+                btnToggleJournal.classList.remove('hidden');
+            }
+        });
+    }
+
     if (!editor || !toolbar) return;
 
     // Toolbar buttons
@@ -4074,7 +4100,7 @@ function showGeneralPopup(imagePath) {
     }
 }
 
-function showSimplePopup(title, content) {
+function showSimplePopup(title, content, iconPath = 'img/icons/mastheads/weather.svg') {
     const modalTitle = document.getElementById('general-info-title');
     const modalContent = document.getElementById('general-info-content');
     const modal = document.getElementById('general-info-modal');
@@ -4082,7 +4108,7 @@ function showSimplePopup(title, content) {
 
     if (modalTitle) modalTitle.textContent = title;
     // Default to weather or info icon for generic popups
-    if (mastheadIcon) mastheadIcon.src = 'img/icons/mastheads/weather.svg';
+    if (mastheadIcon) mastheadIcon.src = iconPath;
     if (modalContent) modalContent.innerHTML = content || "Sem detalhes disponíveis.";
 
     if (modal) {
