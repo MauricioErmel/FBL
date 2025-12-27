@@ -662,45 +662,109 @@ const weatherModifiers = {
     }
 };
 
-// Manter weatherEffects para retrocompatibilidade com exibição de texto
-const weatherEffects = {
-    'Dia Quente de Sol': '✥ +1 em rolagens de DESBRAVAR',
-    'Dia de Frio Cortante': '✥ -1 em rolagens de DESBRAVAR',
-    'Céu Limpo': '✥ +1 em rolagens de DESBRAVAR',
-    'Garoa': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 para rolar na tabela de CALOR<br>✥ -1 em rolagens de DESBRAVAR',
-    'Chuva Leve': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 para rolar na tabela de CALOR<br>✥ -1 em rolagens de DESBRAVAR',
-    'Chuva Forte': '✥ +2 para rolar na tabela de FRIO<br>✥ -2 para rolar na tabela de CALOR<br>✥ -2 em rolagens de DESBRAVAR<br>✥ CAMINHAR requer uma rolagem de Resiliência',
-    'Temporal': '✥ +2 para rolar na tabela de FRIO<br>✥ -2 para rolar na tabela de CALOR<br>✥ -2 em rolagens de DESBRAVAR<br>✥ CAMINHAR requer uma rolagem de Resiliência',
-    'Rajada de Neve': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 em rolagens de DESBRAVAR<br>',
-    'Neve': '✥ +2 para rolar na tabela de FRIO<br>✥ -2 em rolagens de DESBRAVAR<br>✥ CAMINHAR requer uma rolagem de Resiliência',
-    'Nevasca': '✥ +2 para rolar na tabela de FRIO<br>✥ -2 em rolagens de DESBRAVAR<br>✥ CAMINHAR requer uma rolagem de Resiliência',
-    'Sem Vento': '✥ +1 em rolagens de MONTAR ACAMPAMENTO<br>✥ +1 para rolar na tabela de CALOR',
-    'Ventando': '✥ +1 para rolar na tabela de FRIO<br>✥ -1 para rolar na tabela de CALOR<br>✥ -1 em rolagens de MONTAR ACAMPAMENTO',
-    'Ventania Forte': '✥ +2 para rolar na tabela de FRIO<br>✥ -2 para rolar na tabela de CALOR<br>✥ -2 em rolagens de MONTAR ACAMPAMENTO<br>✥ CAMINHAR requer uma rolagem de Resiliência.'
-};
+// Dynamic function to get translated weather effects
+function getWeatherEffects() {
+    // Helper to get translated strings with fallback to Portuguese
+    const tr = (key, fallback) => {
+        if (typeof t === 'function') {
+            const translated = t(key);
+            if (translated && translated !== key) return translated;
+        }
+        return fallback;
+    };
+
+    const pathfind = tr('weather.effect.pathfind', 'em rolagens de DESBRAVAR');
+    const camp = tr('weather.effect.camp', 'em rolagens de MONTAR ACAMPAMENTO');
+    const coldTable = tr('weather.effect.coldTable', 'para rolar na tabela de FRIO');
+    const hotTable = tr('weather.effect.hotTable', 'para rolar na tabela de CALOR');
+    const walkRes = tr('weather.walkResilience', 'CAMINHAR requer uma rolagem de Resiliência');
+
+    return {
+        'Dia Quente de Sol': `✥ +1 ${pathfind}`,
+        'Dia de Frio Cortante': `✥ -1 ${pathfind}`,
+        'Céu Limpo': `✥ +1 ${pathfind}`,
+        'Garoa': `✥ +1 ${coldTable}<br>✥ -1 ${hotTable}<br>✥ -1 ${pathfind}`,
+        'Chuva Leve': `✥ +1 ${coldTable}<br>✥ -1 ${hotTable}<br>✥ -1 ${pathfind}`,
+        'Chuva Forte': `✥ +2 ${coldTable}<br>✥ -2 ${hotTable}<br>✥ -2 ${pathfind}<br>✥ ${walkRes}`,
+        'Temporal': `✥ +2 ${coldTable}<br>✥ -2 ${hotTable}<br>✥ -2 ${pathfind}<br>✥ ${walkRes}`,
+        'Rajada de Neve': `✥ +1 ${coldTable}<br>✥ -1 ${pathfind}<br>`,
+        'Neve': `✥ +2 ${coldTable}<br>✥ -2 ${pathfind}<br>✥ ${walkRes}`,
+        'Nevasca': `✥ +2 ${coldTable}<br>✥ -2 ${pathfind}<br>✥ ${walkRes}`,
+        'Sem Vento': `✥ +1 ${camp}<br>✥ +1 ${hotTable}`,
+        'Ventando': `✥ +1 ${coldTable}<br>✥ -1 ${hotTable}<br>✥ -1 ${camp}`,
+        'Ventania Forte': `✥ +2 ${coldTable}<br>✥ -2 ${hotTable}<br>✥ -2 ${camp}<br>✥ ${walkRes}.`
+    };
+}
+
+// Keep weatherEffects as a variable for backwards compatibility, will be updated dynamically
+let weatherEffects = getWeatherEffects();
 
 function getImageTitle(imagePath) {
     if (!imagePath) return '';
     const imageName = imagePath.split('/').pop();
-    if (imageName === 'ceuLimpo.webp') return 'Céu Limpo';
-    if (imageName === 'chuvaForte.webp') return 'Chuva Forte';
-    if (imageName === 'chuvaLeve.webp') return 'Chuva Leve';
-    if (imageName === 'diaQuenteDeSol.webp') return 'Dia Quente de Sol';
-    if (imageName === 'diaDeFrioCortante.webp') return 'Dia de Frio Cortante';
-    if (imageName === 'encoberto.webp') return 'Encoberto';
-    if (imageName === 'garoa.webp') return 'Garoa';
-    if (imageName === 'nebuloso.webp') return 'Nebuloso';
-    if (imageName === 'nevasca.webp') return 'Nevasca';
-    if (imageName === 'neve.webp') return 'Neve';
-    if (imageName === 'nuvensClaras.webp') return 'Nuvens Claras';
-    if (imageName === 'nuvensPesadas.webp') return 'Nuvens Pesadas';
-    if (imageName === 'rajadaDeNeve.webp') return 'Rajada de Neve';
-    if (imageName === 'temporal.webp') return 'Temporal';
-    if (imageName === 'vento0.webp') return 'Sem Vento';
-    if (imageName === 'vento1.webp') return 'Brisa';
-    if (imageName === 'vento2.webp') return 'Ventando';
-    if (imageName === 'vento3.webp') return 'Ventania Forte';
+
+    // Weather name translations mapping
+    const weatherNames = {
+        'ceuLimpo.webp': { key: 'weather.clearSky', fallback: 'Céu Limpo' },
+        'chuvaForte.webp': { key: 'weather.heavyRain', fallback: 'Chuva Forte' },
+        'chuvaLeve.webp': { key: 'weather.lightRain', fallback: 'Chuva Leve' },
+        'diaQuenteDeSol.webp': { key: 'weather.hotSunnyDay', fallback: 'Dia Quente de Sol' },
+        'diaDeFrioCortante.webp': { key: 'weather.coldBitingDay', fallback: 'Dia de Frio Cortante' },
+        'encoberto.webp': { key: 'weather.overcast', fallback: 'Encoberto' },
+        'garoa.webp': { key: 'weather.drizzle', fallback: 'Garoa' },
+        'nebuloso.webp': { key: 'weather.foggy', fallback: 'Nebuloso' },
+        'nevasca.webp': { key: 'weather.blizzard', fallback: 'Nevasca' },
+        'neve.webp': { key: 'weather.snow', fallback: 'Neve' },
+        'nuvensClaras.webp': { key: 'weather.lightClouds', fallback: 'Nuvens Claras' },
+        'nuvensPesadas.webp': { key: 'weather.heavyClouds', fallback: 'Nuvens Pesadas' },
+        'rajadaDeNeve.webp': { key: 'weather.snowFlurry', fallback: 'Rajada de Neve' },
+        'temporal.webp': { key: 'weather.storm', fallback: 'Temporal' },
+        'vento0.webp': { key: 'weather.noWind', fallback: 'Sem Vento' },
+        'vento1.webp': { key: 'weather.breeze', fallback: 'Brisa' },
+        'vento2.webp': { key: 'weather.windy', fallback: 'Ventando' },
+        'vento3.webp': { key: 'weather.strongWind', fallback: 'Ventania Forte' }
+    };
+
+    const weatherItem = weatherNames[imageName];
+    if (weatherItem) {
+        if (typeof t === 'function') {
+            const translated = t(weatherItem.key);
+            if (translated && translated !== weatherItem.key) {
+                return translated;
+            }
+        }
+        return weatherItem.fallback;
+    }
     return '';
+}
+
+// Returns the original Portuguese name for use as key in weatherModifiers/weatherEffects lookups
+function getOriginalImageTitle(imagePath) {
+    if (!imagePath) return '';
+    const imageName = imagePath.split('/').pop();
+
+    const originalNames = {
+        'ceuLimpo.webp': 'Céu Limpo',
+        'chuvaForte.webp': 'Chuva Forte',
+        'chuvaLeve.webp': 'Chuva Leve',
+        'diaQuenteDeSol.webp': 'Dia Quente de Sol',
+        'diaDeFrioCortante.webp': 'Dia de Frio Cortante',
+        'encoberto.webp': 'Encoberto',
+        'garoa.webp': 'Garoa',
+        'nebuloso.webp': 'Nebuloso',
+        'nevasca.webp': 'Nevasca',
+        'neve.webp': 'Neve',
+        'nuvensClaras.webp': 'Nuvens Claras',
+        'nuvensPesadas.webp': 'Nuvens Pesadas',
+        'rajadaDeNeve.webp': 'Rajada de Neve',
+        'temporal.webp': 'Temporal',
+        'vento0.webp': 'Sem Vento',
+        'vento1.webp': 'Brisa',
+        'vento2.webp': 'Ventando',
+        'vento3.webp': 'Ventania Forte'
+    };
+
+    return originalNames[imageName] || '';
 }
 
 function parseEffect(effectString) {
@@ -720,21 +784,27 @@ function parseEffect(effectString) {
 function processDataSets(data, excludedPhrases = [], seasonType = 'hot') {
     for (const key in data) {
         const hexagon = data[key];
+        // Use translated names for display
         const redTitle = getImageTitle(hexagon.redImage);
         const blueTitle = getImageTitle(hexagon.blueImage);
+        // Use original Portuguese names for dictionary lookups
+        const redOriginalTitle = getOriginalImageTitle(hexagon.redImage);
+        const blueOriginalTitle = getOriginalImageTitle(hexagon.blueImage);
 
+        // Translated connector based on language
+        const connector = (typeof t === 'function') ? t('weather.and') : 'e';
         let title = '';
         if (redTitle && blueTitle) {
-            title = `${redTitle} e ${blueTitle}`;
+            title = `${redTitle} ${connector} ${blueTitle}`;
         } else if (redTitle) {
             title = redTitle;
         } else if (blueTitle) {
             title = blueTitle;
         }
 
-        // --- CALCULAR CAMPO MODIFIERS ESTRUTURADO ---
-        const redMods = weatherModifiers[redTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
-        const blueMods = weatherModifiers[blueTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
+        // --- CALCULAR CAMPO MODIFIERS ESTRUTURADO (use original Portuguese names for lookups) ---
+        const redMods = weatherModifiers[redOriginalTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
+        const blueMods = weatherModifiers[blueOriginalTitle] || { desbravar: 0, acampar: 0, coletar: 0, cacar: 0, temperaturaMod: { hot: 0, cold: 0 }, outros: [] };
 
         // Combinar outros - verificar condição especial de Resiliência combinada
         const redImageName = hexagon.redImage ? hexagon.redImage.split('/').pop() : null;
@@ -742,17 +812,34 @@ function processDataSets(data, excludedPhrases = [], seasonType = 'hot') {
         const conditionRed = ['chuvaForte.webp', 'temporal.webp', 'neve.webp', 'nevasca.webp'].includes(redImageName);
         const conditionBlue = blueImageName === 'vento3.webp';
 
+        // Translation helper for walk resilience messages
+        const walkResilienceBase = typeof t === 'function' && t('weather.walkResilience') !== 'weather.walkResilience'
+            ? t('weather.walkResilience')
+            : 'CAMINHAR requer uma rolagem de Resiliência';
+        const walkResiliencePenalty = typeof t === 'function' && t('weather.walkResiliencePenalty') !== 'weather.walkResiliencePenalty'
+            ? t('weather.walkResiliencePenalty')
+            : 'CAMINHAR requer uma rolagem de Resiliência com um redutor de -2.';
+
         let combinedOutros = [];
         if (conditionRed && conditionBlue) {
             // Combinação especial: Resiliência com redutor de -2
-            combinedOutros.push('CAMINHAR requer uma rolagem de Resiliência com um redutor de -2.');
+            combinedOutros.push(walkResiliencePenalty);
         } else {
-            // Adicionar outros sem duplicação
+            // Adicionar outros sem duplicação - translate if needed
+            const translateOutro = (o) => {
+                // Map Portuguese strings to translation keys
+                if (o === 'CAMINHAR requer uma rolagem de Resiliência.') {
+                    return walkResilienceBase + '.';
+                }
+                return o;
+            };
             redMods.outros.forEach(o => {
-                if (!combinedOutros.includes(o)) combinedOutros.push(o);
+                const translated = translateOutro(o);
+                if (!combinedOutros.includes(translated)) combinedOutros.push(translated);
             });
             blueMods.outros.forEach(o => {
-                if (!combinedOutros.includes(o)) combinedOutros.push(o);
+                const translated = translateOutro(o);
+                if (!combinedOutros.includes(translated)) combinedOutros.push(translated);
             });
         }
 
@@ -779,8 +866,8 @@ function processDataSets(data, excludedPhrases = [], seasonType = 'hot') {
         };
 
         // --- MANTER LÓGICA DE GERAÇÃO DE TEXTO HTML PARA RETROCOMPATIBILIDADE ---
-        const redEffectStrings = (redTitle && weatherEffects[redTitle]) ? weatherEffects[redTitle].split('<br>') : [];
-        const blueEffectStrings = (blueTitle && weatherEffects[blueTitle]) ? weatherEffects[blueTitle].split('<br>') : [];
+        const redEffectStrings = (redOriginalTitle && weatherEffects[redOriginalTitle]) ? weatherEffects[redOriginalTitle].split('<br>') : [];
+        const blueEffectStrings = (blueOriginalTitle && weatherEffects[blueOriginalTitle]) ? weatherEffects[blueOriginalTitle].split('<br>') : [];
 
         // Track effects and their sources
         const effectsMap = new Map(); // Key: description, Value: { value: num, sources: [] }
@@ -817,12 +904,12 @@ function processDataSets(data, excludedPhrases = [], seasonType = 'hot') {
         addEffects(blueEffectStrings, hexagon.blueImage);
 
         if (conditionRed && conditionBlue) {
-            if (effectsMap.has('CAMINHAR requer uma rolagem de Resiliência')) {
-                const oldEntry = effectsMap.get('CAMINHAR requer uma rolagem de Resiliência');
-                effectsMap.delete('CAMINHAR requer uma rolagem de Resiliência');
+            if (effectsMap.has(walkResilienceBase)) {
+                const oldEntry = effectsMap.get(walkResilienceBase);
+                effectsMap.delete(walkResilienceBase);
 
                 // Add new entry with combined sources
-                effectsMap.set('CAMINHAR requer uma rolagem de Resiliência com um redutor de -2', {
+                effectsMap.set(walkResiliencePenalty.replace(/\.$/, ''), {
                     value: null,
                     sources: oldEntry.sources
                 });
@@ -875,3 +962,14 @@ function updateActiveHexagonData(monthName) {
         hexagonData = hexagonDataWinter;
     }
 }
+
+// Listen for language changes to refresh weather effects
+window.addEventListener('languageChanged', function () {
+    // Regenerate weatherEffects with new translations
+    weatherEffects = getWeatherEffects();
+
+    // Reprocess hexagon data sets with new translations
+    processDataSets(hexagonDataWarm, ['para rolar na tabela de FRIO'], 'hot');
+    processDataSets(hexagonDataIntermediate, ['para rolar na tabela de CALOR'], 'cold');
+    processDataSets(hexagonDataWinter, ['para rolar na tabela de CALOR'], 'cold');
+});

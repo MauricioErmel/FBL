@@ -13,9 +13,13 @@
     <!-- Onboarding Screen -->
     <div id="onboarding-screen">
         <div id="onboarding-header">
-            <button id="btn-load-game-onboarding" class="header-btn std-btn" title="Carregar Estado">
+            <button id="btn-load-game-onboarding" class="header-btn std-btn" data-i18n-title="header.load.title">
                 <img src="img/icons/buttons/header/load.svg" alt="" class="btn-icon">
-                <span>CARREGAR</span>
+                <span data-i18n="header.load">CARREGAR</span>
+            </button>
+            <button id="btn-lang-onboarding" class="header-btn std-btn" data-i18n-title="header.lang.title">
+                <img src="img/icons/buttons/header/lang.svg" alt="" class="btn-icon">
+                <span data-i18n="header.lang">IDIOMA</span>
             </button>
             <input type="file" id="file-input-load" accept=".json">
         </div>
@@ -27,99 +31,34 @@
 
         <button id="btn-initial-start" class="std-btn onboarding-start-btn">
             <img src="img/icons/buttons/journal2.svg" class="btn-icon">
-            INICIAR JORNADA
+            <span data-i18n="onboarding.start"></span>
         </button>
 
-        <div id="onboarding-info">
-            <h2>Bem-vindo ao FBL Hexplorer Companion!</h2>
-            <p>Como o nome sugere, esta p&aacute;gina foi feita para te ajudar na explora&ccedil;&atilde;o dos
-                hex&aacute;gonos
-                durante suas sess&otilde;es de <em>Forbidden Lands</em>.</p>
-            <h3>Como usar:</h3>
-            <ul>
-                <li><strong>Configura&ccedil;&atilde;o Inicial:</strong> Comece escolhendo o dia, m&ecirc;s e ano de
-                    in&iacute;cio
-                    da campanha. Isso definir&aacute; o mapa em <em>Hexflower</em> que ser&aacute; utilizado.</li>
-                <li><strong>Clima:</strong> Selecione o clima inicial no mapa. N&atilde;o tem jeito certo para isso,
-                    apenas defina
-                    um arbitrariamente.</li>
-                <li><strong>Temperatura:</strong> Role <strong>1d12</strong> (somando b&ocirc;nus/redutores, se houver)
-                    para definir
-                    a temperatura aleatoriamente, ou clique diretamente em uma op&ccedil;&atilde;o na tabela.</li>
-                <li><strong>Terreno:</strong> Selecione o tipo de terreno onde o personagem est&aacute;.</li>
-                <li><strong>Viagem:</strong> Utilize das informa&ccedil;&otilde;es contidas em <strong>'Procedimentos de
-                        Viagem'</strong> para n&atilde;o esquecer nenhum detalhe importante enquanto estiver pelas
-                    <em>Terras
-                        Proibidas</em>.
-                </li>
-            </ul>
-            <p><strong>Navega&ccedil;&atilde;o e Di&aacute;rio:</strong> Use os bot&otilde;es <strong>DESBRAVAR</strong>
-                e
-                <strong>PERMANECER</strong> para avan&ccedil;ar o dia. Ao final do dia, o sistema pedir&aacute; o clima
-                do dia
-                seguinte. Basta rolar <strong>2d6</strong>: o resultado mover&aacute; o clima para um hex&aacute;gono
-                adjacente
-                (veja em <strong>'Navega&ccedil;&atilde;o no Hexflower'</strong>). Voc&ecirc; pode clicar tanto nos
-                hex&aacute;gonos
-                de navega&ccedil;&atilde;o quanto diretamente no mapa <em>hexflower</em> de clima. Voc&ecirc;
-                tamb&eacute;m
-                precisar&aacute; rolar na tabela de temperatura novamente.
-            </p>
-            <p>N&atilde;o esque&ccedil;a do <strong>Di&aacute;rio</strong>: use-o para anotar encontros, tesouros, etc
-                clicando no
-                bot&atilde;o 'ADICIONAR ANOTA&Ccedil;&Atilde;O'. Clicando na data atual, uma janela mostrar&aacute; o
-                hist&oacute;rico dos dias anteriores.</p>
-            <p>O m&oacute;dulo <strong>Baralho Or&aacute;culo</strong> segue as regras do Book of Beasts para responder
-                perguntas de
-                sim ou n&atilde;o, ideal para o jogo solo.</p>
-            <p>O m&oacute;dulo <strong>Rolador de Dados</strong> permite fazer rolagens no padr&atilde;o do sistema.</p>
-            <hr />
-            <h3>Sobre o Projeto</h3>
-            <p>Criei esta ferramenta pensando em jogos solo, mas a utilizo sempre que mestro para meu grupo. Espero que
-                fa&ccedil;a
-                bom proveito na sua mesa!</p>
-            <p>A principal <em>feature</em> que me motivou a cria&ccedil;&atilde;o da ferramenta foi a
-                <em>house-rule</em> de
-                controle de clima atrav&eacute;s da navega&ccedil;&atilde;o por <em>hexflower</em>, ent&atilde;o esta
-                &aacute;rea
-                recebeu mais carinho, caso voc&ecirc; n&atilde;o conhe&ccedil;a, este &eacute; um m&eacute;todo
-                j&aacute; famoso na
-                comunidade <em>hexcrawl</em> que faz a progress&atilde;o do clima ser menos imprevis&iacute;vel e, com
-                sorte, mais
-                cr&iacute;vel. As regras, b&ocirc;nus e redutores que usei aqui s&atilde;o um am&aacute;lgama de
-                informa&ccedil;&otilde;es do <em>Livro do Mestre</em>, <em>Book of Beasts</em> e materiais da
-                comunidade, ajustados
-                ao meu gosto pessoal.
-            </p>
-            <p><em>Este projeto &eacute; uma ferramenta independente criada por f&atilde; e n&atilde;o possui qualquer
-                    inten&ccedil;&atilde;o de violar direitos autorais. Ele n&atilde;o cont&eacute;m, reproduz ou
-                    distribui material
-                    protegido por copyright do sistema de RPG de mesa Forbidden Lands, que &eacute; propriedade da
-                    empresa Free
-                    League Publishing. Todos os direitos sobre Forbidden Lands pertencem exclusivamente aos seus
-                    respectivos
-                    detentores</em></p>
-        </div>
+        <div id="onboarding-info" data-i18n="info.content" data-i18n-html></div>
     </div>
 
     <!-- Main Application Header (hidden during onboarding) -->
     <header id="site-header">
         <div id="header-controls">
-            <button id="btn-save-game" class="header-btn std-btn" title="Salvar Estado">
+            <button id="btn-save-game" class="header-btn std-btn" data-i18n-title="header.save.title">
                 <img src="img/icons/buttons/header/save.svg" alt="" class="btn-icon">
-                <span>SALVAR</span>
+                <span data-i18n="header.save">SALVAR</span>
             </button>
-            <button id="btn-load-game" class="header-btn std-btn" title="Carregar Estado">
+            <button id="btn-load-game" class="header-btn std-btn" data-i18n-title="header.load.title">
                 <img src="img/icons/buttons/header/load.svg" alt="" class="btn-icon">
-                <span>CARREGAR</span>
+                <span data-i18n="header.load">CARREGAR</span>
             </button>
-            <button id="btn-reset-game" class="header-btn std-btn" title="Resetar Jogo">
+            <button id="btn-reset-game" class="header-btn std-btn" data-i18n-title="header.reset.title">
                 <img src="img/icons/buttons/header/reset.svg" alt="" class="btn-icon">
-                <span>RESET</span>
+                <span data-i18n="header.reset">RESET</span>
             </button>
-            <button id="btn-info-game" class="header-btn std-btn" title="Informações">
+            <button id="btn-info-game" class="header-btn std-btn" data-i18n-title="header.info.title">
                 <img src="img/icons/buttons/header/info.svg" alt="" class="btn-icon">
-                <span>INFO</span>
+                <span data-i18n="header.info">INFO</span>
+            </button>
+            <button id="btn-lang" class="header-btn std-btn" data-i18n-title="header.lang.title">
+                <img src="img/icons/buttons/header/lang.svg" alt="" class="btn-icon">
+                <span data-i18n="header.lang">IDIOMA</span>
             </button>
         </div>
 
@@ -135,7 +74,7 @@
             <div id="info-display">
                 <div class="masthead">
                     <div class="masthead-icon"><img src="img/icons/mastheads/hexagons.svg" alt=""></div>
-                    <div class="masthead-title">Procedimentos de Viagem</div>
+                    <div class="masthead-title" data-i18n="masthead.travelProcedures"></div>
                 </div>
                 <div id="info-display-text"></div>
             </div>
@@ -148,7 +87,8 @@
                 <div id="selected-hexweather-container">
                     <div class="masthead">
                         <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                        <div class="masthead-title" id="selected-hexagon-title">Selecione o Clima</div>
+                        <div class="masthead-title" id="selected-hexagon-title" data-i18n="masthead.selectClimate">
+                        </div>
                     </div>
                     <svg id="solitary-hexagon-svg" viewBox="-50 -50 100 100"></svg>
                 </div>
@@ -156,7 +96,8 @@
                 <div id="selected-terrain">
                     <div class="masthead">
                         <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
-                        <div class="masthead-title" id="selected-terrain-title">Selecione o Terreno</div>
+                        <div class="masthead-title" id="selected-terrain-title" data-i18n="masthead.selectTerrain">
+                        </div>
                     </div>
                     <svg id="solitary-terrain-svg" viewBox="-50 -50 100 100"></svg>
                 </div>
@@ -164,7 +105,7 @@
                 <div id="deck-container">
                     <div class="masthead">
                         <div class="masthead-icon"><img src="img/icons/mastheads/deck.svg" alt=""></div>
-                        <div class="masthead-title" id="deck-container-title">Baralho Oráculo</div>
+                        <div class="masthead-title" id="deck-container-title" data-i18n="masthead.oracleDeck"></div>
                     </div>
                     <div id="deck-container-content">
                         <div id="deck-card-preview">
@@ -176,11 +117,11 @@
                 <div id="roller-container">
                     <div class="masthead">
                         <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
-                        <div class="masthead-title" id="roller-container-title">Rolador de Dados</div>
+                        <div class="masthead-title" id="roller-container-title" data-i18n="masthead.diceRoller"></div>
                     </div>
                     <div id="roller-container-content">
                         <div id="roller-result-preview">
-                            <span class="roller-placeholder">Clique para rolar dados</span>
+                            <span class="roller-placeholder" data-i18n="dice.clickToRoll"></span>
                         </div>
                     </div>
                 </div>
@@ -190,27 +131,28 @@
             <div id="calendar-container">
                 <div class="masthead">
                     <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
-                    <div class="masthead-title" id="current-day-display">Selecione o mês e dia para iniciar</div>
+                    <div class="masthead-title" id="current-day-display" data-i18n="masthead.selectMonthDay"></div>
                 </div>
 
                 <div id="calendar-content-wrapper">
                     <div id="travel-controls">
-                        <div class="desbravar-container">
-                            <button id="btn-desbravar" class="travel-btn std-btn"><img
-                                    src="img/icons/buttons/explore.svg" alt="" class="btn-icon">DESBRAVAR</button>
+                        <div class="caminhar-container">
+                            <button id="btn-caminhar" class="travel-btn std-btn"><img
+                                    src="img/icons/buttons/explore.svg" alt="" class="btn-icon"><span
+                                    data-i18n="button.caminhar"></span></button>
                             <div class="mounted-switch-container">
                                 <label class="switch">
                                     <input type="checkbox" id="toggle-mounted">
                                     <span class="slider round"></span>
                                 </label>
-                                <label for="toggle-mounted">Todos Montados?</label>
+                                <label for="toggle-mounted" data-i18n="label.allMounted"></label>
                             </div>
                         </div>
                         <button id="btn-permanecer" class="travel-btn std-btn"><img src="img/icons/buttons/stay.svg"
-                                alt="" class="btn-icon">PERMANECER</button>
+                                alt="" class="btn-icon"><span data-i18n="button.permanecer"></span></button>
                         <button id="btn-advance-day" class="travel-btn std-btn hidden"><img
-                                src="img/icons/buttons/twilight.svg" class="btn-icon"> AVANÇAR PARA O PRÓXIMO
-                            DIA</button>
+                                src="img/icons/buttons/twilight.svg" class="btn-icon"><span
+                                data-i18n="button.advanceDay"></span></button>
                     </div>
 
                     <div id="day-details-main"></div>
@@ -220,80 +162,94 @@
 
                     <div class="journal-toggle-container">
                         <button id="btn-toggle-journal" class="std-btn journal-toggle-btn">
-                            <img src="img/icons/buttons/addentry.svg" class="btn-icon"> ADICIONAR ANOTAÇÃO
+                            <img src="img/icons/buttons/addentry.svg" class="btn-icon"> <span
+                                data-i18n="button.addNote"></span>
                         </button>
                     </div>
 
                     <div id="journal-section" class="hidden">
                         <div class="journal-section-header">
-                            <h3>Registrar Anotação</h3>
-                            <button id="btn-close-journal" class="journal-close-btn" title="Fechar">
-                                <img src="img/icons/buttons/cancel.svg" alt="Fechar">
+                            <h3 data-i18n="journal.registerNote"></h3>
+                            <button id="btn-close-journal" class="journal-close-btn" data-i18n-title="button.close"
+                                title="Fechar">
+                                <img src="img/icons/buttons/cancel.svg" data-i18n-alt="button.close" alt="Fechar">
                             </button>
                         </div>
 
                         <div id="journal-controls">
-                            <label for="journal-quarter-select">Momento:</label>
+                            <label for="journal-quarter-select" data-i18n="label.moment"></label>
                             <select id="journal-quarter-select">
-                                <option value="0">Manhã</option>
-                                <option value="1">Tarde</option>
-                                <option value="2">Anoitecer</option>
-                                <option value="3">Noite</option>
+                                <option value="0" data-i18n="quarter.morning"></option>
+                                <option value="1" data-i18n="quarter.afternoon"></option>
+                                <option value="2" data-i18n="quarter.dusk"></option>
+                                <option value="3" data-i18n="quarter.night"></option>
                             </select>
                         </div>
 
                         <div class="editor-toolbar">
-                            <button class="tool-btn" data-cmd="bold" title="Negrito"><b>B</b></button>
-                            <button class="tool-btn" data-cmd="italic" title="Itálico"><i>I</i></button>
-                            <button class="tool-btn" data-cmd="underline" title="Sublinhado"><u>U</u></button>
-                            <button class="tool-btn" data-cmd="superscript" title="Sobrescrito">X<sup>2</sup></button>
+                            <button class="tool-btn" data-cmd="bold" data-i18n-title="editor.bold"
+                                title="Negrito"><b>B</b></button>
+                            <button class="tool-btn" data-cmd="italic" data-i18n-title="editor.italic"
+                                title="Itálico"><i>I</i></button>
+                            <button class="tool-btn" data-cmd="underline" data-i18n-title="editor.underline"
+                                title="Sublinhado"><u>U</u></button>
+                            <button class="tool-btn" data-cmd="superscript" data-i18n-title="editor.superscript"
+                                title="Sobrescrito">X<sup>2</sup></button>
                             <div class="separator"></div>
-                            <button class="tool-btn" data-cmd="insertUnorderedList"
+                            <button class="tool-btn" data-cmd="insertUnorderedList" data-i18n-title="editor.bulletList"
                                 title="Lista com Marcadores">•</button>
-                            <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Numerada">1.</button>
+                            <button class="tool-btn" data-cmd="insertOrderedList" data-i18n-title="editor.numberedList"
+                                title="Lista Numerada">1.</button>
                             <div class="separator"></div>
-                            <button class="tool-btn icon-only" data-cmd="justifyLeft" title="Alinhar à Esquerda"><img
-                                    src="img/icons/editor/left.svg" alt="Left"></button>
-                            <button class="tool-btn icon-only" data-cmd="justifyCenter" title="Centralizar"><img
+                            <button class="tool-btn icon-only" data-cmd="justifyLeft" data-i18n-title="editor.alignLeft"
+                                title="Alinhar à Esquerda"><img src="img/icons/editor/left.svg" alt="Left"></button>
+                            <button class="tool-btn icon-only" data-cmd="justifyCenter"
+                                data-i18n-title="editor.alignCenter" title="Centralizar"><img
                                     src="img/icons/editor/center.svg" alt="Center"></button>
-                            <button class="tool-btn icon-only" data-cmd="justifyRight" title="Alinhar à Direita"><img
+                            <button class="tool-btn icon-only" data-cmd="justifyRight"
+                                data-i18n-title="editor.alignRight" title="Alinhar à Direita"><img
                                     src="img/icons/editor/right.svg" alt="Right"></button>
-                            <button class="tool-btn icon-only" data-cmd="justifyFull" title="Justificar"><img
-                                    src="img/icons/editor/justify.svg" alt="Justify"></button>
+                            <button class="tool-btn icon-only" data-cmd="justifyFull" data-i18n-title="editor.justify"
+                                title="Justificar"><img src="img/icons/editor/justify.svg" alt="Justify"></button>
                             <div class="separator"></div>
-                            <div class="color-picker-wrapper" title="Cor do Texto">
+                            <div class="color-picker-wrapper" data-i18n-title="editor.textColor" title="Cor do Texto">
                                 <img src="img/icons/editor/color.svg" alt="Color" class="color-icon">
                                 <input type="color" id="editor-color" value="#e0e0e0">
                             </div>
                         </div>
 
-                        <div id="journal-editor" contenteditable="true" placeholder="Escreva os detalhes da jornada...">
+                        <div id="journal-editor" contenteditable="true" data-i18n-placeholder="journal.placeholder"
+                            placeholder="Escreva os detalhes da jornada...">
                         </div>
 
                         <div id="journal-actions">
                             <button id="btn-save-entry" class="std-btn"><img src="img/icons/buttons/addentry.svg"
-                                    class="btn-icon"> SALVAR ENTRADA</button>
-                            <button id="btn-cancel-edit" class="std-btn"><img src="img/icons/buttons/cancel.svg"
-                                    class="btn-icon"> CANCELAR EDIÇÃO</button>
+                                    class="btn-icon"> <span data-i18n="button.saveEntry"></span></button>
+                            <button id="btn-update-entry" class="std-btn" style="display: none;"><img
+                                    src="img/icons/buttons/addentry.svg" class="btn-icon"> <span
+                                    data-i18n="button.updateEntry"></span></button>
+                            <button id="btn-cancel-edit" class="std-btn" style="display: none;"><img
+                                    src="img/icons/buttons/cancel.svg" class="btn-icon"> <span
+                                    data-i18n="button.cancelEdit"></span></button>
                         </div>
 
                     </div>
                 </div>
             </div>
-        </div> <!-- End of #bottom-container -->
-    </div> <!-- End of #main-content -->
+        </div>
+    </div>
+    <!-- End of #main-content -->
 
     <div id="hexagon-modal" class="modal">
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                <div class="masthead-title">Hexflower de Clima</div>
+                <div class="masthead-title" data-i18n="masthead.climateHexflower"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="modal-body-split">
                 <div id="modal-left-column">
-                    <p id="initial-hex-subtitle" class="subtitle">Selecione o Hexágono de Clima
-                        inicial</p>
+                    <p id="initial-hex-subtitle" class="subtitle" data-i18n="modal.hexflower.subtitle"></p>
                     <div id="modal-map-container"></div>
                     <div id="text-window"></div>
                 </div>
@@ -302,30 +258,30 @@
                         <div class="masthead">
                             <div class="masthead-icon"><img src="img/icons/mastheads/temperature-container.svg" alt="">
                             </div>
-                            <div class="masthead-title">Tabela de Temperatura</div>
+                            <div class="masthead-title" data-i18n="masthead.temperatureTable"></div>
                         </div>
                         <div class="container-content">
-                            <p class="subtitle">Role 1d12 e some com o modificador do hexagono selecionado do Hexflower
-                                de
-                                Temperatura, se houver algum modificador.</p>
+                            <p class="subtitle" data-i18n="modal.temp.subtitle"></p>
                             <table id="temperature-table">
                                 <tr>
-                                    <td>d12</td>
-                                    <td>Calor (MESES QUENTES)</td>
+                                    <td data-i18n="temp.table.d12">d12</td>
+                                    <td data-i18n="temp.table.hot">Calor (MESES QUENTES)</td>
                                 </tr>
                                 <tr>
                                     <td>1 - 8</td>
-                                    <td><b>Ameno</b>. Sem alterações.</td>
+                                    <td data-i18n="temp.mild.full" data-i18n-html><b>Ameno</b>. Sem alterações.</td>
                                 </tr>
                                 <tr>
                                     <td>9 - 11</td>
-                                    <td><b>Calor</b>. Água precisa ser consumida em cada Quarto de Dia para ficar
+                                    <td data-i18n="temp.hot.full" data-i18n-html><b>Calor</b>. Água precisa ser
+                                        consumida em cada Quarto de Dia para ficar
                                         DESIDRATADO.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>12</td>
-                                    <td><b>Escaldante</b>. Água precisa ser consumida em cada Quarto de Dia para não
+                                    <td data-i18n="temp.scorching.full" data-i18n-html><b>Escaldante</b>. Água precisa
+                                        ser consumida em cada Quarto de Dia para não
                                         ficar
                                         DESIDRATADO. Personagens usando armadura precisam fazer uma rolagem de
                                         Resiliência
@@ -358,7 +314,8 @@
                                     </div>
                                 </div>
                                 <button id="btn-roll-temp" class="std-btn">
-                                    <img src="img/icons/buttons/d12.svg" class="btn-icon"> ROLAR 1D12
+                                    <img src="img/icons/buttons/d12.svg" class="btn-icon"><span
+                                        data-i18n="button.rollD12">ROLAR 1D12</span>
                                 </button>
                                 <div id="dice-result-temp"></div>
                             </div>
@@ -369,12 +326,10 @@
                         <div class="masthead">
                             <div class="masthead-icon"><img src="img/icons/mastheads/weather-navigation.svg" alt="">
                             </div>
-                            <div class="masthead-title">Navegação no Hexflower</div>
+                            <div class="masthead-title" data-i18n="masthead.hexflowerNavigation"></div>
                         </div>
                         <div class="container-content">
-                            <p class="subtitle">Role 2d6 e some, compare o resultado com o hexflower abaixo e mova no
-                                hexflower
-                                de temperatura para o hexagono indicado.</p>
+                            <p class="subtitle" data-i18n="modal.nav.subtitle"></p>
                             <svg id="weather-nav-svg"></svg>
                             <div id="dice-container-nav">
                                 <div class="dice-wrapper">
@@ -382,7 +337,7 @@
                                     <div class="die" id="die-2"></div>
                                 </div>
                                 <button id="btn-roll-nav" class="std-btn"><img src="img/icons/buttons/2d6.svg"
-                                        class="btn-icon"> ROLAR 2D6</button>
+                                        class="btn-icon"><span data-i18n="button.roll2D6"></span></button>
                                 <div id="dice-result-nav"></div>
                             </div>
                         </div>
@@ -400,12 +355,10 @@
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/terrain.svg" alt=""></div>
-                <div class="masthead-title">Terrenos Exploráveis</div>
+                <div class="masthead-title" data-i18n="masthead.explorableTerrains"></div>
                 <span class="close-button">&times;</span>
             </div>
-            <p class="subtitle">Selecione o
-                Terreno
-                atual</p>
+            <p class="subtitle" data-i18n="modal.terrain.subtitle"></p>
             <div id="terrain-grid"></div>
         </div>
     </div>
@@ -414,21 +367,28 @@
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
-                <div class="masthead-title">Diário de Viagem</div>
+                <div class="masthead-title" data-i18n="masthead.travelJournal"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="modal-body-column">
                 <div id="calendar-grid"></div>
                 <div id="day-details"></div>
 
-                <div id="modal-journal-section">
+                <div id="modal-journal-section" class="hidden">
+                    <div class="journal-section-header">
+                        <h3 data-i18n="journal.registerNote"></h3>
+                        <button id="modal-btn-close-journal" class="journal-close-btn" data-i18n-title="journal.close">
+                            <img src="img/icons/buttons/cancel.svg" alt="Fechar">
+                        </button>
+                    </div>
+
                     <div id="modal-journal-controls">
-                        <label for="modal-journal-quarter-select">Momento:</label>
+                        <label for="modal-journal-quarter-select" data-i18n="label.moment"></label>
                         <select id="modal-journal-quarter-select">
-                            <option value="0">Manhã</option>
-                            <option value="1">Tarde</option>
-                            <option value="2">Anoitecer</option>
-                            <option value="3">Noite</option>
+                            <option value="0" data-i18n="quarter.morning"></option>
+                            <option value="1" data-i18n="quarter.afternoon"></option>
+                            <option value="2" data-i18n="quarter.dusk"></option>
+                            <option value="3" data-i18n="quarter.night"></option>
                         </select>
                     </div>
 
@@ -455,15 +415,19 @@
                             <input type="color" id="modal-editor-color" value="#e0e0e0">
                         </div>
                     </div>
-                    <div id="modal-journal-editor" contenteditable="true"
+                    <div id="modal-journal-editor" contenteditable="true" data-i18n-placeholder="journal.placeholder"
                         placeholder="Escreva os detalhes da jornada...">
                     </div>
 
                     <div id="modal-journal-actions">
                         <button id="modal-btn-save-entry" class="std-btn"><img src="img/icons/buttons/addentry.svg"
-                                class="btn-icon"> SALVAR ENTRADA</button>
-                        <button id="modal-btn-cancel-edit" class="std-btn"><img src="img/icons/buttons/cancel.svg"
-                                class="btn-icon"> CANCELAR EDIÇÃO</button>
+                                class="btn-icon"><span data-i18n="button.saveEntryModal"></span></button>
+                        <button id="modal-btn-update-entry" class="std-btn" style="display: none;"><img
+                                src="img/icons/buttons/addentry.svg" class="btn-icon"><span
+                                data-i18n="button.updateEntry"></span></button>
+                        <button id="modal-btn-cancel-edit" class="std-btn" style="display: none;"><img
+                                src="img/icons/buttons/cancel.svg" class="btn-icon"><span
+                                data-i18n="button.cancelEditModal"></span></button>
                     </div>
                 </div>
             </div>
@@ -474,24 +438,24 @@
         <div class="modal-content start-game-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/journal.svg" alt=""></div>
-                <div class="masthead-title">Iniciar Viagem</div>
+                <div class="masthead-title" data-i18n="masthead.startTravel"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="start-game-form">
                 <div class="form-group">
-                    <label for="start-year">Ano:</label>
+                    <label for="start-year" data-i18n="label.year"></label>
                     <input type="number" id="start-year" value="1165">
                 </div>
                 <div class="form-group">
-                    <label for="start-month">Mês:</label>
+                    <label for="start-month" data-i18n="label.month"></label>
                     <select id="start-month"></select>
                 </div>
                 <div class="form-group">
-                    <label for="start-day">Dia:</label>
+                    <label for="start-day" data-i18n="label.day"></label>
                     <input type="number" id="start-day" min="1" max="46" value="1">
                 </div>
                 <button id="btn-start-game" class="std-btn"><img src="img/icons/buttons/correct.svg" class="btn-icon">
-                    DATA DEFINIDA</button>
+                    <span data-i18n="button.dateSet"></span></button>
             </div>
         </div>
     </div>
@@ -500,83 +464,10 @@
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/info2.svg" alt=""></div>
-                <div class="masthead-title">Informações</div>
+                <div class="masthead-title" data-i18n="masthead.information"></div>
                 <span class="close-button">&times;</span>
             </div>
-            <div id="info-content">
-                <h2>Bem-vindo ao FBL Hexplorer Companion!</h2>
-                <p>Como o nome sugere, esta p&aacute;gina foi feita para te ajudar na explora&ccedil;&atilde;o dos
-                    hex&aacute;gonos
-                    durante suas sess&otilde;es de <em>Forbidden Lands</em>.</p>
-                <h3>Como usar:</h3>
-                <ul>
-                    <li><strong>Configura&ccedil;&atilde;o Inicial:</strong> Comece escolhendo o dia, m&ecirc;s e ano de
-                        in&iacute;cio
-                        da campanha. Isso definir&aacute; o mapa em <em>Hexflower</em> que ser&aacute; utilizado.</li>
-                    <li><strong>Clima:</strong> Selecione o clima inicial no mapa. N&atilde;o tem jeito certo para isso,
-                        apenas defina
-                        um arbitrariamente.</li>
-                    <li><strong>Temperatura:</strong> Role <strong>1d12</strong> (somando b&ocirc;nus/redutores, se
-                        houver) para definir
-                        a temperatura aleatoriamente, ou clique diretamente em uma op&ccedil;&atilde;o na tabela.</li>
-                    <li><strong>Terreno:</strong> Selecione o tipo de terreno onde o personagem est&aacute;.</li>
-                    <li><strong>Viagem:</strong> Utilize das informa&ccedil;&otilde;es contidas em
-                        <strong>'Procedimentos de
-                            Viagem'</strong> para n&atilde;o esquecer nenhum detalhe importante enquanto estiver pelas
-                        <em>Terras
-                            Proibidas</em>.
-                    </li>
-                </ul>
-                <p><strong>Navega&ccedil;&atilde;o e Di&aacute;rio:</strong> Use os bot&otilde;es
-                    <strong>DESBRAVAR</strong> e
-                    <strong>PERMANECER</strong> para avan&ccedil;ar o dia. Ao final do dia, o sistema pedir&aacute; o
-                    clima do dia
-                    seguinte. Basta rolar <strong>2d6</strong>: o resultado mover&aacute; o clima para um
-                    hex&aacute;gono adjacente
-                    (veja em <strong>'Navega&ccedil;&atilde;o no Hexflower'</strong>). Voc&ecirc; pode clicar tanto nos
-                    hex&aacute;gonos
-                    de navega&ccedil;&atilde;o quanto diretamente no mapa <em>hexflower</em> de clima. Voc&ecirc;
-                    tamb&eacute;m
-                    precisar&aacute; rolar na tabela de temperatura novamente.
-                </p>
-                <p>N&atilde;o esque&ccedil;a do <strong>Di&aacute;rio</strong>: use-o para anotar encontros, tesouros,
-                    etc clicando no
-                    bot&atilde;o 'ADICIONAR ANOTA&Ccedil;&Atilde;O'. Clicando na data atual, uma janela mostrar&aacute;
-                    o
-                    hist&oacute;rico dos dias anteriores.</p>
-                <p>O m&oacute;dulo <strong>Baralho Or&aacute;culo</strong> segue as regras do Book of Beasts para
-                    responder perguntas de
-                    sim ou n&atilde;o, ideal para o jogo solo.</p>
-                <p>O m&oacute;dulo <strong>Rolador de Dados</strong> permite fazer rolagens no padr&atilde;o do sistema.
-                </p>
-                <hr />
-                <h3>Sobre o Projeto</h3>
-                <p>Criei esta ferramenta pensando em jogos solo, mas a utilizo sempre que mestro para meu grupo. Espero
-                    que fa&ccedil;a
-                    bom proveito na sua mesa!</p>
-                <p>A principal <em>feature</em> que me motivou a cria&ccedil;&atilde;o da ferramenta foi a
-                    <em>house-rule</em> de
-                    controle de clima atrav&eacute;s da navega&ccedil;&atilde;o por <em>hexflower</em>, ent&atilde;o
-                    esta &aacute;rea
-                    recebeu mais carinho, caso voc&ecirc; n&atilde;o conhe&ccedil;a, este &eacute; um m&eacute;todo
-                    j&aacute; famoso na
-                    comunidade <em>hexcrawl</em> que faz a progress&atilde;o do clima ser menos imprevis&iacute;vel e,
-                    com sorte, mais
-                    cr&iacute;vel. As regras, b&ocirc;nus e redutores que usei aqui s&atilde;o um am&aacute;lgama de
-                    informa&ccedil;&otilde;es do <em>Livro do Mestre</em>, <em>Book of Beasts</em> e materiais da
-                    comunidade, ajustados
-                    ao meu gosto pessoal.
-                </p>
-                <p><em>Este projeto &eacute; uma ferramenta independente criada por f&atilde; e n&atilde;o possui
-                        qualquer
-                        inten&ccedil;&atilde;o de violar direitos autorais. Ele n&atilde;o cont&eacute;m, reproduz ou
-                        distribui material
-                        protegido por copyright do sistema de RPG de mesa Forbidden Lands, que &eacute; propriedade da
-                        empresa Free
-                        League Publishing. Todos os direitos sobre Forbidden Lands pertencem exclusivamente aos seus
-                        respectivos
-                        detentores</em></p>
-            </div>
+            <div id="info-content" data-i18n="info.content" data-i18n-html></div>
         </div>
     </div>
 
@@ -584,7 +475,7 @@
         <div class="modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/weather.svg" alt=""></div>
-                <div class="masthead-title" id="general-info-title">Clima</div>
+                <div class="masthead-title" id="general-info-title"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div id="general-info-content"></div>
@@ -595,7 +486,7 @@
         <div class="modal-content deck-modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/deck.svg" alt=""></div>
-                <div class="masthead-title">Baralho Oráculo</div>
+                <div class="masthead-title" data-i18n="masthead.oracleDeck"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="deck-modal-body">
@@ -609,7 +500,7 @@
                             <div class="card-back"><img src="img/icons/other/cardback.svg" alt=""></div>
                         </div>
                         <div class="pile-info">
-                            <span class="pile-label">Baralho</span>
+                            <span class="pile-label" data-i18n="deck.deck"></span>
                             <span id="deck-count" class="pile-count">52</span>
                         </div>
                     </div>
@@ -618,19 +509,19 @@
                             <div class="card-back discard-empty">∅</div>
                         </div>
                         <div class="pile-info">
-                            <span class="pile-label">Descarte</span>
+                            <span class="pile-label" data-i18n="deck.discard"></span>
                             <span id="discard-count" class="pile-count">0</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="deck-buttons">
-                    <button id="btn-oracle-5050" class="std-btn deck-btn">50% de Chance</button>
-                    <button id="btn-oracle-provavel" class="std-btn deck-btn">É Provável</button>
-                    <button id="btn-oracle-improvavel" class="std-btn deck-btn">É Improvável</button>
-                    <button id="btn-deck-shuffle" class="std-btn deck-btn">Embaralhar</button>
-                    <button id="btn-draw-1" class="std-btn deck-btn">Sacar 1 Carta</button>
-                    <button id="btn-draw-2" class="std-btn deck-btn">Sacar 2 Cartas</button>
+                    <button id="btn-oracle-5050" class="std-btn deck-btn" data-i18n="deck.50chance"></button>
+                    <button id="btn-oracle-provavel" class="std-btn deck-btn" data-i18n="deck.likely"></button>
+                    <button id="btn-oracle-improvavel" class="std-btn deck-btn" data-i18n="deck.unlikely"></button>
+                    <button id="btn-deck-shuffle" class="std-btn deck-btn" data-i18n="deck.shuffle"></button>
+                    <button id="btn-draw-1" class="std-btn deck-btn" data-i18n="deck.draw1"></button>
+                    <button id="btn-draw-2" class="std-btn deck-btn" data-i18n="deck.draw2"></button>
                 </div>
             </div>
         </div>
@@ -640,71 +531,82 @@
         <div class="modal-content dice-roller-modal-content">
             <div class="masthead">
                 <div class="masthead-icon"><img src="img/icons/mastheads/rolls.svg" alt=""></div>
-                <div class="masthead-title">Rolador de Dados</div>
+                <div class="masthead-title" data-i18n="masthead.diceRoller"></div>
                 <span class="close-button">&times;</span>
             </div>
             <div class="dice-roller-modal-body">
-                <!-- Quick Roll Buttons Section -->
                 <div class="dice-roller-quick-section">
                     <div class="quick-roll-buttons">
                         <div class="quick-roll-row">
-                            <button class="std-btn quick-roll-btn" data-roll-type="desbravar">DESBRAVAR</button>
+                            <button class="info-roll-btn" onclick="showRollModal('DESBRAVAR')"><img
+                                    src="img/icons/buttons/header/info.svg" class="btn-icon"></button>
+                            <button class="std-btn quick-roll-btn" data-roll-type="desbravar"
+                                data-i18n="roll.pathfind"></button>
                             <span class="quick-roll-bonus" id="bonus-desbravar">+0</span>
                         </div>
                         <div class="quick-roll-row">
-                            <button class="std-btn quick-roll-btn" data-roll-type="acampar">MONTAR ACAMPAMENTO</button>
+                            <button class="info-roll-btn" onclick="showRollModal('MONTAR ACAMPAMENTO')"><img
+                                    src="img/icons/buttons/header/info.svg" class="btn-icon"></button>
+                            <button class="std-btn quick-roll-btn" data-roll-type="acampar"
+                                data-i18n="roll.camp"></button>
                             <span class="quick-roll-bonus" id="bonus-acampar">+0</span>
                         </div>
                         <div class="quick-roll-row">
-                            <button class="std-btn quick-roll-btn" data-roll-type="coletar">COLETAR</button>
+                            <button class="info-roll-btn" onclick="showRollModal('COLETAR')"><img
+                                    src="img/icons/buttons/header/info.svg" class="btn-icon"></button>
+                            <button class="std-btn quick-roll-btn" data-roll-type="coletar"
+                                data-i18n="roll.forage"></button>
                             <span class="quick-roll-bonus" id="bonus-coletar">+0</span>
                         </div>
                         <div class="quick-roll-row">
-                            <button class="std-btn quick-roll-btn" data-roll-type="cacar">CAÇAR</button>
+                            <button class="info-roll-btn" onclick="showRollModal('CAÇAR')"><img
+                                    src="img/icons/buttons/header/info.svg" class="btn-icon"></button>
+                            <button class="std-btn quick-roll-btn" data-roll-type="cacar"
+                                data-i18n="roll.hunt"></button>
                             <span class="quick-roll-bonus" id="bonus-cacar">+0</span>
                         </div>
                     </div>
                     <div class="modifier-input-section">
-                        <label for="custom-modifier">Modificador Adicional:</label>
+                        <label for="custom-modifier" data-i18n="label.additionalModifier"></label>
                         <div class="modifier-controls">
                             <button class="modifier-btn" id="modifier-minus"><img src="img/icons/other/minus.svg"
                                     alt="-"></button>
-                            <input type="number" id="custom-modifier" value="0" min="-10" max="10">
+                            <input type="number" id="custom-modifier" value="0" min="-99" max="99">
                             <button class="modifier-btn" id="modifier-plus"><img src="img/icons/other/plus.svg"
                                     alt="+"></button>
                         </div>
                         <div class="applied-modifier-display">
-                            <span id="applied-modifier-label">Modificador Total: </span>
+                            <span id="applied-modifier-label" data-i18n="label.totalModifier"></span>
                             <span id="applied-modifier-value">+0</span>
                         </div>
-                        <button id="btn-reset-all-dice" class="std-btn global-reset-btn" title="Resetar Tudo">
-                            <img src="img/icons/buttons/header/reset.svg" class="btn-icon" alt="Reset"> RESET
+                        <button id="btn-reset-all-dice" class="std-btn global-reset-btn" data-i18n-title="button.reset"
+                            title="Resetar Tudo">
+                            <img src="img/icons/buttons/header/reset.svg" class="btn-icon" alt="Reset"> <span
+                                data-i18n="button.reset"></span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Dice Slots Section -->
-                <!-- Action Buttons (Top) -->
                 <div class="dice-action-buttons">
                     <button id="btn-roll-dice-top" class="std-btn roll-btn">
-                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> ROLAR DADOS
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> <span data-i18n="button.rollDice"></span>
                     </button>
                     <button id="btn-force-roll-top" class="std-btn force-roll-btn" disabled>
-                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> FORÇAR ROLAGEM
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> <span
+                            data-i18n="button.forceRoll"></span>
                     </button>
                 </div>
 
                 <div class="dice-slots-section">
                     <div class="dice-slots-container">
-                        <!-- Atributo Slot -->
                         <div class="dice-slot" data-dice-type="atributo">
                             <div class="dice-slot-header">
-                                <span class="dice-slot-label">Atributo</span>
+                                <span class="dice-slot-label" data-i18n="dice.attribute"></span>
                                 <div class="dice-amount-controls">
                                     <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
                                             alt="-"></button>
                                     <input type="number" class="dice-amount-input" id="diceAmountAtrib" value="1"
-                                        min="1" max="10">
+                                        min="1" max="99">
                                     <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
                                             alt="+"></button>
                                 </div>
@@ -712,15 +614,14 @@
                             <div class="dice-display" id="atributo-dice-display"></div>
                         </div>
 
-                        <!-- Perícia Slot -->
                         <div class="dice-slot" data-dice-type="pericia">
                             <div class="dice-slot-header">
-                                <span class="dice-slot-label">Perícia</span>
+                                <span class="dice-slot-label" data-i18n="dice.skill"></span>
                                 <div class="dice-amount-controls">
                                     <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
                                             alt="-"></button>
                                     <input type="number" class="dice-amount-input" id="diceAmountSkill" value="0"
-                                        min="0" max="10">
+                                        min="0" max="99">
                                     <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
                                             alt="+"></button>
                                 </div>
@@ -728,22 +629,21 @@
                             <div class="dice-display" id="pericia-dice-display"></div>
                         </div>
 
-                        <!-- Equipamento Slot -->
                         <div class="dice-slot" data-dice-type="equipamento">
                             <div class="dice-slot-header">
-                                <span class="dice-slot-label">Equipamento</span>
+                                <span class="dice-slot-label" data-i18n="dice.equipment"></span>
                                 <div class="dice-amount-controls">
                                     <button class="dice-amount-btn minus-btn"><img src="img/icons/other/minus.svg"
                                             alt="-"></button>
                                     <input type="number" class="dice-amount-input" id="diceAmountEquip" value="0"
-                                        min="0" max="10">
+                                        min="0" max="99">
                                     <button class="dice-amount-btn plus-btn"><img src="img/icons/other/plus.svg"
                                             alt="+"></button>
                                 </div>
                                 <div class="artifact-die-select">
-                                    <label for="artifact-die-type">Artefato: </label>
+                                    <label for="artifact-die-type" data-i18n="label.artifact"></label>
                                     <select id="artifact-die-type">
-                                        <option value="none">Não</option>
+                                        <option value="none" data-i18n="label.no"></option>
                                         <option value="d8">d8</option>
                                         <option value="d10">d10</option>
                                         <option value="d12">d12</option>
@@ -755,45 +655,72 @@
                     </div>
                 </div>
 
-                <!-- Results Section -->
                 <div class="dice-results-section">
                     <div class="dice-results-main">
                         <div class="result-item success-result">
                             <img src="img/icons/other/success.svg" alt="Sucesso" class="result-icon">
                             <span id="success-count" class="result-value">0</span>
-                            <span class="result-label">Sucessos</span>
+                            <span class="result-label" data-i18n="dice.successes"></span>
                         </div>
                     </div>
                     <div class="dice-results-skulls faded" id="skull-results">
                         <div class="result-item skull-result atributo-skull">
                             <img src="img/icons/other/caveira.svg" alt="Caveira" class="result-icon">
                             <span id="atributo-skull-count" class="result-value">0</span>
-                            <span class="result-label">Dano(s) no Atributo</span>
+                            <span class="result-label" data-i18n="dice.attrDamage"></span>
                         </div>
                         <div class="result-item skull-result equipamento-skull">
                             <img src="img/icons/other/caveira.svg" alt="Caveira" class="result-icon">
                             <span id="equipamento-skull-count" class="result-value">0</span>
-                            <span class="result-label">Dano(s) no Equipamento</span>
+                            <span class="result-label" data-i18n="dice.equipDamage"></span>
+                        </div>
+                    </div>
+                    <div class="dice-results-willpower faded" id="willpower-results">
+                        <div class="result-item willpower-result">
+                            <img src="img/icons/other/caveira.svg" alt="Força de Vontade" class="result-icon">
+                            <span id="willpower-count" class="result-value">0</span>
+                            <span class="result-label" data-i18n="dice.willpower"></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="dice-action-buttons">
                     <button id="btn-roll-dice" class="std-btn roll-btn">
-                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> ROLAR DADOS
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> <span data-i18n="button.rollDice"></span>
                     </button>
                     <button id="btn-force-roll" class="std-btn force-roll-btn" disabled>
-                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> FORÇAR ROLAGEM
+                        <img src="img/icons/buttons/2d6.svg" class="btn-icon"> <span
+                            data-i18n="button.forceRoll"></span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="lang-modal" class="modal">
+        <div class="modal-content lang-modal-content">
+            <div class="masthead">
+                <div class="masthead-icon"><img src="img/icons/buttons/header/lang.svg" alt=""></div>
+                <div class="masthead-title" data-i18n="modal.lang.title"></div>
+                <span class="close-button">&times;</span>
+            </div>
+            <div class="lang-options">
+                <button class="lang-option std-btn" data-lang="pt">
+                    <span class="lang-flag">🇧🇷</span>
+                    <span>Português</span>
+                </button>
+                <button class="lang-option std-btn" data-lang="en">
+                    <span class="lang-flag">🇺🇸</span>
+                    <span>English</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-notification" class="toast"></div>
 
-    <script src="hexagon_data.js"></script>
+    <script src="scripts/i18n.js"></script>
+    <script src="scripts/hexweather.js"></script>
     <script src="script.js"></script>
     <script src="scripts/deck.js"></script>
     <script src="scripts/dice-roller.js"></script>

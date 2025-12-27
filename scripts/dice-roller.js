@@ -106,6 +106,7 @@ let customModifierInput;
 let btnRollDice, btnForceRoll;
 let successCountEl, atributoSkullCountEl, equipamentoSkullCountEl;
 let skullResultsContainer;
+let willpowerCountEl, willpowerResultsContainer;
 let appliedModifierValueEl;
 
 function initDOMReferences() {
@@ -130,6 +131,9 @@ function initDOMReferences() {
     atributoSkullCountEl = document.getElementById('atributo-skull-count');
     equipamentoSkullCountEl = document.getElementById('equipamento-skull-count');
     skullResultsContainer = document.getElementById('skull-results');
+
+    willpowerCountEl = document.getElementById('willpower-count');
+    willpowerResultsContainer = document.getElementById('willpower-results');
 
     appliedModifierValueEl = document.getElementById('applied-modifier-value');
 }
@@ -570,6 +574,28 @@ function updateResultDisplay() {
         }
     } else if (skullResultsContainer) {
         skullResultsContainer.classList.add('faded');
+        // Reset skull counts to 0 in DOM when not forced
+        if (atributoSkullCountEl) {
+            atributoSkullCountEl.textContent = '0';
+        }
+        if (equipamentoSkullCountEl) {
+            equipamentoSkullCountEl.textContent = '0';
+        }
+    }
+
+    // Update willpower results (sum of atributo and equipamento skulls)
+    if (diceRollerState.hasForcedRoll && willpowerResultsContainer) {
+        willpowerResultsContainer.classList.remove('faded');
+        if (willpowerCountEl) {
+            const totalWillpower = diceRollerState.atributoSkulls + diceRollerState.equipamentoSkulls;
+            willpowerCountEl.textContent = totalWillpower;
+        }
+    } else if (willpowerResultsContainer) {
+        willpowerResultsContainer.classList.add('faded');
+        // Reset willpower count to 0 in DOM when not forced
+        if (willpowerCountEl) {
+            willpowerCountEl.textContent = '0';
+        }
     }
 
     // Update force roll button state (both top and bottom)
@@ -591,7 +617,15 @@ function updateRollerContainer() {
     if (!preview) return;
 
     if (!diceRollerState.hasRolled) {
-        preview.innerHTML = '<span class="roller-placeholder">Clique para rolar dados</span>';
+        // Translation helper
+        const tr = (key, fallback) => {
+            if (typeof t === 'function') {
+                const translated = t(key);
+                if (translated && translated !== key) return translated;
+            }
+            return fallback;
+        };
+        preview.innerHTML = `<span class="roller-placeholder">${tr('dice.clickToRoll', 'Clique para rolar dados')}</span>`;
         return;
     }
 
@@ -605,7 +639,7 @@ function updateRollerContainer() {
         </div>
     `;
 
-    // Skulls (only after forced roll)
+    // Skulls and Willpower (only after forced roll)
     if (diceRollerState.hasForcedRoll) {
         if (diceRollerState.atributoSkulls > 0) {
             html += `
@@ -622,6 +656,17 @@ function updateRollerContainer() {
                     <img src="img/icons/other/caveira.svg" alt="Caveira">
                     <span class="result-value" style="color: var(--col-accent-warm);">${diceRollerState.equipamentoSkulls}</span>
                     <span style="font-size: 0.8em;">(Equip)</span>
+                </div>
+            `;
+        }
+        // Willpower (sum of atributo and equipamento skulls)
+        const totalWillpower = diceRollerState.atributoSkulls + diceRollerState.equipamentoSkulls;
+        if (totalWillpower > 0) {
+            html += `
+                <div class="roller-result-item">
+                    <img src="img/icons/other/caveira.svg" alt="Força de Vontade" style="filter: hue-rotate(180deg) saturate(0.7);">
+                    <span class="result-value" style="color: var(--col-accent-cool);">${totalWillpower}</span>
+                    <span style="font-size: 0.8em;">(FdV)</span>
                 </div>
             `;
         }
@@ -1104,7 +1149,7 @@ function setupEventListeners() {
 
     if (modifierMinus) {
         modifierMinus.addEventListener('click', () => {
-            diceRollerState.customModifier = Math.max(-10, diceRollerState.customModifier - 1);
+            diceRollerState.customModifier = Math.max(-99, diceRollerState.customModifier - 1);
             customModifierInput.value = diceRollerState.customModifier;
             updateModifierDisplay();
             updateDiceDisplays();
@@ -1113,7 +1158,7 @@ function setupEventListeners() {
 
     if (modifierPlus) {
         modifierPlus.addEventListener('click', () => {
-            diceRollerState.customModifier = Math.min(10, diceRollerState.customModifier + 1);
+            diceRollerState.customModifier = Math.min(99, diceRollerState.customModifier + 1);
             customModifierInput.value = diceRollerState.customModifier;
             updateModifierDisplay();
             updateDiceDisplays();
@@ -1230,7 +1275,7 @@ function setupDiceSlotControls() {
         });
 
         plusBtn?.addEventListener('click', () => {
-            diceRollerState.atributoCount = Math.min(10, diceRollerState.atributoCount + 1);
+            diceRollerState.atributoCount = Math.min(99, diceRollerState.atributoCount + 1);
             diceAmountAtrib.value = diceRollerState.atributoCount;
             updateDiceDisplays();
         });
@@ -1238,7 +1283,7 @@ function setupDiceSlotControls() {
 
     if (diceAmountAtrib) {
         diceAmountAtrib.addEventListener('change', () => {
-            diceRollerState.atributoCount = Math.max(1, Math.min(10, parseInt(diceAmountAtrib.value) || 1));
+            diceRollerState.atributoCount = Math.max(1, Math.min(99, parseInt(diceAmountAtrib.value) || 1));
             diceAmountAtrib.value = diceRollerState.atributoCount;
             updateDiceDisplays();
         });
@@ -1257,7 +1302,7 @@ function setupDiceSlotControls() {
         });
 
         plusBtn?.addEventListener('click', () => {
-            diceRollerState.periciaCount = Math.min(10, diceRollerState.periciaCount + 1);
+            diceRollerState.periciaCount = Math.min(99, diceRollerState.periciaCount + 1);
             diceAmountSkill.value = diceRollerState.periciaCount;
             updateDiceDisplays();
         });
@@ -1265,7 +1310,7 @@ function setupDiceSlotControls() {
 
     if (diceAmountSkill) {
         diceAmountSkill.addEventListener('change', () => {
-            diceRollerState.periciaCount = Math.max(0, Math.min(10, parseInt(diceAmountSkill.value) || 0));
+            diceRollerState.periciaCount = Math.max(0, Math.min(99, parseInt(diceAmountSkill.value) || 0));
             diceAmountSkill.value = diceRollerState.periciaCount;
             updateDiceDisplays();
         });
@@ -1284,7 +1329,7 @@ function setupDiceSlotControls() {
         });
 
         plusBtn?.addEventListener('click', () => {
-            diceRollerState.equipamentoCount = Math.min(10, diceRollerState.equipamentoCount + 1);
+            diceRollerState.equipamentoCount = Math.min(99, diceRollerState.equipamentoCount + 1);
             diceAmountEquip.value = diceRollerState.equipamentoCount;
             updateDiceDisplays();
         });
@@ -1292,7 +1337,7 @@ function setupDiceSlotControls() {
 
     if (diceAmountEquip) {
         diceAmountEquip.addEventListener('change', () => {
-            diceRollerState.equipamentoCount = Math.max(0, Math.min(10, parseInt(diceAmountEquip.value) || 0));
+            diceRollerState.equipamentoCount = Math.max(0, Math.min(99, parseInt(diceAmountEquip.value) || 0));
             diceAmountEquip.value = diceRollerState.equipamentoCount;
             updateDiceDisplays();
         });
@@ -1399,3 +1444,8 @@ function updateQuickRollBonuses() {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initDiceRoller);
+
+// Update roller container when language changes
+window.addEventListener('languageChanged', function () {
+    updateRollerContainer();
+});

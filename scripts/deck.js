@@ -2,19 +2,43 @@
 // ORACLE DECK SYSTEM
 // ========================================
 
+// --- Translation Helper ---
+function tr(key, fallback) {
+    if (typeof t === 'function') {
+        const translated = t(key);
+        if (translated && translated !== key) return translated;
+    }
+    return fallback;
+}
+
 // --- Card Data ---
 const suits = ['H', 'D', 'C', 'S']; // Hearts, Diamonds, Clubs, Spades
 const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 const suitSymbols = { H: '♥', D: '♦', C: '♣', S: '♠' };
-const suitNames = { H: 'Copas', D: 'Ouros', C: 'Paus', S: 'Espadas' };
+function getSuitNames() {
+    return {
+        H: tr('card.hearts', 'Copas'),
+        D: tr('card.diamonds', 'Ouros'),
+        C: tr('card.clubs', 'Paus'),
+        S: tr('card.spades', 'Espadas')
+    };
+}
 const cardValues = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
 const faceCards = ['J', 'Q', 'K'];
-const rankNames = { 'J': 'Valete', 'Q': 'Dama', 'K': 'Rei', 'A': 'Ás' };
+function getRankNames() {
+    return {
+        'J': tr('card.jack', 'Valete'),
+        'Q': tr('card.queen', 'Dama'),
+        'K': tr('card.king', 'Rei'),
+        'A': tr('card.ace', 'Ás')
+    };
+}
 
 // --- Deck State ---
 let deck = [];
 let discardPile = [];
 let displayedCards = [];
+let decidingCardIndex = -1; // Index of the "winning" card in displayedCards (-1 means no distinction)
 
 // --- Fisher-Yates Shuffle ---
 function shuffleDeck(arr) {
@@ -43,7 +67,7 @@ function initializeDeck() {
     discardPile = [];
     displayedCards = [];
     updatePileCounters();
-    updateDeckContainerTitle('Baralho Oráculo');
+    updateDeckContainerTitle(tr('deck.oracleDeck', 'Baralho Oráculo'));
 }
 
 // --- Draw Cards ---
@@ -78,8 +102,8 @@ function resetDeck() {
     displayedCards = [];
     updatePileCounters();
     renderDisplayedCards();
-    updateDeckContainerTitle('Baralho Oráculo');
-    showOracleMessage('Baralho embaralhado!');
+    updateDeckContainerTitle(tr('deck.oracleDeck', 'Baralho Oráculo'));
+    showOracleMessage(tr('deck.shuffled', 'Baralho embaralhado!'));
 }
 
 // --- Update Pile Counters ---
@@ -105,38 +129,38 @@ function updateDeckContainerTitle(message) {
 
 // --- Get Card Display Name ---
 function getCardDisplayName(card) {
-    const rankName = rankNames[card.rank] || card.rank;
-    const suitName = suitNames[card.suit];
-    return `${rankName} de ${suitName}`;
+    const rankName = getRankNames()[card.rank] || card.rank;
+    const suitName = getSuitNames()[card.suit];
+    return `${rankName} ${tr('card.of', 'de')} ${suitName}`;
 }
 
 // --- Get Oracle Message for Single Card ---
 function getOracleMessage(card) {
     const value = cardValues[card.rank];
-    const isPositiveSuit = card.suit === 'H' || card.suit === 'D'; // Copas ou Ouros
+    const isPositiveSuit = card.suit === 'H' || card.suit === 'D'; // Hearts or Diamonds
     const isFace = faceCards.includes(card.rank);
     const isAce = card.rank === 'A';
 
     if (isPositiveSuit) {
         if (value <= 3) {
-            return 'Talvez, mas o resultado não é claro';
+            return tr('oracle.maybeUnclear', 'Talvez, mas o resultado não é claro');
         } else if (value <= 10) {
-            return 'Sim (números mais altos são mais definitivos)';
+            return tr('oracle.yesDefinitive', 'Sim (números mais altos são mais definitivos)');
         } else if (isFace) {
-            return 'Sim, mas com alguma complicação';
+            return tr('oracle.yesComplication', 'Sim, mas com alguma complicação');
         } else if (isAce) {
-            return 'Sim Excepcional';
+            return tr('oracle.yesExceptional', 'Sim Excepcional');
         }
     } else {
-        // Paus ou Espadas
+        // Clubs or Spades
         if (value <= 3) {
-            return 'Talvez, mas o resultado não é claro';
+            return tr('oracle.maybeUnclear', 'Talvez, mas o resultado não é claro');
         } else if (value <= 10) {
-            return 'Não (números mais altos são mais definitivos)';
+            return tr('oracle.noDefinitive', 'Não (números mais altos são mais definitivos)');
         } else if (isFace) {
-            return 'Não, e com alguma complicação';
+            return tr('oracle.noComplication', 'Não, e com alguma complicação');
         } else if (isAce) {
-            return 'Não Excepcional';
+            return tr('oracle.noExceptional', 'Não Excepcional');
         }
     }
     return '';
@@ -145,9 +169,10 @@ function getOracleMessage(card) {
 // --- Oracle 50/50 ---
 function oracle5050() {
     if (deck.length < 1) {
-        showOracleMessage('Baralho vazio! Embaralhe para continuar.');
+        showOracleMessage(tr('deck.empty', 'Baralho vazio! Embaralhe para continuar.'));
         return;
     }
+    decidingCardIndex = -1; // Single card, no distinction needed
     const cards = drawCards(1);
     const message = getOracleMessage(cards[0]);
     const cardName = getCardDisplayName(cards[0]);
@@ -158,7 +183,7 @@ function oracle5050() {
 // --- Oracle Provável (favor positive) ---
 function oracleProvavel() {
     if (deck.length < 2) {
-        showOracleMessage('Cartas insuficientes! Embaralhe para continuar.');
+        showOracleMessage(tr('deck.notEnough', 'Cartas insuficientes! Embaralhe para continuar.'));
         return;
     }
     const cards = drawCards(2);
@@ -176,6 +201,10 @@ function oracleProvavel() {
         decidingCard = negative.reduce((a, b) => cardValues[a.rank] < cardValues[b.rank] ? a : b);
     }
 
+    // Find index of deciding card in displayedCards
+    decidingCardIndex = displayedCards.findIndex(c => c.rank === decidingCard.rank && c.suit === decidingCard.suit);
+    renderDisplayedCards(); // Re-render with fading
+
     const message = getOracleMessage(decidingCard);
     const cardName = getCardDisplayName(decidingCard);
     showOracleMessage(`${cardName}: ${message}`);
@@ -185,7 +214,7 @@ function oracleProvavel() {
 // --- Oracle Improvável (favor negative) ---
 function oracleImprovavel() {
     if (deck.length < 2) {
-        showOracleMessage('Cartas insuficientes! Embaralhe para continuar.');
+        showOracleMessage(tr('deck.notEnough', 'Cartas insuficientes! Embaralhe para continuar.'));
         return;
     }
     const cards = drawCards(2);
@@ -203,6 +232,10 @@ function oracleImprovavel() {
         decidingCard = positive.reduce((a, b) => cardValues[a.rank] < cardValues[b.rank] ? a : b);
     }
 
+    // Find index of deciding card in displayedCards
+    decidingCardIndex = displayedCards.findIndex(c => c.rank === decidingCard.rank && c.suit === decidingCard.suit);
+    renderDisplayedCards(); // Re-render with fading
+
     const message = getOracleMessage(decidingCard);
     const cardName = getCardDisplayName(decidingCard);
     showOracleMessage(`${cardName}: ${message}`);
@@ -212,13 +245,14 @@ function oracleImprovavel() {
 // --- Draw without message ---
 function drawOnly(count) {
     if (deck.length < count) {
-        showOracleMessage(`Cartas insuficientes! Restam ${deck.length} cartas.`);
+        showOracleMessage(tr('deck.remaining', 'Cartas insuficientes! Restam {0} cartas.').replace('{0}', deck.length));
         return;
     }
+    decidingCardIndex = -1; // No deciding card for simple draws
     drawCards(count);
     const names = displayedCards.map(getCardDisplayName).join(', ');
     showOracleMessage(names);
-    updateDeckContainerTitle('Baralho Oráculo');
+    updateDeckContainerTitle(tr('deck.oracleDeck', 'Baralho Oráculo'));
 }
 
 // --- Show Oracle Message ---
@@ -242,6 +276,12 @@ function renderDisplayedCards() {
         const cardEl = createCardElement(card);
         cardEl.style.animationDelay = `${index * 0.1}s`;
         cardEl.classList.add('card-draw-animation');
+
+        // Fade non-deciding cards when there are multiple cards and a deciding card is set
+        if (displayedCards.length > 1 && decidingCardIndex !== -1 && index !== decidingCardIndex) {
+            cardEl.classList.add('card-faded');
+        }
+
         container.appendChild(cardEl);
     });
 
@@ -355,3 +395,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// --- Export/Import Deck State for Save System ---
+function getDeckState() {
+    return {
+        deck: [...deck],
+        discardPile: [...discardPile],
+        displayedCards: [...displayedCards]
+    };
+}
+
+function restoreDeckState(state) {
+    if (!state) return;
+
+    deck = state.deck || [];
+    discardPile = state.discardPile || [];
+    displayedCards = state.displayedCards || [];
+
+    updatePileCounters();
+    renderDisplayedCards();
+    updateDeckContainerTitle(tr('deck.oracleDeck', 'Baralho Oráculo'));
+}
+

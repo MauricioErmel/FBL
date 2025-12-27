@@ -99,6 +99,7 @@ h6 {
 #onboarding-header {
     display: flex;
     justify-content: center;
+    gap: 10px;
     width: 100%;
     margin-bottom: 40px;
 }
@@ -202,7 +203,6 @@ body:not(.onboarding-active) #main-content {
     display: block;
 }
 
-/* --- Layout Principal --- */
 /* --- Layout Principal --- */
 #main-container {
     display: flex;
@@ -450,28 +450,20 @@ tr:hover:not(th) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     padding: 10px 20px;
     font-family: inherit;
     font-weight: bold;
     text-transform: uppercase;
     border: none;
-    border-radius: 0;
-    cursor: pointer;
-    color: var(--col-text-primary) !important;
-    /* Enforce text color */
-    transition: transform 0.1s ease, filter 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     cursor: pointer;
+    color: var(--col-text-primary) !important;
     transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.5px;
     flex: 1;
     max-width: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 }
 
 .std-btn:active {
@@ -492,7 +484,7 @@ tr:hover:not(th) {
 #btn-start-game,
 #btn-roll-nav,
 #btn-roll-temp,
-#btn-desbravar,
+#btn-caminhar,
 #btn-advance-day,
 #btn-edit-entry,
 .btn-edit-entry,
@@ -512,6 +504,8 @@ tr:hover:not(th) {
 #btn-info-game,
 #btn-save-entry,
 #modal-btn-save-entry,
+#btn-update-entry,
+#modal-btn-update-entry,
 #btn-add-entry-modal {
     background-color: var(--col-accent-cool);
 }
@@ -597,7 +591,10 @@ tr:hover:not(th) {
     width: 40%;
     position: relative;
     z-index: 20;
-    /* Ensure it stays above left column if overlapping */
+}
+
+#general-info-modal {
+    z-index: 2000;
 }
 
 #modal-map-container {
@@ -752,7 +749,7 @@ tr:hover:not(th) {
     display: block;
 }
 
-.desbravar-container {
+.caminhar-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -761,7 +758,7 @@ tr:hover:not(th) {
     max-width: 200px;
 }
 
-.desbravar-container #btn-desbravar {
+.caminhar-container #btn-caminhar {
     width: 100%;
     max-width: none;
     /* Let container control width */
@@ -896,7 +893,6 @@ tr:hover:not(th) {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* H3 styles removed from here as they are replaced by masthead title */
 
 #temperature-container .subtitle {
     font-size: 0.85em;
@@ -1055,7 +1051,6 @@ tr:hover:not(th) {
     align-items: center;
 }
 
-/* H3 styles removed from here as they are replaced by masthead title */
 
 #weather-navigation .subtitle {
     font-size: 0.85em;
@@ -1091,7 +1086,6 @@ tr:hover:not(th) {
     /* Let clicks pass through text to group */
 }
 
-/* Dice Roller Styles */
 /* Dice Roller Styles */
 #dice-container-nav,
 #dice-container-temp {
@@ -1404,10 +1398,6 @@ button.disabled,
     transform: translateX(10px);
 }
 
-.slider.round:before {
-    border-radius: 50%;
-}
-
 /* --- Start Game Modal --- */
 .start-game-content {
     max-width: 400px;
@@ -1492,7 +1482,7 @@ button.disabled,
 .journal-toggle-container {
     display: flex;
     justify-content: center;
-    margin: 15px 0;
+    margin: 5px 0;
 }
 
 .journal-toggle-btn {
@@ -1540,35 +1530,7 @@ button.disabled,
 }
 
 /* Journal Section with slide animation */
-#journal-section {
-    width: 100%;
-    margin-top: 20px;
-    background-color: var(--col-text-primary);
-    /* Light background requested */
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--col-bg-main);
-    overflow: hidden;
-    max-height: 1000px;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s ease-out, margin 0.4s ease-out;
-    opacity: 1;
-}
 
-#journal-section.hidden {
-    max-height: 0;
-    opacity: 0;
-    padding: 0 15px;
-    margin-top: 0;
-    border: none;
-}
-
-#journal-section h3 {
-    color: var(--col-bg-main);
-    /* Dark title for contrast */
-    border-bottom: 1px solid var(--col-bg-main);
-    padding-bottom: 10px;
-}
 
 #journal-controls {
     margin-bottom: 10px;
@@ -1608,35 +1570,18 @@ button.disabled,
 }
 
 .color-picker-wrapper {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid transparent;
+    border-radius: 4px;
     width: 30px;
     height: 30px;
-    border: 1px solid var(--col-border);
-    border-radius: 4px;
-    cursor: pointer;
     overflow: hidden;
     background: var(--col-bg-main);
-}
-
-.color-picker-wrapper span {
-    font-weight: bold;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.color-picker-wrapper input[type="color"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    padding: 0;
-    border: none;
 }
 
 #journal-editor {
@@ -1801,9 +1746,6 @@ button.disabled,
     color: var(--col-text-highlight);
     display: block;
     margin-bottom: 5px;
-    color: var(--col-text-highlight);
-    display: block;
-    margin-bottom: 5px;
 }
 
 .tool-btn.icon-only {
@@ -1818,19 +1760,6 @@ button.disabled,
     height: 13px;
     display: block;
     padding: 0px 0px;
-}
-
-.color-picker-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0px 0px;
-    cursor: pointer;
-    position: relative;
-    border: 1px solid transparent;
-    border-radius: 0;
-    width: 15px;
-    height: 15px;
 }
 
 .color-picker-wrapper:hover {
@@ -1855,7 +1784,6 @@ button.disabled,
     display: none;
 }
 
-/* Main content visibility is controlled by body.onboarding-active class */
 
 /* Quarter select styling */
 #journal-quarter-select,
@@ -1887,6 +1815,16 @@ button.disabled,
 #btn-cancel-edit,
 #modal-btn-cancel-edit {
     display: none;
+}
+
+#btn-update-entry,
+#modal-btn-update-entry,
+#btn-cancel-edit,
+#modal-btn-cancel-edit {
+    width: auto;
+    max-width: none;
+    white-space: nowrap;
+    min-width: fit-content;
 }
 
 /* Initial hex subtitle - hidden by default */
@@ -2276,6 +2214,15 @@ button.disabled,
     font-size: 0.7em;
 }
 
+/* --- Faded Card (non-winning in oracle) --- */
+.playing-card.card-faded {
+    opacity: 0.25;
+    filter: grayscale(100%) brightness(0.7);
+    transform: scale(0.9);
+    transition: opacity 0.3s, filter 0.3s, transform 0.3s;
+}
+
+
 /* --- Card Back --- */
 .card-back {
     width: 80px;
@@ -2584,6 +2531,30 @@ button.disabled,
     gap: 8px;
 }
 
+.info-roll-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: all 0.2s;
+    margin-right: 2px;
+}
+
+.info-roll-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.info-roll-btn img.btn-icon {
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+}
+
 .quick-roll-bonus {
     display: flex;
     align-items: center;
@@ -2686,7 +2657,36 @@ button.disabled,
 .dice-slots-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    background: linear-gradient(145deg, rgba(24, 40, 45, 0.6) 0%, rgba(51, 55, 58, 0.4) 100%);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+}
+
+/* Decorative corner accents */
+.dice-slots-section::before,
+.dice-slots-section::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--col-text-highlight);
+    border-style: solid;
+    opacity: 0.6;
+}
+
+.dice-slots-section::before {
+    top: 8px;
+    left: 8px;
+    border-width: 2px 0 0 2px;
+}
+
+.dice-slots-section::after {
+    bottom: 8px;
+    right: 8px;
+    border-width: 0 2px 2px 0;
 }
 
 .global-reset-btn {
@@ -2704,27 +2704,48 @@ button.disabled,
 .dice-slots-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .dice-slot {
-    background-color: var(--col-accent-cool);
-    border-radius: 4px;
-    padding: 10px;
+    background: linear-gradient(180deg, rgba(71, 111, 113, 0.5) 0%, rgba(71, 111, 113, 0.25) 100%);
+    border: 1px solid var(--col-accent-cool);
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dice-slot:hover {
+    border-color: var(--col-text-highlight);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(249, 206, 138, 0.1);
 }
 
 .dice-slot-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, rgba(24, 40, 45, 0.9) 0%, rgba(24, 40, 45, 0.7) 100%);
+    border-bottom: 1px solid rgba(71, 111, 113, 0.5);
+    flex-wrap: nowrap;
 }
 
 .dice-slot-label {
     font-weight: bold;
+    font-size: 0.95em;
     color: var(--col-text-highlight);
-    min-width: 100px;
+    width: 110px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .dice-amount-controls {
@@ -2829,10 +2850,13 @@ button.disabled,
 .dice-display {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    min-height: 50px;
-    padding: 5px;
+    gap: 10px;
+    min-height: 58px;
+    padding: 12px 14px;
     align-items: center;
+    justify-content: flex-start;
+    background: rgba(24, 40, 45, 0.4);
+    border-radius: 0 0 5px 5px;
 }
 
 /* Base Roller Die */
@@ -3231,6 +3255,36 @@ button.disabled,
     height: 24px;
 }
 
+/* --- Willpower Results --- */
+.dice-results-willpower {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.dice-results-willpower.faded {
+    opacity: 0.35;
+}
+
+.dice-results-willpower .result-item {
+    padding: 8px 15px;
+    border: 1px solid var(--col-accent-cool);
+    background: linear-gradient(135deg, var(--col-bg-main) 0%, var(--col-bg-surface) 100%);
+}
+
+.dice-results-willpower .result-value {
+    font-size: 1.5em;
+    color: var(--col-accent-cool);
+}
+
+.dice-results-willpower .result-icon {
+    width: 24px;
+    height: 24px;
+    filter: hue-rotate(180deg) saturate(0.7);
+}
+
 /* --- Action Buttons --- */
 .dice-action-buttons {
     display: flex;
@@ -3254,6 +3308,227 @@ button.disabled,
     opacity: 0.5;
     cursor: not-allowed;
     filter: grayscale(50%);
+}
+
+#btn-advance-day {
+    width: 100%;
+    min-width: max-content;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    height: auto;
+}
+
+#btn-advance-day img {
+    vertical-align: bottom;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   CALENDAR GRID
+   ======================================== */
+
+#calendar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(32, 32, 32, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Custom scrollbar for Windows 11 feel */
+#calendar-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+#calendar-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#calendar-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+#calendar-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Month Section Container */
+.calendar-month-section {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: fit-content;
+}
+
+/* Month Title Header */
+.calendar-month-title {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calendar-month-title img {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+/* Days Grid Container - 7 columns */
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 36px);
+    gap: 0;
+    justify-content: center;
+}
+
+/* Individual Day Cell - Base Styles */
+.calendar-day-item {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    background: transparent;
+    border: none;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    position: relative;
+}
+
+/* Past Day - Days that have been played */
+.calendar-day-item.past-day {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.calendar-day-item.past-day:hover {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Current Day - Windows 11 accent blue */
+.calendar-day-item.current-day {
+    background: #0078D4;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.calendar-day-item.current-day:hover {
+    background: #1a86d9;
+    box-shadow: 0 0 8px rgba(0, 120, 212, 0.5);
+}
+
+/* Future Day - Faded */
+.calendar-day-item.future-day {
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+/* Pre-Campaign Days - Very faded */
+.calendar-day-item.pre-campaign {
+    color: rgba(255, 255, 255, 0.15);
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Viewing Day - Selected indicator */
+.calendar-day-item.viewing-day:not(.current-day) {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.6);
+}
+
+.calendar-day-item.viewing-day.current-day {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4), 0 0 12px rgba(0, 120, 212, 0.4);
+}
+
+/* Unexplored Days - Days not yet visited in the campaign */
+.calendar-day-item.unexplored-day {
+    color: rgba(255, 255, 255, 0.2);
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Days with journal entries - Highlight color indicator */
+.calendar-day-item.has-journal {
+    color: var(--col-text-highlight);
+}
+
+/* ========================================
+   LANGUAGE MODAL STYLES
+   ======================================== */
+
+.lang-modal-content {
+    max-width: 400px;
+}
+
+.lang-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 30px;
+    align-items: center;
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    background-color: var(--col-bg-main);
+    border: 2px solid var(--col-accent-cool);
+    color: var(--col-text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 250px;
+}
+
+.lang-option:hover {
+    background-color: var(--col-accent-cool);
+    color: var(--col-text-highlight);
+    border-color: var(--col-text-highlight);
+}
+
+.lang-option.active {
+    background-color: var(--col-accent-deep);
+    border-color: var(--col-text-highlight);
+    color: var(--col-text-highlight);
+}
+
+.lang-flag {
+    font-size: 1.5em;
+    line-height: 1;
+}
+
+#btn-lang {
+    background-color: var(--col-text-highlight) !important;
 }
 
 @media (max-width: 1120px) {
@@ -3527,6 +3802,28 @@ button.disabled,
 
     .dice-slot-label {
         min-width: auto;
+        width: auto;
+        font-size: 0.85em;
+    }
+
+    .dice-amount-controls {
+        gap: 3px;
+    }
+
+    .dice-amount-btn {
+        width: 26px;
+        height: 26px;
+    }
+
+    .dice-amount-btn img {
+        width: 12px;
+        height: 12px;
+    }
+
+    .dice-amount-input {
+        width: 38px;
+        padding: 4px;
+        font-size: 0.95em;
     }
 
     .artifact-die-select {
@@ -3553,5 +3850,39 @@ button.disabled,
 
     .dice-results-skulls .result-item.skull-result {
         width: 220px;
+    }
+
+    /* Calendar Grid Mobile Styles */
+    #calendar-grid {
+        padding: 10px;
+        max-height: 300px;
+        overflow-x: hidden;
+    }
+
+    .calendar-month-section {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .calendar-days-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+
+    .calendar-day-item {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .calendar-month-title {
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .calendar-month-title img {
+        width: 22px;
+        height: 22px;
     }
 }
