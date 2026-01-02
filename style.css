@@ -2552,7 +2552,7 @@ button.disabled,
 .info-roll-btn img.btn-icon {
     width: 22px;
     height: 22px;
-    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+    filter: invert(1) drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
 }
 
 .quick-roll-bonus {
